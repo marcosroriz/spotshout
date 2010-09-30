@@ -35,7 +35,7 @@ public abstract class UnicastRemoteObject implements Remote {
      * Process a receiving call/invoke method that has no return.
      * @param packet - the method meta-data and it's arguments.
      */
-    protected abstract void callWithoutReturn(DataOutput packet);
+    public abstract void callWithoutReturn(DataOutput packet);
 
     /**
      * Process a receiving call/invoke method that has return.
@@ -43,18 +43,18 @@ public abstract class UnicastRemoteObject implements Remote {
      * @return the return value as a Object, if it's a simple type it will
      *         be Wrapped and UnWrapped on the Stub.
      */
-    protected abstract Object callWithReturn(DataOutput packet);
+    public abstract Object callWithReturn(DataOutput packet);
 
     /**
      * Get the called method return type.
      * @return the method type (int constant)
      * @TODO - put link to constant table
      */
-    protected abstract int getReturnType();
+    public abstract int getReturnType();
 
     /**
      * Set the called method return type. (int constant)
      * @TODO - put link to constant table
      */
-    protected abstract void setReturnType();
+    public abstract void setReturnType();
 }
