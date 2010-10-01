@@ -15,13 +15,13 @@
  * GNU Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public License
- * along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
+ * along with SpotShout.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
 
 package java.rmi.registry.server;
 
-import java.io.DataOutput;
+import com.google.code.spotshout.remote.TargetMethod;
 import java.rmi.registry.Remote;
 
 /**
@@ -33,29 +33,13 @@ public abstract class UnicastRemoteObject implements Remote {
     }
 
     /**
-     * Process a receiving call/invoke method that has no return.
+     * Process a receiving call/invoke method request.
      * @param packet - the method meta-data and it's arguments.
+     * @return the return value as a Object:
+     *    - if it's a simple type it will be Wrapped and UnWrapped on the Stub
+     *    - if the method has no return (void) it will return null to the
+     *      protocol and won't send the answer/reply to the caller.
      */
-    public abstract void callWithoutReturn(DataOutput packet);
+    public abstract Object invokeRequest(TargetMethod method);
 
-    /**
-     * Process a receiving call/invoke method that has return.
-     * @param packet - the method meta-data and it's arguments.
-     * @return the return value as a Object, if it's a simple type it will
-     *         be Wrapped and UnWrapped on the Stub.
-     */
-    public abstract Object callWithReturn(DataOutput packet);
-
-    /**
-     * Get the called method return type.
-     * @return the method type (int constant)
-     * @TODO - put link to constant table
-     */
-    public abstract int getReturnType();
-
-    /**
-     * Set the called method return type. (int constant)
-     * @TODO - put link to constant table
-     */
-    public abstract void setReturnType();
 }
