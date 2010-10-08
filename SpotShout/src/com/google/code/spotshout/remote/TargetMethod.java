@@ -17,12 +17,17 @@
 
 package com.google.code.spotshout.remote;
 
+import java.io.IOException;
+import ksn.io.KSNSerializableInterface;
+import ksn.io.ObjectInputStream;
+import ksn.io.ObjectOutputStream;
+
 /**
  * Contains the meta-data of a called/invoked method and it's arguments. 
  * A object of this class will be the data that is going to be sent within
  * the peers of the protocol.
  */
-public final class TargetMethod {
+public final class TargetMethod implements KSNSerializableInterface {
 
     /**
      * Method Name
@@ -88,6 +93,12 @@ public final class TargetMethod {
 
     public void setMethodSignature(String methodSignature) {
         this.methodSignature = methodSignature;
+    }
+
+    public void writeObjectOnSensor(ObjectOutputStream stream) throws IOException {
+    }
+
+    public void readObjectOnSensor(ObjectInputStream stream) throws IOException, ClassNotFoundException, IllegalAccessException, InstantiationException {
     }
     
 }

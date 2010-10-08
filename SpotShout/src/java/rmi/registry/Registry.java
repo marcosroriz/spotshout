@@ -32,6 +32,7 @@ public interface Registry {
     /**
      * Binds a remote reference to a given name.
      * @param name - name choosed to represent the remote reference.
+     * @param remoteFullName - the remote interface full name (including package)
      * @param obj - the remote reference.
      * @throws AlreadyBoundException - if the given name is already bound in
      *                                 the registry.
@@ -39,8 +40,8 @@ public interface Registry {
      * @throws RemoteException - if there is a connection problem during
      *                           the operation.
      */
-    public void bind(String name, Remote obj) throws AlreadyBoundException,
-            NullPointerException, RemoteException;
+    public void bind(String name, String remoteFullName, Remote obj)
+            throws AlreadyBoundException, NullPointerException, RemoteException;
 
     /**
      * List the names that are bounded on the registry.
@@ -68,13 +69,14 @@ public interface Registry {
      * a {@link AlreadyBoundException} if there is already the given name on
      * the registry.
      * @param name - name choosed to represent the remote reference.
+     * @param remoteFullName - the remote interface full name (including package)
      * @param obj - the remote reference.
      * @throws NullPointerException - if the remote object or name is null.
      * @throws RemoteException - if there is a connection problem during
      *                           the operation.
      */
-    public void rebind(String name, Remote obj) throws NullPointerException,
-            RemoteException;
+    public void rebind(String name, String remoteFullName, Remote obj)
+            throws NullPointerException, RemoteException;
 
     /**
      * Removes the binding of <i>name</b> on the registry.

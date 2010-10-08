@@ -15,17 +15,25 @@
  * and limitations under the License.
  */
 
-package java.rmi.registry.server;
+package com.google.code.spotshout.remote;
 
-import com.google.code.spotshout.remote.TargetMethod;
 import java.rmi.Remote;
 
 /**
- * Defines the basic structure of a export {@link Remote} object.
+ * This class represent the structure of a abstract Skeleton. Each Skeleton has
+ * to inherit this class.
  */
-public abstract class UnicastRemoteObject implements Remote {
+public abstract class Skel {
 
-    public UnicastRemoteObject() {
+    /**
+     * Remote object that the skell will dispatch the request.
+     */
+    private Remote remote;
+
+    /**
+     * Empty constructor for reflection.
+     */
+    public Skel() {
     }
 
     /**
@@ -38,4 +46,11 @@ public abstract class UnicastRemoteObject implements Remote {
      */
     public abstract Object invokeRequest(TargetMethod method);
 
+    public Remote getRemote() {
+        return remote;
+    }
+
+    public void setRemote(Remote remote) {
+        this.remote = remote;
+    }
 }

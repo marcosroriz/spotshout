@@ -15,7 +15,7 @@
  * and limitations under the License.
  */
 
-package java.rmi.registry;
+package java.rmi;
 
 /**
  * The Remote interface represent the basic contract that a server/client will
