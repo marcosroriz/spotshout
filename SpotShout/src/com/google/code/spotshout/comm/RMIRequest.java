@@ -20,13 +20,40 @@ package com.google.code.spotshout.comm;
 /**
  * This class represent a generic RMI Request (Protocol).
  */
-public class RMIRequest {
+public abstract class RMIRequest {
 
     /**
      * Protocol Opcode
      */
     private byte operation;
 
-    
+    /**
+     * Our address (in Mac).
+     */
+    private String ourAddr;
 
+    private RMIRequest(byte op, String addr) {
+        setOperation(op);
+        setOurAddr(addr);
+    }
+
+    // Getters and Setters
+    public byte getOperation() {
+        return operation;
+    }
+
+    public void setOperation(byte operation) {
+        if (((operation & 0x01) == 0) && (operation > 10))
+            throw new UnsupportedProtocolException(RMIRequest.class, "Unsupported Operation");
+        this.operation = operation;
+    }
+
+    public String getOurAddr() {
+        return ourAddr;
+    }
+
+    public void setOurAddr(String ourAddr) {
+        if (ourAddr == null) throw new NullPointerException("Our Address is NULL");
+        this.ourAddr = ourAddr;
+    }
 }
