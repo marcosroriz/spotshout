@@ -75,7 +75,7 @@
             <compilation-unit>
                 <package-root>src</package-root>
                 <classpath mode="boot">${sunspot.bootclasspath}</classpath>
-                <classpath mode="compile">/home/marcos/Softwares/sunspot/sdk/lib/multihop_common.jar:/home/marcos/Softwares/sunspot/sdk/lib/transducer_device.jar:/home/marcos/Softwares/sunspot/sdk/lib/ipv6lib_common.jar:/home/marcos/Softwares/sunspot/sdk/lib/spotlib_device.jar:/home/marcos/Softwares/sunspot/sdk/lib/spotlib_common.jar:lib/KSNSerialization-0.2.jar</classpath>
+                <classpath mode="compile">${sunspot.home}/lib/multihop_common.jar:${sunspot.home}/lib/transducer_device.jar:${sunspot.home}/lib/ipv6lib_common.jar:${sunspot.home}/lib/spotlib_device.jar:${sunspot.home}/lib/spotlib_common.jar:lib/KSNSerialization-0.2.jar</classpath>
                 <built-to>build</built-to>
                 <source-level>1.4</source-level>
             </compilation-unit>
