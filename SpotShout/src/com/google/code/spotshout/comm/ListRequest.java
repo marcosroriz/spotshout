@@ -17,56 +17,35 @@
 
 package com.google.code.spotshout.comm;
 
-import com.google.code.spotshout.remote.SpotRegistry;
 import java.io.DataOutput;
 import java.io.IOException;
 import java.rmi.RemoteException;
 
 /**
- * This class represent a bind request.
+ * This class represent a list request.
  */
-public class BindRequest extends RMIRequest {
+public class ListRequest extends RMIRequest {
 
-    /**
-     * Remote Interface Name on NameServer.
-     */
-    private String remoteInterfaceName;
-
-    /**
-     * Remote Interface full qualified name (including package).
-     * Ex: foo.bar.IWeather
-     */
-    private String remoteFullName;
-
-    public BindRequest(byte operation, String remoteInterfaceName, String remoteFullName) {
-        super(operation);
-        this.remoteInterfaceName = remoteInterfaceName;
-        this.remoteFullName = remoteFullName;
+    public ListRequest(byte opcode) {
+        super(opcode);
     }
 
     /**
-     * Bind Request Protocol--
+     * List Request Protocol
      * ------------------------------------------------------------------------
      * Byte:        Opcode
      * UTF:         Address
-     * INT:         Skeleton Port
-     * UTF:         Remote Interface Desired Name
-     * UTF:         Remote Interface Full Qualified Name
-     *
+     * 
      * For method explanation:
      * @see com.google.code.spotshout.comm.RMIRequest#writeData(java.io.DataOutput)
-     * @TODO Solve this acoplation with SpotRegistry
      */
     protected void writeData(DataOutput output) {
         try {
             output.write(getOperation());
             output.writeUTF(getOurAddr());
-            output.writeInt(SpotRegistry.getFreePort());
-            output.writeUTF(remoteInterfaceName);
-            output.writeUTF(remoteFullName);
         } catch (IOException ex) {
             ex.printStackTrace();
-            throw new RemoteException(BindRequest.class, "Error on bind()");
+            throw new RemoteException(ListRequest.class, "Error on list()");
         }
     }
 
