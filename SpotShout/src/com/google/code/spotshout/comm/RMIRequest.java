@@ -17,6 +17,8 @@
 
 package com.google.code.spotshout.comm;
 
+import java.io.DataOutput;
+
 /**
  * This class represent a generic RMI Request (Protocol).
  */
@@ -28,14 +30,21 @@ public abstract class RMIRequest {
     private byte operation;
 
     /**
-     * Our address (in Mac).
+     * Our address (MAC).
      */
     private String ourAddr;
 
-    private RMIRequest(byte op, String addr) {
+    public RMIRequest(byte op) {
         setOperation(op);
-        setOurAddr(addr);
+        this.ourAddr = System.getProperty("IEEE_ADDRESS");
     }
+
+    /**
+     * This method define the order and fields that it's going to be written
+     * by each operation [i.e. -- Protocol] on the output.
+     * @param output - the outputstream that the request data should be written.
+     */
+    protected abstract void writeData(DataOutput output);
 
     // Getters and Setters
     public byte getOperation() {
@@ -52,8 +61,4 @@ public abstract class RMIRequest {
         return ourAddr;
     }
 
-    public void setOurAddr(String ourAddr) {
-        if (ourAddr == null) throw new NullPointerException("Our Address is NULL");
-        this.ourAddr = ourAddr;
-    }
 }
