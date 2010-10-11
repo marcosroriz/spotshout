@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions
  * and limitations under the License.
  */
+
 package com.google.code.spotshout.comm;
 
 import com.google.code.spotshout.remote.SpotRegistry;
@@ -30,11 +31,13 @@ public class RebindRequest extends RMIRequest {
      * Remote Interface Name on NameServer.
      */
     private String remoteInterfaceName;
+
     /**
      * Remote Interface Full Qualified Name (including package).
      * Ex: foo.bar.IWeather
      */
     private String remoteFullName;
+
     /**
      * Skeleton port.
      */

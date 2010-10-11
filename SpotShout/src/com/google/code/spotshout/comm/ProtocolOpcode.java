@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions
  * and limitations under the License.
  */
+
 package com.google.code.spotshout.comm;
 
 /**
@@ -33,9 +34,11 @@ public class ProtocolOpcode {
     public static final byte REBIND_REPLY = 8;
     public static final byte UNBIND_REQUEST = 9;
     public static final byte UNBIND_REPLY = 10;
+
     // RMI Operation Status
     public static final byte OPERATION_OK = 11;
     public static final byte OPERATION_NOK = 12;
+
     // RMI Exceptions
     public static final byte EXCEPTION_ALREADY_BOUND = 13;
     public static final byte EXCEPTION_NOT_BOUND = 14;

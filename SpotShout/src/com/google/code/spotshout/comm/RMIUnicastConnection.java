@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions
  * and limitations under the License.
  */
+
 package com.google.code.spotshout.comm;
 
 import javax.microedition.io.Connection;
@@ -29,18 +30,22 @@ public class RMIUnicastConnection {
      * The wrapped connection.
      */
     private Connection connection;
+
     /**
      * The protocol used (radiogram, radiostream, tcp or udp).
      */
     private String protocol;
+
     /**
      * The target address (MAC).
      */
     private String targetAddr;
+
     /**
      * The target port.
      */
     private int port;
+
     /**
      * The RMIRequest of this connection.
      */

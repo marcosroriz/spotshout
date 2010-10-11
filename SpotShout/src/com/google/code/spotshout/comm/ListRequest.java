@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions
  * and limitations under the License.
  */
+
 package com.google.code.spotshout.comm;
 
 import java.io.DataOutput;
@@ -38,7 +39,7 @@ public class ListRequest extends RMIRequest {
      * Byte:        Opcode
      * UTF:         Address
      * INT:         Reply Port
-     * 
+     *
      * For method explanation:
      * @see com.google.code.spotshout.comm.RMIRequest#writeData(java.io.DataOutput)
      */
