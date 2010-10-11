@@ -59,8 +59,8 @@ public class BindRequest extends RMIRequest {
      */
     protected void writeData(DataOutput output) {
         try {
-            output.write(ProtocolOpcode.BIND_REQUEST);
-            output.writeUTF(remoteFullName);
+            output.write(getOperation());
+            output.writeUTF(getOurAddr());
             output.writeInt(SpotRegistry.getFreePort());
             output.writeUTF(remoteInterfaceName);
             output.writeUTF(remoteFullName);
