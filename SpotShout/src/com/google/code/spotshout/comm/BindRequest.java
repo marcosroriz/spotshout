@@ -23,7 +23,7 @@ import java.io.IOException;
 import java.rmi.RemoteException;
 
 /**
- * This class represent a bind request.
+ * This class represent the bind request of the RMI Protocol.
  */
 public class BindRequest extends RMIRequest {
 
@@ -39,19 +39,26 @@ public class BindRequest extends RMIRequest {
     private String remoteFullName;
 
     /**
+     * Skeleton port.
+     */
+    private int skelPort;
+
+    /**
      * The bind request of the rmi protocol.
      * @param remoteInterfaceName - the remote name (in the NameServer)
      * @param remoteFullName - the remote interface full qualified name
      *                         (including package).
+     * @TODO check for exceptions?
      */
     public BindRequest(String remoteInterfaceName, String remoteFullName) {
         super(ProtocolOpcode.BIND_REQUEST);
         this.remoteInterfaceName = remoteInterfaceName;
         this.remoteFullName = remoteFullName;
+        this.skelPort = SpotRegistry.getFreePort();
     }
 
     /**
-     * Bind Request Protocol--
+     * Bind Request Protocol
      * ------------------------------------------------------------------------
      * Byte:        Opcode
      * UTF:         Address
@@ -62,20 +69,28 @@ public class BindRequest extends RMIRequest {
      *
      * For method explanation:
      * @see com.google.code.spotshout.comm.RMIRequest#writeData(java.io.DataOutput)
-     * @TODO Solve this acoplation with SpotRegistry
      */
-    protected void writeData(DataOutput output) {
+    protected DataOutput writeData(DataOutput output) {
         try {
             output.write(getOperation());
             output.writeUTF(getOurAddr());
             output.writeInt(getReplyPort());
-            output.writeInt(SpotRegistry.getFreePort());
+            output.writeInt(getSkelPort());
             output.writeUTF(remoteInterfaceName);
             output.writeUTF(remoteFullName);
+            return output;
         } catch (IOException ex) {
             ex.printStackTrace();
-            throw new RemoteException(BindRequest.class, "Error on bind()");
+            throw new RemoteException(BindRequest.class, 
+                    "Error on bind(" + remoteInterfaceName + ")");
         }
     }
 
+    /**
+     * Get the port which the skeleton will listen.
+     * @return the port of the skeleton.
+     */
+    public int getSkelPort() {
+        return skelPort;
+    }
 }

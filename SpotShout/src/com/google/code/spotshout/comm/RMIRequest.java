@@ -49,9 +49,10 @@ public abstract class RMIRequest {
     /**
      * This method define the order and fields that it's going to be written
      * by each operation [i.e. -- Protocol] on the output.
-     * @param output - the outputstream that the request data should be written.
+     * @param output - the outputStream that the request data should be written.
+     * @return DataOutput - the outputStream that the data has been written.
      */
-    protected abstract void writeData(DataOutput output);
+    protected abstract DataOutput writeData(DataOutput output);
 
     // Getters
     public int getReplyPort() {

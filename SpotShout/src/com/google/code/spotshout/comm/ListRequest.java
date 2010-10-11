@@ -22,7 +22,7 @@ import java.io.IOException;
 import java.rmi.RemoteException;
 
 /**
- * This class represent a list request.
+ * This class represent the list request of the RMI Protocol.
  */
 public class ListRequest extends RMIRequest {
 
@@ -43,15 +43,15 @@ public class ListRequest extends RMIRequest {
      * For method explanation:
      * @see com.google.code.spotshout.comm.RMIRequest#writeData(java.io.DataOutput)
      */
-    protected void writeData(DataOutput output) {
+    protected DataOutput writeData(DataOutput output) {
         try {
             output.write(getOperation());
             output.writeUTF(getOurAddr());
             output.writeInt(getReplyPort());
+            return output;
         } catch (IOException ex) {
             ex.printStackTrace();
             throw new RemoteException(ListRequest.class, "Error on list()");
         }
     }
-
 }
