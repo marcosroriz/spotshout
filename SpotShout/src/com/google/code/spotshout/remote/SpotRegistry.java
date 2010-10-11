@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions
  * and limitations under the License.
  */
+
 package com.google.code.spotshout.remote;
 
 import com.google.code.spotshout.comm.ProtocolOpcode;
@@ -38,14 +39,17 @@ public class SpotRegistry implements Registry {
      * Our address.
      */
     private String ourAddress;
+
     /**
      * Registry (Server) address.
      */
     private String srvAddress;
+
     /**
      * Registry (Server) Port.
      */
     private int srvPort;
+
     /**
      * Hashtable to locally binded remote objects.
      */
