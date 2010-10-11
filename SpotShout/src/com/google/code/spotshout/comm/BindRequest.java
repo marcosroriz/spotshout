@@ -33,13 +33,19 @@ public class BindRequest extends RMIRequest {
     private String remoteInterfaceName;
 
     /**
-     * Remote Interface full qualified name (including package).
+     * Remote Interface Full Qualified Name (including package).
      * Ex: foo.bar.IWeather
      */
     private String remoteFullName;
 
-    public BindRequest(byte operation, String remoteInterfaceName, String remoteFullName) {
-        super(operation);
+    /**
+     * The bind request of the rmi protocol.
+     * @param remoteInterfaceName - the remote name (in the NameServer)
+     * @param remoteFullName - the remote interface full qualified name
+     *                         (including package).
+     */
+    public BindRequest(String remoteInterfaceName, String remoteFullName) {
+        super(ProtocolOpcode.BIND_REQUEST);
         this.remoteInterfaceName = remoteInterfaceName;
         this.remoteFullName = remoteFullName;
     }
@@ -49,6 +55,7 @@ public class BindRequest extends RMIRequest {
      * ------------------------------------------------------------------------
      * Byte:        Opcode
      * UTF:         Address
+     * INT:         Reply Port
      * INT:         Skeleton Port
      * UTF:         Remote Interface Desired Name
      * UTF:         Remote Interface Full Qualified Name
@@ -61,6 +68,7 @@ public class BindRequest extends RMIRequest {
         try {
             output.write(getOperation());
             output.writeUTF(getOurAddr());
+            output.writeInt(getReplyPort());
             output.writeInt(SpotRegistry.getFreePort());
             output.writeUTF(remoteInterfaceName);
             output.writeUTF(remoteFullName);

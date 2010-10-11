@@ -17,6 +17,7 @@
 
 package com.google.code.spotshout.comm;
 
+import com.google.code.spotshout.remote.SpotRegistry;
 import java.io.DataOutput;
 
 /**
@@ -25,7 +26,7 @@ import java.io.DataOutput;
 public abstract class RMIRequest {
 
     /**
-     * Protocol Opcode
+     * Protocol Opcode.
      */
     private byte operation;
 
@@ -34,9 +35,15 @@ public abstract class RMIRequest {
      */
     private String ourAddr;
 
+    /**
+     * The operation reply port.
+     */
+    private int replyPort;
+
     public RMIRequest(byte op) {
-        setOperation(op);
+        this.operation = op;
         this.ourAddr = System.getProperty("IEEE_ADDRESS");
+        this.replyPort = SpotRegistry.getFreePort();
     }
 
     /**
@@ -46,19 +53,16 @@ public abstract class RMIRequest {
      */
     protected abstract void writeData(DataOutput output);
 
-    // Getters and Setters
-    public byte getOperation() {
-        return operation;
+    // Getters
+    public int getReplyPort() {
+        return replyPort;
     }
 
-    public void setOperation(byte operation) {
-        if (((operation & 0x01) == 0) && (operation > 10))
-            throw new UnsupportedProtocolException(RMIRequest.class, "Unsupported Operation");
-        this.operation = operation;
+    public byte getOperation() {
+        return operation;
     }
 
     public String getOurAddr() {
         return ourAddr;
     }
-
 }

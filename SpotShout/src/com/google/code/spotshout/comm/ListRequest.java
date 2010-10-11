@@ -26,8 +26,11 @@ import java.rmi.RemoteException;
  */
 public class ListRequest extends RMIRequest {
 
-    public ListRequest(byte opcode) {
-        super(opcode);
+    /**
+     * The list request of the RMI Protocol.
+     */
+    public ListRequest() {
+        super(ProtocolOpcode.LIST_REQUEST);
     }
 
     /**
@@ -35,6 +38,7 @@ public class ListRequest extends RMIRequest {
      * ------------------------------------------------------------------------
      * Byte:        Opcode
      * UTF:         Address
+     * INT:         Reply Port
      * 
      * For method explanation:
      * @see com.google.code.spotshout.comm.RMIRequest#writeData(java.io.DataOutput)
@@ -43,6 +47,7 @@ public class ListRequest extends RMIRequest {
         try {
             output.write(getOperation());
             output.writeUTF(getOurAddr());
+            output.writeInt(getReplyPort());
         } catch (IOException ex) {
             ex.printStackTrace();
             throw new RemoteException(ListRequest.class, "Error on list()");
