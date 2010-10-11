@@ -80,7 +80,6 @@ public class RebindRequest extends RMIRequest {
             output.writeUTF(remoteFullName);
             return output;
         } catch (IOException ex) {
-            ex.printStackTrace();
             throw new RemoteException(RebindRequest.class,
                     "Error on rebind(" + remoteInterfaceName + ")");
         }

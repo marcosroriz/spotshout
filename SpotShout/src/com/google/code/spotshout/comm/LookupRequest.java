@@ -32,7 +32,7 @@ public class LookupRequest extends RMIRequest {
     private String remoteInterfaceName;
 
     /**
-     * The lookup request of the rmi protocol.
+     * The lookup request of the RMI protocol.
      * @param remoteInterfaceName - the remote name (in the NameServer)
      */
     public LookupRequest(String remoteInterfaceName) {
@@ -59,7 +59,6 @@ public class LookupRequest extends RMIRequest {
             output.writeUTF(remoteInterfaceName);
             return output;
         } catch (IOException ex) {
-            ex.printStackTrace();
             throw new RemoteException(LookupRequest.class,
                     "Error on lookup(" + remoteInterfaceName + ")");
         }

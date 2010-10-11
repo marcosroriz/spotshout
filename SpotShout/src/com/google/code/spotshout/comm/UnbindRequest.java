@@ -32,7 +32,7 @@ public class UnbindRequest extends RMIRequest {
     private String remoteInterfaceName;
 
     /**
-     * The unbind request of the rmi protocol.
+     * The unbind request of the RMI protocol.
      * @param remoteInterfaceName - the remote name (in the NameServer)
      */
     public UnbindRequest(String remoteInterfaceName) {
@@ -59,7 +59,6 @@ public class UnbindRequest extends RMIRequest {
             output.writeUTF(remoteInterfaceName);
             return output;
         } catch (IOException ex) {
-            ex.printStackTrace();
             throw new RemoteException(UnbindRequest.class,
                     "Error on lookup(" + remoteInterfaceName + ")");
         }

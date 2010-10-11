@@ -21,7 +21,9 @@ import com.google.code.spotshout.remote.SpotRegistry;
 import java.io.DataOutput;
 
 /**
- * This class represent a generic RMI Request (Protocol).
+ * This class represent a generic RMI Request (Protocol). Each operation will
+ * inherit this class and specify it's detail, overwriting the writeData method
+ * with the specific data of it's protocol.
  */
 public abstract class RMIRequest {
 
@@ -49,11 +51,13 @@ public abstract class RMIRequest {
     /**
      * This method define the order and fields that it's going to be written
      * by each operation [i.e. -- Protocol] on the output.
+     * 
      * @param output - the outputStream that the request data should be written.
      * @return DataOutput - the outputStream that the data has been written.
+     * @TODO Write basic data here?
      */
     protected abstract DataOutput writeData(DataOutput output);
-
+            
     // Getters
     public int getReplyPort() {
         return replyPort;

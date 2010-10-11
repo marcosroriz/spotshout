@@ -44,7 +44,7 @@ public class BindRequest extends RMIRequest {
     private int skelPort;
 
     /**
-     * The bind request of the rmi protocol.
+     * The bind request of the RMI protocol.
      * @param remoteInterfaceName - the remote name (in the NameServer)
      * @param remoteFullName - the remote interface full qualified name
      *                         (including package).
@@ -80,7 +80,6 @@ public class BindRequest extends RMIRequest {
             output.writeUTF(remoteFullName);
             return output;
         } catch (IOException ex) {
-            ex.printStackTrace();
             throw new RemoteException(BindRequest.class,
                     "Error on bind(" + remoteInterfaceName + ")");
         }

@@ -47,7 +47,7 @@ public class RMIUnicastConnection {
     private int port;
 
     /**
-     * The RMIRequest of this connection.
+     * The RMI Request of this connection.
      */
     private RMIRequest request;
 }

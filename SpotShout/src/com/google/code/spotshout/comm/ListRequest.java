@@ -50,7 +50,6 @@ public class ListRequest extends RMIRequest {
             output.writeInt(getReplyPort());
             return output;
         } catch (IOException ex) {
-            ex.printStackTrace();
             throw new RemoteException(ListRequest.class, "Error on list()");
         }
     }
