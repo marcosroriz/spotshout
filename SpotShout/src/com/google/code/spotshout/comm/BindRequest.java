@@ -1,5 +1,5 @@
 /*
- * SpotShout - A RMI library for the SunSPOT Platform.
+ * SpotSHOUT - A RMI Middleware for the SunSPOT Platform.
  * Copyright (C) 2010 Marcos Paulino Roriz Junior
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions
  * and limitations under the License.
  */
-
 package com.google.code.spotshout.comm;
 
 import com.google.code.spotshout.remote.SpotRegistry;
@@ -31,13 +30,11 @@ public class BindRequest extends RMIRequest {
      * Remote Interface Name on NameServer.
      */
     private String remoteInterfaceName;
-
     /**
      * Remote Interface Full Qualified Name (including package).
      * Ex: foo.bar.IWeather
      */
     private String remoteFullName;
-
     /**
      * Skeleton port.
      */
@@ -81,7 +78,7 @@ public class BindRequest extends RMIRequest {
             return output;
         } catch (IOException ex) {
             ex.printStackTrace();
-            throw new RemoteException(BindRequest.class, 
+            throw new RemoteException(BindRequest.class,
                     "Error on bind(" + remoteInterfaceName + ")");
         }
     }

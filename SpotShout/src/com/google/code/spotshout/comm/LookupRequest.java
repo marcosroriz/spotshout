@@ -1,5 +1,5 @@
 /*
- * SpotShout - A RMI library for the SunSPOT Platform.
+ * SpotSHOUT - A RMI Middleware for the SunSPOT Platform.
  * Copyright (C) 2010 Marcos Paulino Roriz Junior
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions
  * and limitations under the License.
  */
-
 package com.google.code.spotshout.comm;
 
 import java.io.DataOutput;
@@ -60,7 +59,7 @@ public class LookupRequest extends RMIRequest {
             return output;
         } catch (IOException ex) {
             ex.printStackTrace();
-            throw new RemoteException(LookupRequest.class, 
+            throw new RemoteException(LookupRequest.class,
                     "Error on lookup(" + remoteInterfaceName + ")");
         }
     }

@@ -1,5 +1,5 @@
 /*
- * SpotShout - A RMI library for the SunSPOT Platform.
+ * SpotSHOUT - A RMI Middleware for the SunSPOT Platform.
  * Copyright (C) 2010 Marcos Paulino Roriz Junior
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions
  * and limitations under the License.
  */
-
 package com.google.code.spotshout.comm;
 
 /**
@@ -24,25 +23,22 @@ package com.google.code.spotshout.comm;
 public class ProtocolOpcode {
 
     // RMI Opcodes
-    public static final byte BIND_REQUEST    = 1;
-    public static final byte BIND_REPLY      = 2;
-    public static final byte LIST_REQUEST    = 3;
-    public static final byte LIST_REPLY      = 4;
-    public static final byte LOOKUP_REQUEST  = 5;
-    public static final byte LOOKUP_REPLY    = 6;
-    public static final byte REBIND_REQUEST  = 7;
-    public static final byte REBIND_REPLY    = 8;
-    public static final byte UNBIND_REQUEST  = 9;
-    public static final byte UNBIND_REPLY    = 10;
-
+    public static final byte BIND_REQUEST = 1;
+    public static final byte BIND_REPLY = 2;
+    public static final byte LIST_REQUEST = 3;
+    public static final byte LIST_REPLY = 4;
+    public static final byte LOOKUP_REQUEST = 5;
+    public static final byte LOOKUP_REPLY = 6;
+    public static final byte REBIND_REQUEST = 7;
+    public static final byte REBIND_REPLY = 8;
+    public static final byte UNBIND_REQUEST = 9;
+    public static final byte UNBIND_REPLY = 10;
     // RMI Operation Status
-    public static final byte OPERATION_OK    = 11;
-    public static final byte OPERATION_NOK   = 12;
-
+    public static final byte OPERATION_OK = 11;
+    public static final byte OPERATION_NOK = 12;
     // RMI Exceptions
     public static final byte EXCEPTION_ALREADY_BOUND = 13;
-    public static final byte EXCEPTION_NOT_BOUND     = 14;
-    public static final byte EXCEPTION_NULL_POINT    = 15;
-    public static final byte EXCEPTION_REMOTE        = 16;
-
+    public static final byte EXCEPTION_NOT_BOUND = 14;
+    public static final byte EXCEPTION_NULL_POINT = 15;
+    public static final byte EXCEPTION_REMOTE = 16;
 }

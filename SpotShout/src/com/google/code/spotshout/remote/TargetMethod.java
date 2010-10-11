@@ -1,5 +1,5 @@
 /*
- * SpotShout - A RMI library for the SunSPOT Platform.
+ * SpotSHOUT - A RMI Middleware for the SunSPOT Platform.
  * Copyright (C) 2010 Marcos Paulino Roriz Junior
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions
  * and limitations under the License.
  */
-
 package com.google.code.spotshout.remote;
 
 import java.io.IOException;
@@ -33,17 +32,14 @@ public final class TargetMethod implements KSNSerializableInterface {
      * Method Name
      */
     private String methodName;
-
     /**
      * Method Signature (According to JVM Spec).
      */
     private String methodSignature;
-
     /**
      * Boolean value that identify if the method has a return.
      */
     private boolean returnable;
-
     /**
      * Method arguments (values). If argument are primitive they
      * will be Wrapped.
@@ -68,7 +64,9 @@ public final class TargetMethod implements KSNSerializableInterface {
     }
 
     public void setArgs(Object[] args) {
-        if (args != null) this.args = args;
+        if (args != null) {
+            this.args = args;
+        }
     }
 
     public boolean isReturnable() {
@@ -100,5 +98,4 @@ public final class TargetMethod implements KSNSerializableInterface {
 
     public void readObjectOnSensor(ObjectInputStream stream) throws IOException, ClassNotFoundException, IllegalAccessException, InstantiationException {
     }
-    
 }

@@ -1,5 +1,5 @@
 /*
- * SpotShout - A RMI library for the SunSPOT Platform.
+ * SpotSHOUT - A RMI Middleware for the SunSPOT Platform.
  * Copyright (C) 2010 Marcos Paulino Roriz Junior
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,11 +14,10 @@
  * See the License for the specific language governing permissions
  * and limitations under the License.
  */
-
 package com.google.code.spotshout.remote;
 
 import com.google.code.spotshout.comm.ProtocolOpcode;
-import com.sun.spot.io.j2me.tcp.TCPConnection;
+import com.sun.spot.io.j2me.radiostream.RadiostreamConnection;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -39,17 +38,14 @@ public class SpotRegistry implements Registry {
      * Our address.
      */
     private String ourAddress;
-
     /**
      * Registry (Server) address.
      */
     private String srvAddress;
-
     /**
      * Registry (Server) Port.
      */
     private int srvPort;
-
     /**
      * Hashtable to locally binded remote objects.
      */
@@ -64,11 +60,15 @@ public class SpotRegistry implements Registry {
             throws AlreadyBoundException, NullPointerException, RemoteException {
 
         // Exceptions
-        if (name == null) throw new NullPointerException("Bind name is null.");
-        if (obj == null) throw new NullPointerException("Remote object is null.");
-        
+        if (name == null) {
+            throw new NullPointerException("Bind name is null.");
+        }
+        if (obj == null) {
+            throw new NullPointerException("Remote object is null.");
+        }
+
         try {
-            TCPConnection con = (TCPConnection) Connector.open(
+            RadiostreamConnection con = (RadiostreamConnection) Connector.open(
                     "tcp://" + srvAddress + ":" + srvPort);
             DataOutputStream conOut = con.openDataOutputStream();
             DataInputStream conIn = con.openDataInputStream();
@@ -80,7 +80,6 @@ public class SpotRegistry implements Registry {
              * UTF:         Address
              * UTF:         Remote Interface Desired Name
              * UTF:         Remote Interface Full Qualified Name
-             * @TODO Define the port that this guy will listen
              */
             conOut.write(ProtocolOpcode.BIND_REQUEST);
             conOut.writeUTF(ourAddress);
@@ -107,7 +106,7 @@ public class SpotRegistry implements Registry {
             }
 
             // Binding Locally
-            // TODO -- fazer cada skel em uma thread, ou uma thread toda pro registro.
+            // @TODO -- fazer cada skel em uma thread, ou uma thread toda pro registro.
             Class skelClass = Class.forName(remoteFullName + "_Skel");
             Skel skel = (Skel) skelClass.newInstance();
             skel.setRemote(obj);
@@ -132,8 +131,8 @@ public class SpotRegistry implements Registry {
      */
     public String[] list() throws RemoteException {
         try {
-            TCPConnection con = (TCPConnection) Connector.open(
-                "tcp://" + srvAddress + ":" + srvPort);
+            RadiostreamConnection con = (RadiostreamConnection) Connector.open(
+                    "tcp://" + srvAddress + ":" + srvPort);
             DataOutputStream conOut = con.openDataOutputStream();
             DataInputStream conIn = con.openDataInputStream();
 
@@ -176,10 +175,12 @@ public class SpotRegistry implements Registry {
             NullPointerException, RemoteException {
 
         // Exceptions
-        if (name == null) throw new NullPointerException("Lookup name is null.");
+        if (name == null) {
+            throw new NullPointerException("Lookup name is null.");
+        }
 
         try {
-            TCPConnection con = (TCPConnection) Connector.open(
+            RadiostreamConnection con = (RadiostreamConnection) Connector.open(
                     "tcp://" + srvAddress + ":" + srvPort);
             DataOutputStream conOut = con.openDataOutputStream();
             DataInputStream conIn = con.openDataInputStream();
@@ -273,4 +274,11 @@ public class SpotRegistry implements Registry {
         return fullName.substring(0, lastIdx);
     }
 
+    /**
+     * This method return a free port for listening.
+     * @TODO metodo de alocar portas melhores
+     */
+    public static synchronized int getFreePort() {
+        return 0;
+    }
 }

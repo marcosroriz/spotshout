@@ -16,19 +16,33 @@
  */
 package com.google.code.spotshout.comm;
 
-/**
- * This class represents constants values that are attributed to identify
- * simple data types (and the Object type) that are used in the protocol.
- */
-public final class TypeConstants {
+import javax.microedition.io.Connection;
 
-    public static final int BOOLEAN = 1;
-    public static final int BYTE = 2;
-    public static final int CHAR = 4;
-    public static final int DOUBLE = 8;
-    public static final int FLOAT = 16;
-    public static final int INT = 32;
-    public static final int LONG = 64;
-    public static final int OBJECT = 128;
-    public static final int SHORT = 256;
+/**
+ * This class abstract the details of creating a unicast connection between SPOTs
+ * for the RMI protocol. We'll inject the RMIRequest and create the given RMIReply
+ * reducint the coupling.
+ */
+public class RMIUnicastConnection {
+
+    /**
+     * The wrapped connection.
+     */
+    private Connection connection;
+    /**
+     * The protocol used (radiogram, radiostream, tcp or udp).
+     */
+    private String protocol;
+    /**
+     * The target address (MAC).
+     */
+    private String targetAddr;
+    /**
+     * The target port.
+     */
+    private int port;
+    /**
+     * The RMIRequest of this connection.
+     */
+    private RMIRequest request;
 }

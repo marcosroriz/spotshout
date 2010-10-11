@@ -1,5 +1,5 @@
 /*
- * SpotShout - A RMI library for the SunSPOT Platform.
+ * SpotSHOUT - A RMI Middleware for the SunSPOT Platform.
  * Copyright (C) 2010 Marcos Paulino Roriz Junior
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions
  * and limitations under the License.
  */
-
 package java.rmi;
 
 /**
@@ -22,5 +21,4 @@ package java.rmi;
  * implement/use to make remote requests.
  */
 public interface Remote {
-
 }

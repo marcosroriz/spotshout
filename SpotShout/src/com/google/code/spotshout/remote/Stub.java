@@ -1,5 +1,5 @@
 /*
- * SpotShout - A RMI library for the SunSPOT Platform.
+ * SpotSHOUT - A RMI Middleware for the SunSPOT Platform.
  * Copyright (C) 2010 Marcos Paulino Roriz Junior
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions
  * and limitations under the License.
  */
-
 package com.google.code.spotshout.remote;
 
 /**
@@ -27,12 +26,10 @@ public abstract class Stub {
      * Target (Remote) name.
      */
     private String targetName;
-
     /**
      * Target Address.
      */
     private String targetAddr;
-
     /**
      * Target Port.
      */
@@ -45,7 +42,6 @@ public abstract class Stub {
     }
 
     // Getters and Setters
-    
     public String getTargetAddr() {
         return targetAddr;
     }

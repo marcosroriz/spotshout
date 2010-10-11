@@ -1,5 +1,5 @@
 /*
- * SpotShout - A RMI library for the SunSPOT Platform.
+ * SpotSHOUT - A RMI Middleware for the SunSPOT Platform.
  * Copyright (C) 2010 Marcos Paulino Roriz Junior
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions
  * and limitations under the License.
  */
-
 package java.rmi.registry.server;
 
 import com.google.code.spotshout.remote.TargetMethod;
@@ -37,5 +36,4 @@ public abstract class UnicastRemoteObject implements Remote {
      *      protocol and won't send the answer/reply to the caller.
      */
     public abstract Object invokeRequest(TargetMethod method);
-
 }
