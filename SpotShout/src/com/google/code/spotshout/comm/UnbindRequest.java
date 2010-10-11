@@ -17,15 +17,14 @@
 
 package com.google.code.spotshout.comm;
 
-import com.google.code.spotshout.remote.SpotRegistry;
 import java.io.DataOutput;
 import java.io.IOException;
 import java.rmi.RemoteException;
 
 /**
- * This class represent the rebind request of the RMI Protocol.
+ * This class represent the unbind request of the RMI Protocol.
  */
-public class RebindRequest extends RMIRequest {
+public class UnbindRequest extends RMIRequest {
 
     /**
      * Remote Interface Name on NameServer.
@@ -33,39 +32,21 @@ public class RebindRequest extends RMIRequest {
     private String remoteInterfaceName;
 
     /**
-     * Remote Interface Full Qualified Name (including package).
-     * Ex: foo.bar.IWeather
-     */
-    private String remoteFullName;
-
-    /**
-     * Skeleton port.
-     */
-    private int skelPort;
-
-    /**
-     * The bind request of the rmi protocol.
+     * The unbind request of the rmi protocol.
      * @param remoteInterfaceName - the remote name (in the NameServer)
-     * @param remoteFullName - the remote interface full qualified name
-     *                         (including package).
-     * @TODO check for exceptions?
      */
-    public RebindRequest(String remoteInterfaceName, String remoteFullName) {
-        super(ProtocolOpcode.REBIND_REQUEST);
+    public UnbindRequest(String remoteInterfaceName) {
+        super(ProtocolOpcode.UNBIND_REQUEST);
         this.remoteInterfaceName = remoteInterfaceName;
-        this.remoteFullName = remoteFullName;
-        this.skelPort = SpotRegistry.getFreePort();
     }
 
     /**
-     * Rebind Request Protocol
+     * Unbind Request Protocol
      * ------------------------------------------------------------------------
      * Byte:        Opcode
      * UTF:         Address
      * INT:         Reply Port
-     * INT:         Skeleton Port
-     * UTF:         Remote Interface Desired Name
-     * UTF:         Remote Interface Full Qualified Name
+     * UTF:         Remote Interface Name
      *
      * For method explanation:
      * @see com.google.code.spotshout.comm.RMIRequest#writeData(java.io.DataOutput)
@@ -75,22 +56,12 @@ public class RebindRequest extends RMIRequest {
             output.write(getOperation());
             output.writeUTF(getOurAddr());
             output.writeInt(getReplyPort());
-            output.writeInt(getSkelPort());
             output.writeUTF(remoteInterfaceName);
-            output.writeUTF(remoteFullName);
             return output;
         } catch (IOException ex) {
             ex.printStackTrace();
-            throw new RemoteException(RebindRequest.class,
-                    "Error on rebind(" + remoteInterfaceName + ")");
+            throw new RemoteException(UnbindRequest.class,
+                    "Error on lookup(" + remoteInterfaceName + ")");
         }
-    }
-
-    /**
-     * Get the port which the skeleton will listen.
-     * @return the port of the skeleton.
-     */
-    public int getSkelPort() {
-        return skelPort;
     }
 }
