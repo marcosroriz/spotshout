@@ -93,7 +93,7 @@ public class BindRequest extends RMIRequest {
             remoteFullName = input.readUTF();
         } catch (IOException ex) {
             throw new RemoteException(BindRequest.class,
-                    "Error on reading bind(" + remoteInterfaceName + ")");
+                    "Error on reading bind()");
         }
     }
 

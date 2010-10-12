@@ -17,12 +17,22 @@
 
 package com.google.code.spotshout.comm;
 
+import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 import java.rmi.RemoteException;
 
 /**
- * This class represent the unbind request of the RMI Protocol.
+ * This class represent the Unbind Request of the RMI Protocol. It implements
+ * the writeData and the readData methods necessary to send and read the request
+ * from the Spot to the NameServer. The request data is the following:
+ *
+ * Unbind Request Protocol
+ * ------------------------------------------------------------------------
+ * Byte:        Opcode
+ * UTF:         Address
+ * INT:         Reply Port
+ * UTF:         Remote Interface Name
  */
 public class UnbindRequest extends RMIRequest {
 
@@ -30,6 +40,12 @@ public class UnbindRequest extends RMIRequest {
      * Remote Interface Name on NameServer.
      */
     private String remoteInterfaceName;
+
+    /**
+     * Empty constructor for dependency injection and "manual" reflection.
+     */
+    public UnbindRequest() {
+    }
 
     /**
      * The unbind request of the RMI protocol.
@@ -41,12 +57,27 @@ public class UnbindRequest extends RMIRequest {
     }
 
     /**
-     * Unbind Request Protocol
-     * ------------------------------------------------------------------------
-     * Byte:        Opcode
-     * UTF:         Address
-     * INT:         Reply Port
-     * UTF:         Remote Interface Name
+     * For the protocol data:
+     * @see com.google.code.spotshout.comm.UnbindRequest
+     *
+     * For method explanation:
+     * @see com.google.code.spotshout.comm.RMIRequest#readData(java.io.DataInput)
+     */
+    protected void readData(DataInput input) throws RemoteException {
+        try {
+            // We have already readed operation for the manual reflection
+            ourAddr = input.readUTF();
+            replyPort = input.readInt();
+            remoteInterfaceName = input.readUTF();
+        } catch (IOException ex) {
+            throw new RemoteException(UnbindRequest.class,
+                    "Error on reading unbinding()");
+        }
+    }
+
+    /**
+     * For the protocol data:
+     * @see com.google.code.spotshout.comm.UnbindRequest
      *
      * For method explanation:
      * @see com.google.code.spotshout.comm.RMIRequest#writeData(java.io.DataOutput)
@@ -59,7 +90,7 @@ public class UnbindRequest extends RMIRequest {
             output.writeUTF(remoteInterfaceName);
         } catch (IOException ex) {
             throw new RemoteException(UnbindRequest.class,
-                    "Error on lookup(" + remoteInterfaceName + ")");
+                    "Error on writting unbinding(" + remoteInterfaceName + ")");
         }
     }
 }

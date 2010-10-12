@@ -18,12 +18,24 @@
 package com.google.code.spotshout.comm;
 
 import com.google.code.spotshout.remote.RemoteGarbageCollector;
+import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 import java.rmi.RemoteException;
 
 /**
- * This class represent the rebind request of the RMI Protocol.
+ * This class represent the Rebind Request of the RMI Protocol. It implements
+ * the writeData and the readData methods necessary to send and read the request
+ * from the Spot to the NameServer. The request data is the following:
+ *
+ * Rebind Request Protocol
+ * ------------------------------------------------------------------------
+ * Byte:        Opcode
+ * UTF:         Address
+ * INT:         Reply Port
+ * INT:         Skeleton Port
+ * UTF:         Remote Interface Desired Name
+ * UTF:         Remote Interface Full Qualified Name
  */
 public class RebindRequest extends RMIRequest {
 
@@ -44,27 +56,35 @@ public class RebindRequest extends RMIRequest {
     private int skelPort;
 
     /**
-     * The bind request of the RMI protocol.
-     * @param remoteInterfaceName - the remote name (in the NameServer)
-     * @param remoteFullName - the remote interface full qualified name
-     *                         (including package).
+     * Empty constructor for dependency injection and "manual" reflection.
      */
-    public RebindRequest(String remoteInterfaceName, String remoteFullName) {
-        super(ProtocolOpcode.REBIND_REQUEST);
-        this.remoteInterfaceName = remoteInterfaceName;
-        this.remoteFullName = remoteFullName;
-        this.skelPort = RemoteGarbageCollector.getFreePort();
+    public RebindRequest() {
+    }
+    
+    /**
+     * For the protocol data:
+     * @see com.google.code.spotshout.comm.RebindRequest
+     *
+     * For method explanation:
+     * @see com.google.code.spotshout.comm.RMIRequest#readData(java.io.DataInput)
+     */
+    protected void readData(DataInput input) throws RemoteException {
+        try {
+            // We have already readed operation for the manual reflection
+            ourAddr = input.readUTF();
+            replyPort = input.readInt();
+            skelPort = input.readInt();
+            remoteInterfaceName = input.readUTF();
+            remoteFullName = input.readUTF();
+        } catch (IOException ex) {
+            throw new RemoteException(RebindRequest.class,
+                    "Error on reading rebind()");
+        }
     }
 
     /**
-     * Rebind Request Protocol
-     * ------------------------------------------------------------------------
-     * Byte:        Opcode
-     * UTF:         Address
-     * INT:         Reply Port
-     * INT:         Skeleton Port
-     * UTF:         Remote Interface Desired Name
-     * UTF:         Remote Interface Full Qualified Name
+     * For the protocol data:
+     * @see com.google.code.spotshout.comm.RebindRequest
      *
      * For method explanation:
      * @see com.google.code.spotshout.comm.RMIRequest#writeData(java.io.DataOutput)
@@ -78,8 +98,8 @@ public class RebindRequest extends RMIRequest {
             output.writeUTF(remoteInterfaceName);
             output.writeUTF(remoteFullName);
         } catch (IOException ex) {
-            throw new RemoteException(RebindRequest.class,
-                    "Error on rebind(" + remoteInterfaceName + ")");
+            throw new RemoteException(BindRequest.class,
+                    "Error on writting rebind(" + remoteInterfaceName + ")");
         }
     }
 
