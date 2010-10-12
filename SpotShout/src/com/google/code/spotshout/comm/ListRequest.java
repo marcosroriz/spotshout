@@ -43,12 +43,11 @@ public class ListRequest extends RMIRequest {
      * For method explanation:
      * @see com.google.code.spotshout.comm.RMIRequest#writeData(java.io.DataOutput)
      */
-    protected DataOutput writeData(DataOutput output) {
+    protected void writeData(DataOutput output) throws RemoteException {
         try {
             output.write(getOperation());
             output.writeUTF(getOurAddr());
             output.writeInt(getReplyPort());
-            return output;
         } catch (IOException ex) {
             throw new RemoteException(ListRequest.class, "Error on list()");
         }

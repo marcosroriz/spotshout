@@ -73,7 +73,7 @@ public class LookupReply extends RMIReply {
      * For method explanation:
      * @see com.google.code.spotshout.comm.RMIReply#readData(java.io.DataInput)
      */
-    protected DataInput readData(DataInput input) throws RemoteException {
+    protected void readData(DataInput input) throws RemoteException {
         try {
             operation = input.readByte();
             status = input.readByte();
@@ -85,8 +85,6 @@ public class LookupReply extends RMIReply {
                 remotePort = input.readInt();
                 remoteFullName = input.readUTF();
             }
-
-            return input;
         } catch (IOException ex) {
             throw new RemoteException(LookupReply.class, "Error on lookup reply");
         }

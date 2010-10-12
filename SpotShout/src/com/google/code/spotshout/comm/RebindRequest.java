@@ -18,7 +18,6 @@
 package com.google.code.spotshout.comm;
 
 import com.google.code.spotshout.remote.RemoteGarbageCollector;
-import com.google.code.spotshout.remote.SpotRegistry;
 import java.io.DataOutput;
 import java.io.IOException;
 import java.rmi.RemoteException;
@@ -70,7 +69,7 @@ public class RebindRequest extends RMIRequest {
      * For method explanation:
      * @see com.google.code.spotshout.comm.RMIRequest#writeData(java.io.DataOutput)
      */
-    protected DataOutput writeData(DataOutput output) {
+    protected void writeData(DataOutput output) throws RemoteException {
         try {
             output.write(getOperation());
             output.writeUTF(getOurAddr());
@@ -78,7 +77,6 @@ public class RebindRequest extends RMIRequest {
             output.writeInt(getSkelPort());
             output.writeUTF(remoteInterfaceName);
             output.writeUTF(remoteFullName);
-            return output;
         } catch (IOException ex) {
             throw new RemoteException(RebindRequest.class,
                     "Error on rebind(" + remoteInterfaceName + ")");

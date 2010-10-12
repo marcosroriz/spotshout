@@ -69,7 +69,7 @@ public class BindRequest extends RMIRequest {
      * For method explanation:
      * @see com.google.code.spotshout.comm.RMIRequest#writeData(java.io.DataOutput)
      */
-    protected DataOutput writeData(DataOutput output) {
+    protected void writeData(DataOutput output) throws RemoteException {
         try {
             output.write(getOperation());
             output.writeUTF(getOurAddr());
@@ -77,7 +77,6 @@ public class BindRequest extends RMIRequest {
             output.writeInt(getSkelPort());
             output.writeUTF(remoteInterfaceName);
             output.writeUTF(remoteFullName);
-            return output;
         } catch (IOException ex) {
             throw new RemoteException(BindRequest.class,
                     "Error on bind(" + remoteInterfaceName + ")");

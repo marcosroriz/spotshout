@@ -17,12 +17,14 @@
 
 package java.rmi;
 
+import java.io.IOException;
+
 /**
  * A RemoteException is thrown if there is a problem with communication during
  * an remote operation (method invoke, binding, etc).
  * @TODO Serialize this Exception.
  */
-public class RemoteException extends RuntimeException {
+public class RemoteException extends IOException {
 
     public RemoteException() {
         super();

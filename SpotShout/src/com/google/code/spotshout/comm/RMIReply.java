@@ -42,11 +42,10 @@ public abstract class RMIReply {
      * by each operation [i.e. -- Protocol] on the input.
      * 
      * @param input - the inputStream that the request data should be read.
-     * @return DataInput - the inputStream that the data will be readed.
      * @throws RemoteException - in case of a failure in communication or if the
      *                           data comes corrupted.
      */
-    protected abstract DataInput readData(DataInput input) throws RemoteException;
+    protected abstract void readData(DataInput input) throws RemoteException;
 
     /**
      * Verify if a exception happened on the RMI operation.

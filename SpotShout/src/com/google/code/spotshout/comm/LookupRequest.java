@@ -51,13 +51,12 @@ public class LookupRequest extends RMIRequest {
      * For method explanation:
      * @see com.google.code.spotshout.comm.RMIRequest#writeData(java.io.DataOutput)
      */
-    protected DataOutput writeData(DataOutput output) {
+    protected void writeData(DataOutput output) throws RemoteException {
         try {
             output.write(getOperation());
             output.writeUTF(getOurAddr());
             output.writeInt(getReplyPort());
             output.writeUTF(remoteInterfaceName);
-            return output;
         } catch (IOException ex) {
             throw new RemoteException(LookupRequest.class,
                     "Error on lookup(" + remoteInterfaceName + ")");

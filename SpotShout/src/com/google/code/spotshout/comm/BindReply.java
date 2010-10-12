@@ -48,15 +48,13 @@ public class BindReply extends RMIReply {
      * For method explanation:
      * @see com.google.code.spotshout.comm.RMIReply#readData(java.io.DataInput)
      */
-    protected DataInput readData(DataInput input) throws RemoteException {
+    protected void readData(DataInput input) throws RemoteException {
         try {
             operation = input.readByte();
             status = input.readByte();
 
             if (status != ProtocolOpcode.OPERATION_OK)
                 exception = input.readByte();
-
-            return input;
         } catch (IOException ex) {
             throw new RemoteException(BindReply.class, "Error on bind reply");
         }

@@ -48,7 +48,7 @@ public class ListReply extends RMIReply {
      * For method explanation:
      * @see com.google.code.spotshout.comm.RMIReply#readData(java.io.DataInput)
      */
-    protected DataInput readData(DataInput input) throws RemoteException {
+    protected void readData(DataInput input) throws RemoteException {
         try {
             operation = input.readByte();
             status = input.readByte();
@@ -57,8 +57,6 @@ public class ListReply extends RMIReply {
             names = new String[listSize];
             for (int i = 0; i < listSize; i++)
                 names[i] = input.readUTF();
-
-            return input;
         } catch (IOException ex) {
             throw new RemoteException(ListReply.class, "Error on list reply");
         }
