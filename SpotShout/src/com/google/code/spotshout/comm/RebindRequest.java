@@ -17,6 +17,7 @@
 
 package com.google.code.spotshout.comm;
 
+import com.google.code.spotshout.remote.RemoteGarbageCollector;
 import com.google.code.spotshout.remote.SpotRegistry;
 import java.io.DataOutput;
 import java.io.IOException;
@@ -44,17 +45,16 @@ public class RebindRequest extends RMIRequest {
     private int skelPort;
 
     /**
-     * The bind request of the rmi protocol.
+     * The bind request of the RMI protocol.
      * @param remoteInterfaceName - the remote name (in the NameServer)
      * @param remoteFullName - the remote interface full qualified name
      *                         (including package).
-     * @TODO check for exceptions?
      */
     public RebindRequest(String remoteInterfaceName, String remoteFullName) {
         super(ProtocolOpcode.REBIND_REQUEST);
         this.remoteInterfaceName = remoteInterfaceName;
         this.remoteFullName = remoteFullName;
-        this.skelPort = SpotRegistry.getFreePort();
+        this.skelPort = RemoteGarbageCollector.getFreePort();
     }
 
     /**

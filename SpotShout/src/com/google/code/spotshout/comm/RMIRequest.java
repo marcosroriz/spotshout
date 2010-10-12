@@ -17,6 +17,7 @@
 
 package com.google.code.spotshout.comm;
 
+import com.google.code.spotshout.remote.RemoteGarbageCollector;
 import com.google.code.spotshout.remote.SpotRegistry;
 import java.io.DataOutput;
 
@@ -29,6 +30,7 @@ public abstract class RMIRequest {
 
     /**
      * Protocol Opcode.
+     * @see ProtocolOpcode
      */
     private byte operation;
 
@@ -45,7 +47,7 @@ public abstract class RMIRequest {
     public RMIRequest(byte op) {
         this.operation = op;
         this.ourAddr = System.getProperty("IEEE_ADDRESS");
-        this.replyPort = SpotRegistry.getFreePort();
+        this.replyPort = RemoteGarbageCollector.getFreePort();
     }
 
     /**

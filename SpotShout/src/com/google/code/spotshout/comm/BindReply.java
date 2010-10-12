@@ -62,9 +62,11 @@ public class BindReply extends RMIReply {
         }
     }
 
+    // Getters
+    
     /**
      * Gets the exception Opcode (if happened).
-     * @return
+     * @return true if an exception occured, false otherwise.
      */
     public byte getException() {
         return exception;

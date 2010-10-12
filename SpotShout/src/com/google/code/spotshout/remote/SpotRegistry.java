@@ -277,12 +277,4 @@ public class SpotRegistry implements Registry {
         int lastIdx = fullName.lastIndexOf('.');
         return fullName.substring(0, lastIdx);
     }
-
-    /**
-     * This method return a free port for listening.
-     * @TODO metodo de alocar portas melhores
-     */
-    public static synchronized int getFreePort() {
-        return 0;
-    }
 }

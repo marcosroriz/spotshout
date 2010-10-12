@@ -56,7 +56,7 @@ public abstract class RMIReply {
         return status == ProtocolOpcode.OPERATION_NOK;
     }
     
-    // Getters and Setters
+    // Getters
     public byte getOperation() {
         return operation;
     }

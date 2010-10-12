@@ -17,7 +17,7 @@
 
 package com.google.code.spotshout.comm;
 
-import com.google.code.spotshout.remote.SpotRegistry;
+import com.google.code.spotshout.remote.RemoteGarbageCollector;
 import java.io.DataOutput;
 import java.io.IOException;
 import java.rmi.RemoteException;
@@ -48,13 +48,12 @@ public class BindRequest extends RMIRequest {
      * @param remoteInterfaceName - the remote name (in the NameServer)
      * @param remoteFullName - the remote interface full qualified name
      *                         (including package).
-     * @TODO check for exceptions?
      */
     public BindRequest(String remoteInterfaceName, String remoteFullName) {
         super(ProtocolOpcode.BIND_REQUEST);
         this.remoteInterfaceName = remoteInterfaceName;
         this.remoteFullName = remoteFullName;
-        this.skelPort = SpotRegistry.getFreePort();
+        this.skelPort = RemoteGarbageCollector.getFreePort();
     }
 
     /**
