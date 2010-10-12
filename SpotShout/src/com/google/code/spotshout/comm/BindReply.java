@@ -18,6 +18,7 @@
 package com.google.code.spotshout.comm;
 
 import java.io.DataInput;
+import java.io.DataOutput;
 import java.io.IOException;
 import java.rmi.RemoteException;
 
@@ -46,7 +47,7 @@ public class BindReply extends RMIReply {
      * (Opt) Byte:  Exception
      *
      * For method explanation:
-     * @see com.google.code.spotshout.comm.RMIReply#readData(java.io.DataInput)
+     * @see com.google.code.spotshout.comm.RMIOperation#readData(java.io.DataInput)
      */
     protected void readData(DataInput input) throws RemoteException {
         try {
@@ -60,8 +61,13 @@ public class BindReply extends RMIReply {
         }
     }
 
+    protected void readOpcode(DataInput input) throws RemoteException {
+    }
+
+    protected void writeData(DataOutput output) throws RemoteException {
+    }
+
     // Getters
-    
     /**
      * Gets the exception Opcode (if happened).
      * @return true if an exception occured, false otherwise.
