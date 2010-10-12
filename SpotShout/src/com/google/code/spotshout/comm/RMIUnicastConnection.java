@@ -17,7 +17,12 @@
 
 package com.google.code.spotshout.comm;
 
-import javax.microedition.io.Connection;
+import com.sun.spot.io.j2me.radiostream.RadiostreamConnection;
+import com.sun.spot.peripheral.TimeoutException;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.rmi.RemoteException;
+import javax.microedition.io.Connector;
 
 /**
  * This class abstract the details of creating a unicast connection between SPOTs
@@ -27,9 +32,14 @@ import javax.microedition.io.Connection;
 public class RMIUnicastConnection {
 
     /**
+     * Timeout in milliseconds before throwing a TimeoutException
+     */
+    private int TIMEOUT = 5000;
+
+    /**
      * The wrapped connection.
      */
-    private Connection connection;
+    private RadiostreamConnection connection;
 
     /**
      * The protocol used (radiogram, radiostream, tcp or udp).
@@ -44,10 +54,72 @@ public class RMIUnicastConnection {
     /**
      * The target port.
      */
-    private int port;
+    private int targetPort;
 
     /**
-     * The RMI Request of this connection.
+     * The RMI operation request of this connection.
      */
     private RMIRequest request;
+
+    /**
+     * The RMI operation reply of this connection.
+     */
+    private RMIReply reply;
+
+    /**
+     * Abstract a unicast connection between the Spot and the {@link Registry}.
+     * @param targetAddr - the registry address (MAC).
+     * @param targetPort - the registry port.
+     * @throws RemoteException - on error
+     */
+    public RMIUnicastConnection(String addr, int port) throws RemoteException {
+        protocol = "radiostream";
+        targetAddr = addr;
+        targetPort = port;
+        String uri = protocol + "://" + targetAddr + ":" + targetPort;
+        try {
+            connection = (RadiostreamConnection) Connector.open(uri);
+            connection.setTimeout(TIMEOUT);
+        } catch (IOException ex) {
+            throw new RemoteException(RMIUnicastConnection.class,
+                    "Failed to comunicate with: " + uri);
+        }
+    }
+
+    public void writeRequest(RMIRequest request) throws RemoteException, TimeoutException {
+        try {
+            this.request = request;
+            DataOutputStream dos = connection.openDataOutputStream();
+            request.writeData(dos);
+            dos.flush();
+        } catch (IOException ex) {
+            throw new RemoteException("Remote Eception on Opening Data Output Stream");
+        }
+    }
+
+    public RMIReply readReply() throws RemoteException {
+        try {
+            byte operation = request.getOperation();
+
+            switch (operation) {
+                case ProtocolOpcode.BIND_REQUEST:
+                    break;
+                case ProtocolOpcode.LIST_REQUEST:
+                    break;
+                case ProtocolOpcode.LOOKUP_REQUEST:
+                    break;
+                case ProtocolOpcode.REBIND_REQUEST:
+                    break;
+                case ProtocolOpcode.UNBIND_REQUEST:
+                    break;
+                default:
+                    throw new RemoteException(RMIUnicastConnection.class,
+                            "Unsupported Operation");
+            }
+            return null;
+        } catch (IOException ex) {
+            throw new RemoteException(RMIUnicastConnection.class,
+                    "Unsupported Operation");
+        }
+    }
 }
