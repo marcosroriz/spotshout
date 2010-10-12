@@ -46,7 +46,7 @@ public class ListReply extends RMIReply {
      * Strings:     Element Name
      *
      * For method explanation:
-     * @see com.google.code.spotshout.comm.RMIReply#readData(java.io.DataInput)
+     * @see com.google.code.spotshout.comm.RMIOperation#readData(java.io.DataInput)
      */
     protected void readData(DataInput input) throws RemoteException {
         try {
