@@ -17,35 +17,17 @@
 
 package com.google.code.spotshout.comm;
 
-import java.io.DataInput;
-import java.rmi.RemoteException;
-
 /**
  * This class represent a generic RMI Reply (Protocol). Each operation will
  * inherit this class and specify it's detail, overwriting the readData method
  * with the specific data of it's protocol.
  */
-public abstract class RMIReply {
-
-    /**
-     * Protocol Opcode.
-     */
-    protected byte operation;
+public abstract class RMIReply extends RMIOperation {
 
     /**
      * Operation Status - OK or NOK.
      */
     protected byte status;
-
-    /**
-     * This method define the order and fields that it's going to be read
-     * by each operation [i.e. -- Protocol] on the input.
-     * 
-     * @param input - the inputStream that the request data should be read.
-     * @throws RemoteException - in case of a failure in communication or if the
-     *                           data comes corrupted.
-     */
-    protected abstract void readData(DataInput input) throws RemoteException;
 
     /**
      * Verify if a exception happened on the RMI operation.
@@ -56,10 +38,7 @@ public abstract class RMIReply {
     }
     
     // Getters
-    public byte getOperation() {
-        return operation;
-    }
-
+    
     public byte getStatus() {
         return status;
     }
