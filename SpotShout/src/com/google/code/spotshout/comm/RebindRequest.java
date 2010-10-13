@@ -29,7 +29,7 @@ import java.rmi.RemoteException;
  * from the Spot to the NameServer. The request data is the following:
  *
  * Rebind Request Protocol
- * ------------------------------------------------------------------------
+ * ----------------------------------------------------------------------------
  * Byte:        Opcode
  * UTF:         Address
  * INT:         Reply Port

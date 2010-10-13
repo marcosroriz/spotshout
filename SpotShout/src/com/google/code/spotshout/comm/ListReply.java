@@ -18,11 +18,21 @@
 package com.google.code.spotshout.comm;
 
 import java.io.DataInput;
+import java.io.DataOutput;
 import java.io.IOException;
 import java.rmi.RemoteException;
 
 /**
- * This class represent the list reply of the RMI Protocol.
+ * This class represent the List Reply of the RMI Protocol. It implements
+ * the writeData and the readData methods necessary to send and read the request
+ * from the Spot to the NameServer. The reply data is the following:
+ *
+ * List Reply Protocol
+ * ----------------------------------------------------------------------------
+ * Byte:        Opcode
+ * Byte:        Status
+ * Int:         List Size
+ * Strings:     Element Name
  */
 public class ListReply extends RMIReply {
     
@@ -35,15 +45,23 @@ public class ListReply extends RMIReply {
      * Empty constructor for dependency injection and "manual" reflection.
      */
     public ListReply() {
+        super(ProtocolOpcode.LIST_REPLY);
     }
 
     /**
-     * List Reply Protocol
-     * ------------------------------------------------------------------------
-     * Byte:        Opcode
-     * Byte:        Status
-     * Int:         List Size
-     * Strings:     Element Name
+     * The list reply of the RMI protocol. This constructor should be used by
+     * the Server.
+     *
+     * @param namesList - the list of bounded names on the server.
+     */
+    public ListReply(String[] namesList) {
+        super(ProtocolOpcode.LIST_REPLY);
+        names = namesList;
+    }
+
+    /**
+     * For the protocol data:
+     * @see com.google.code.spotshout.comm.ListReply
      *
      * For method explanation:
      * @see com.google.code.spotshout.comm.RMIOperation#readData(java.io.DataInput)
@@ -51,14 +69,35 @@ public class ListReply extends RMIReply {
     protected void readData(DataInput input) throws RemoteException {
         try {
             operation = input.readByte();
-            status = input.readByte();
+            operationStatus = input.readByte();
             int listSize = input.readInt();
 
             names = new String[listSize];
             for (int i = 0; i < listSize; i++)
                 names[i] = input.readUTF();
         } catch (IOException ex) {
-            throw new RemoteException(ListReply.class, "Error on list reply");
+            throw new RemoteException(ListReply.class, "Error on reading list reply");
+        }
+    }
+
+    /**
+     * For the protocol data:
+     * @see com.google.code.spotshout.comm.ListReply
+     *
+     * For method explanation:
+     * @see com.google.code.spotshout.comm.RMIOperation#writeData(java.io.DataOutput)
+     */
+    protected void writeData(DataOutput output) throws RemoteException {
+        try {
+            output.write(getOperation());
+            output.write(getOperationStatus());
+
+            output.writeInt(getListSize());
+
+            for (int i = 0; i < names.length; i++)
+                output.writeUTF(names[i]);
+        } catch (IOException ex) {
+            throw new RemoteException(ListReply.class, "Error on writting list reply");
         }
     }
 

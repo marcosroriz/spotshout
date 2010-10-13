@@ -18,55 +18,67 @@
 package com.google.code.spotshout.comm;
 
 import java.io.DataInput;
+import java.io.DataOutput;
 import java.io.IOException;
 import java.rmi.RemoteException;
 
 /**
- * This class represent the rebind reply of the RMI Protocol.
+ * This class represent the Rebind Reply of the RMI Protocol. It implements
+ * the writeData and the readData methods necessary to send and read the request
+ * from the Spot to the NameServer. The reply data is the following:
+ *
+ * Rebind Reply Protocol
+ * ----------------------------------------------------------------------------
+ * Byte:        Opcode
+ * Byte:        Status
+ * (Opt) Byte:  Exception
  */
 public class RebindReply extends RMIReply {
-
-    /**
-     * Protocol exception
-     * @see ProtocolOpcode
-     */
-    private byte exception;
 
     /**
      * Empty constructor for dependency injection and "manual" reflection.
      */
     public RebindReply() {
+        super(ProtocolOpcode.REBIND_REPLY);
     }
 
     /**
-     * Rebind Reply Protocol
-     * ------------------------------------------------------------------------
-     * Byte:        Opcode
-     * Byte:        Status
-     * (Opt) Byte:  Exception
+     * For the protocol data:
+     * @see com.google.code.spotshout.comm.RebindReply
      *
      * For method explanation:
-     * @see com.google.code.spotshout.comm.RMIReply#readData(java.io.DataInput)
+     * @see com.google.code.spotshout.comm.RMIOperation#readData(java.io.DataInput)
      */
     protected void readData(DataInput input) throws RemoteException {
         try {
             operation = input.readByte();
-            status = input.readByte();
+            operationStatus = input.readByte();
 
-            if (status != ProtocolOpcode.OPERATION_OK)
+            if (operationStatus != ProtocolOpcode.OPERATION_OK) {
                 exception = input.readByte();
+            }
         } catch (IOException ex) {
             throw new RemoteException(RebindReply.class, "Error on rebind reply");
         }
     }
 
-    // Getters
-
     /**
-     * Gets the exception Opcode (if happened).
-     * @return true if an exception occured, false otherwise.
+     * For the protocol data:
+     * @see com.google.code.spotshout.comm.RebindReply
+     *
+     * For method explanation:
+     * @see com.google.code.spotshout.comm.RMIOperation#writeData(java.io.DataOutput)
      */
-    public byte getException() {
-        return exception;
+    protected void writeData(DataOutput output) throws RemoteException {
+        try {
+            output.write(getOperation());
+            output.write(getOperationStatus());
+
+            if (operationStatus != ProtocolOpcode.OPERATION_OK) {
+                output.write(getException());
+            }
+        } catch (IOException ex) {
+            throw new RemoteException(RebindReply.class, "Error on writting rebind reply");
+        }
     }
 }

@@ -31,12 +31,15 @@ public abstract class RMIRequest extends RMIOperation {
     /**
      * Our address (MAC).
      */
-    private String ourAddr;
+    protected String ourAddr;
 
     /**
      * The operation reply port.
      */
-    private int replyPort;
+    protected int replyPort;
+
+    public RMIRequest() {
+    }
 
     public RMIRequest(byte op) {
         operation = op;

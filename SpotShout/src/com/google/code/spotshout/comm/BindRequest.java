@@ -29,7 +29,7 @@ import java.rmi.RemoteException;
  * from the Spot to the NameServer. The request data is the following:
  *
  * Bind Request Protocol
- * ------------------------------------------------------------------------
+ * ----------------------------------------------------------------------------
  * Byte:        Opcode
  * UTF:         Address
  * INT:         Reply Port
@@ -59,6 +59,7 @@ public class BindRequest extends RMIRequest {
      * Empty constructor for dependency injection and "manual" reflection.
      */
     public BindRequest() {
+        super(ProtocolOpcode.BIND_REQUEST);
     }
 
     /**

@@ -18,55 +18,65 @@
 package com.google.code.spotshout.comm;
 
 import java.io.DataInput;
+import java.io.DataOutput;
 import java.io.IOException;
 import java.rmi.RemoteException;
 
 /**
- * This class represent the unbind reply of the RMI Protocol.
+ * This class represent the Unbind Reply of the RMI Protocol. It implements
+ * the writeData and the readData methods necessary to send and read the request
+ * from the Spot to the NameServer. The reply data is the following:
+ *
+ * Unbind Reply Protocol
+ * ----------------------------------------------------------------------------
+ * Byte:        Opcode
+ * Byte:        Status
+ * (Opt) Byte:  Exception
  */
 public class UnbindReply extends RMIReply {
-
-    /**
-     * Protocol exception
-     * @see ProtocolOpcode
-     */
-    private byte exception;
 
     /**
      * Empty constructor for dependency injection and "manual" reflection.
      */
     public UnbindReply() {
+        super(ProtocolOpcode.UNBIND_REPLY);
     }
 
     /**
-     * Bind Reply Protocol
-     * ------------------------------------------------------------------------
-     * Byte:        Opcode
-     * Byte:        Status
-     * (Opt) Byte:  Exception
+     * For the protocol data:
+     * @see com.google.code.spotshout.comm.UnbindReply
      *
      * For method explanation:
-     * @see com.google.code.spotshout.comm.RMIReply#readData(java.io.DataInput)
+     * @see com.google.code.spotshout.comm.RMIOperation#readData(java.io.DataInput)
      */
     protected void readData(DataInput input) throws RemoteException {
         try {
             operation = input.readByte();
-            status = input.readByte();
+            operationStatus = input.readByte();
 
-            if (status != ProtocolOpcode.OPERATION_OK)
+            if (operationStatus != ProtocolOpcode.OPERATION_OK)
                 exception = input.readByte();
         } catch (IOException ex) {
-            throw new RemoteException(UnbindReply.class, "Error on unbind reply");
+            throw new RemoteException(UnbindReply.class, "Error on reading unbind reply");
         }
     }
 
-    // Getters
-    
     /**
-     * Gets the exception Opcode (if happened).
-     * @return true if an exception occured, false otherwise.
+     * For the protocol data:
+     * @see com.google.code.spotshout.comm.UnbindReply
+     *
+     * For method explanation:
+     * @see com.google.code.spotshout.comm.RMIOperation#writeData(java.io.DataOutput)
      */
-    public byte getException() {
-        return exception;
+    protected void writeData(DataOutput output) throws RemoteException {
+                try {
+            output.write(getOperation());
+            output.write(getOperationStatus());
+
+            if (operationStatus != ProtocolOpcode.OPERATION_OK)
+                output.write(getException());
+        } catch (IOException ex) {
+            throw new RemoteException(UnbindReply.class, "Error on writting unbind reply");
+        }
     }
 }

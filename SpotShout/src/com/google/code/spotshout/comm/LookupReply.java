@@ -19,19 +19,25 @@ package com.google.code.spotshout.comm;
 
 import com.google.code.spotshout.remote.Stub;
 import java.io.DataInput;
+import java.io.DataOutput;
 import java.io.IOException;
 import java.rmi.RemoteException;
 
 /**
- * This class represent the lookup reply of the RMI Protocol.
+ * This class represent the Lookup Reply of the RMI Protocol. It implements
+ * the writeData and the readData methods necessary to send and read the request
+ * from the Spot to the NameServer. The reply data is the following:
+ *
+ * Lookup Reply Protocol
+ * ---------------------------------------------------------------
+ * Byte:        Opcode
+ * Byte:        Status
+ * (Opt) Byte:  Exception
+ * String:      Remote Reference Address
+ * Int:         Remote Reference Port
+ * String:      Remote Full Qualified Name
  */
 public class LookupReply extends RMIReply {
-
-    /**
-     * Protocol exception.
-     * @see ProtocolOpcode.
-     */
-    private byte exception;
 
     /**
      * Remote address (in MAC).
@@ -47,7 +53,7 @@ public class LookupReply extends RMIReply {
      * Remote Interface Name (as announced).
      * @TODO Preciso do nome anunciado da classe? Mas não estou ouvihndo na thread? So se for pra GC.
      */
-    private String remoteName;
+    //private String remoteName;
 
     /**
      * Remote Interface Full Qualified Name (including package).
@@ -58,27 +64,49 @@ public class LookupReply extends RMIReply {
      * Empty constructor for dependency injection and "manual" reflection.
      */
     public LookupReply() {
+        super(ProtocolOpcode.LOOKUP_REPLY);
     }
 
-    /*
-     * Lookup Reply Protocol
-     * ---------------------------------------------------------------
-     * Byte:        Opcode
-     * Byte:        Status
-     * (Opt) Byte:  Exception
-     * String:      Remote Reference Address
-     * Int:         Remote Reference Port
-     * String:      Remote Full Qualified Name
-     * 
+    /**
+     * Construct a LookupReply with a given exception code.
+     * @param statusCode - the operation status code
+     * @param exceptionCode - the exception code
+     */
+    public LookupReply(byte statusCode, byte exceptionCode) {
+       super(ProtocolOpcode.LOOKUP_REPLY);
+       operationStatus = statusCode;
+       exception = exceptionCode;
+    }
+
+    /**
+     * Construct a LookupReply with all the meta-data available so we can
+     * manually instantiate a Stub in the Spot.
+     * @param statusCode - operation status (OK)
+     * @param remAddr - remote address
+     * @param remPort - remote port
+     * @param remFullName - remote interface full name (including package)
+     */
+    public LookupReply(byte statusCode, String remAddr, int remPort,
+            String remFullName) {
+        operationStatus = statusCode;
+        remoteAddr = remAddr;
+        remotePort = remPort;
+        remoteFullName = remFullName;
+    }
+
+    /**
+     * For the protocol data:
+     * @see com.google.code.spotshout.comm.LookupReply
+     *
      * For method explanation:
-     * @see com.google.code.spotshout.comm.RMIReply#readData(java.io.DataInput)
+     * @see com.google.code.spotshout.comm.RMIOperation#readData(java.io.DataInput)
      */
     protected void readData(DataInput input) throws RemoteException {
         try {
             operation = input.readByte();
-            status = input.readByte();
+            operationStatus = input.readByte();
 
-            if (status != ProtocolOpcode.OPERATION_OK) {
+            if (operationStatus != ProtocolOpcode.OPERATION_OK) {
                 exception = input.readByte();
             } else {
                 remoteAddr = input.readUTF();
@@ -86,7 +114,31 @@ public class LookupReply extends RMIReply {
                 remoteFullName = input.readUTF();
             }
         } catch (IOException ex) {
-            throw new RemoteException(LookupReply.class, "Error on lookup reply");
+            throw new RemoteException(LookupReply.class, "Error on reading lookup reply");
+        }
+    }
+
+    /**
+     * For the protocol data:
+     * @see com.google.code.spotshout.comm.LookupReply
+     *
+     * For method explanation:
+     * @see com.google.code.spotshout.comm.RMIOperation#writeData(java.io.DataOutput)
+     */
+    protected void writeData(DataOutput output) throws RemoteException {
+        try {
+            output.write(getOperation());
+            output.write(getOperationStatus());
+
+            if (operationStatus != ProtocolOpcode.OPERATION_OK) {
+                output.write(getException());
+            } else {
+                output.writeUTF(remoteAddr);
+                output.writeInt(remotePort);
+                output.writeUTF(remoteFullName);
+            }
+        } catch (IOException ex) {
+            throw new RemoteException(LookupReply.class, "Error on writting lookup reply");
         }
     }
 
@@ -103,7 +155,8 @@ public class LookupReply extends RMIReply {
             Stub stub = (Stub) stubClass.newInstance();
             stub.setTargetAddr(remoteAddr);
             stub.setTargetPort(remotePort);
-            stub.setTargetName(remoteName);
+            //stub.setTargetName(remoteName);
+            //@TODO Preciso do nome anunciado da classe? Mas não estou ouvihndo na thread? So se for pra GC.
 
             return stub;
         } catch (Exception ex) {
@@ -112,21 +165,16 @@ public class LookupReply extends RMIReply {
         }
     }
 
-    // Getters and Setters
-    
-    /**
-     * Gets the exception Opcode (if happened).
-     * @return true if an exception occured, false otherwise.
-     */
-    public byte getException() {
-        return exception;
+    // Getters
+    public String getRemoteAddr() {
+        return remoteAddr;
     }
 
-    /**
-     * Inject the target remote name (as announced).
-     * @param remoteName - the remote name in the name server.
-     */
-    public void setRemoteName(String remoteName) {
-        this.remoteName = remoteName;
+    public String getRemoteFullName() {
+        return remoteFullName;
+    }
+
+    public int getRemotePort() {
+        return remotePort;
     }
 }

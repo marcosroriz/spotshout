@@ -67,7 +67,7 @@ public class RMIUnicastConnection {
     private RMIReply reply;
 
     /**
-     * Abstract a unicast connection between the Spot and the {@link Registry}.
+     * Abstract a unicast connection between Spots and {@link Registry}.
      * @param targetAddr - the registry address (MAC).
      * @param targetPort - the registry port.
      * @throws RemoteException - on error
@@ -93,7 +93,7 @@ public class RMIUnicastConnection {
             request.writeData(dos);
             dos.flush();
         } catch (IOException ex) {
-            throw new RemoteException("Remote Eception on Opening Data Output Stream");
+            throw new RemoteException("Remote Exception on Opening Data Output Stream");
         }
     }
 

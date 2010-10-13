@@ -27,19 +27,43 @@ public abstract class RMIReply extends RMIOperation {
     /**
      * Operation Status - OK or NOK.
      */
-    protected byte status;
+    protected byte operationStatus;
+
+    /**
+     * Protocol exception (if happened).
+     * @see ProtocolOpcode.
+     */
+    protected byte exception;
+
+    public RMIReply() {
+    }
+
+    public RMIReply(byte op) {
+        operation = op;
+    }
 
     /**
      * Verify if a exception happened on the RMI operation.
      * @return true if a exception happened during the RMI Reply, false otherwise
      */
     public boolean exceptionHappened() {
-        return status == ProtocolOpcode.OPERATION_NOK;
+        return operationStatus == ProtocolOpcode.OPERATION_NOK;
     }
-    
-    // Getters
-    
-    public byte getStatus() {
-        return status;
+
+    // Getters and Setters
+    public byte getException() {
+        return exception;
+    }
+
+    public byte getOperationStatus() {
+        return operationStatus;
+    }
+
+    public void setException(byte exception) {
+        this.exception = exception;
+    }
+
+    public void setOperationStatus(byte operationStatus) {
+        this.operationStatus = operationStatus;
     }
 }

@@ -28,7 +28,7 @@ import java.rmi.RemoteException;
  * from the Spot to the NameServer. The request data is the following:
  * 
  * List Request Protocol
- * ------------------------------------------------------------------------
+ * ----------------------------------------------------------------------------
  * Byte:        Opcode
  * UTF:         Address
  * INT:         Reply Port
@@ -55,7 +55,7 @@ public class ListRequest extends RMIRequest {
             ourAddr = input.readUTF();
             replyPort = input.readInt();
         } catch (IOException ex) {
-            throw new RemoteException(BindRequest.class, "Error on reading list()");
+            throw new RemoteException(ListRequest.class, "Error on reading list()");
         }
     }
 

@@ -19,6 +19,7 @@ package com.google.code.spotshout.comm;
 
 import java.io.DataInput;
 import java.io.DataOutput;
+import java.io.IOException;
 import java.rmi.RemoteException;
 
 /**
@@ -51,7 +52,14 @@ public abstract class RMIOperation {
      * @param input - the inputStream that the request data should be read.
      * @throws RemoteException
      */
-    protected abstract void readOpcode(DataInput input) throws RemoteException;
+    protected void readOpcode(DataInput input) throws RemoteException {
+        try {
+            operation = input.readByte();
+        } catch (IOException ex) {
+            throw new RemoteException(RMIOperation.class,
+                    "Error on reading operation code");
+        }
+    }
 
     /**
      * This method define the order and fields that it's going to be written

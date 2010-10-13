@@ -23,28 +23,28 @@ import java.io.IOException;
 import java.rmi.RemoteException;
 
 /**
- * This class represent the bind reply of the RMI Protocol.
+ * This class represent the Bind Reply of the RMI Protocol. It implements
+ * the writeData and the readData methods necessary to send and read the request
+ * from the Spot to the NameServer. The reply data is the following:
+ *
+ * Bind Reply Protocol
+ * ----------------------------------------------------------------------------
+ * Byte:        Opcode
+ * Byte:        Status
+ * (Opt) Byte:  Exception
  */
 public class BindReply extends RMIReply {
-
-    /**
-     * Protocol exception
-     * @see ProtocolOpcode
-     */
-    private byte exception;
 
     /**
      * Empty constructor for dependency injection and "manual" reflection.
      */
     public BindReply() {
+        super(ProtocolOpcode.BIND_REPLY);
     }
 
     /**
-     * Bind Reply Protocol
-     * ------------------------------------------------------------------------
-     * Byte:        Opcode
-     * Byte:        Status
-     * (Opt) Byte:  Exception
+     * For the protocol data:
+     * @see com.google.code.spotshout.comm.BindReply
      *
      * For method explanation:
      * @see com.google.code.spotshout.comm.RMIOperation#readData(java.io.DataInput)
@@ -52,27 +52,31 @@ public class BindReply extends RMIReply {
     protected void readData(DataInput input) throws RemoteException {
         try {
             operation = input.readByte();
-            status = input.readByte();
+            operationStatus = input.readByte();
 
-            if (status != ProtocolOpcode.OPERATION_OK)
+            if (operationStatus != ProtocolOpcode.OPERATION_OK)
                 exception = input.readByte();
         } catch (IOException ex) {
-            throw new RemoteException(BindReply.class, "Error on bind reply");
+            throw new RemoteException(BindReply.class, "Error on reading bind reply");
         }
     }
 
-    protected void readOpcode(DataInput input) throws RemoteException {
-    }
-
-    protected void writeData(DataOutput output) throws RemoteException {
-    }
-
-    // Getters
     /**
-     * Gets the exception Opcode (if happened).
-     * @return true if an exception occured, false otherwise.
+     * For the protocol data:
+     * @see com.google.code.spotshout.comm.BindReply
+     *
+     * For method explanation:
+     * @see com.google.code.spotshout.comm.RMIOperation#writeData(java.io.DataOutput) 
      */
-    public byte getException() {
-        return exception;
+    protected void writeData(DataOutput output) throws RemoteException {
+                try {
+            output.write(getOperation());
+            output.write(getOperationStatus());
+
+            if (operationStatus != ProtocolOpcode.OPERATION_OK)
+                output.write(getException());
+        } catch (IOException ex) {
+            throw new RemoteException(BindReply.class, "Error on writting bind reply");
+        }
     }
 }

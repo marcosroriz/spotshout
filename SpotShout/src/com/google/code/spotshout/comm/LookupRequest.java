@@ -28,7 +28,7 @@ import java.rmi.RemoteException;
  * from the Spot to the NameServer. The request data is the following:
  *
  * Lookup Request Protocol
- * ------------------------------------------------------------------------
+ * ----------------------------------------------------------------------------
  * Byte:        Opcode
  * UTF:         Address
  * INT:         Reply Port
@@ -45,6 +45,7 @@ public class LookupRequest extends RMIRequest {
      * Empty constructor for dependency injection and "manual" reflection.
      */
     public LookupRequest() {
+        super(ProtocolOpcode.LOOKUP_REQUEST);
     }
 
     /**
@@ -70,7 +71,7 @@ public class LookupRequest extends RMIRequest {
             replyPort = input.readInt();
             remoteInterfaceName = input.readUTF();
         } catch (IOException ex) {
-            throw new RemoteException(BindRequest.class,
+            throw new RemoteException(LookupRequest.class,
                     "Error on reading lookup()");
         }
     }
