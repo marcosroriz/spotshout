@@ -30,8 +30,6 @@ import java.io.IOException;
  * Bind Request Protocol
  * ----------------------------------------------------------------------------
  * Byte:        Opcode
- * UTF:         Address
- * INT:         Reply Port
  * INT:         Skeleton Port
  * UTF:         Remote Interface Desired Name
  * UTF:         Remote Interface Full Qualified Name
@@ -85,8 +83,6 @@ public class BindRequest extends RMIRequest {
      */
     protected void readData(DataInput input) throws IOException {
         // We have already readed operation for the manual reflection
-        ourAddr = input.readUTF();
-        replyPort = input.readInt();
         skelPort = input.readInt();
         remoteInterfaceName = input.readUTF();
         remoteFullName = input.readUTF();
@@ -101,8 +97,6 @@ public class BindRequest extends RMIRequest {
      */
     protected void writeData(DataOutput output) throws IOException {
         output.write(getOperation());
-        output.writeUTF(getOurAddr());
-        output.writeInt(getReplyPort());
         output.writeInt(getSkelPort());
         output.writeUTF(remoteInterfaceName);
         output.writeUTF(remoteFullName);
@@ -114,5 +108,21 @@ public class BindRequest extends RMIRequest {
      */
     public int getSkelPort() {
         return skelPort;
+    }
+
+    /**
+     * Get the full qualified name of the remote interface.
+     * @return full qualified name of remote interface.
+     */
+    public String getRemoteFullName() {
+        return remoteFullName;
+    }
+
+    /**
+     * Get the remote interface name (as desired).
+     * @return desired name.
+     */
+    public String getRemoteInterfaceName() {
+        return remoteInterfaceName;
     }
 }

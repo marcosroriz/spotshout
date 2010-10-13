@@ -29,8 +29,6 @@ import java.io.IOException;
  * List Request Protocol
  * ----------------------------------------------------------------------------
  * Byte:        Opcode
- * UTF:         Address
- * INT:         Reply Port
  */
 public class ListRequest extends RMIRequest {
 
@@ -50,8 +48,6 @@ public class ListRequest extends RMIRequest {
      */
     protected void readData(DataInput input) throws IOException {
         // We have already readed operation for the manual reflection
-        ourAddr = input.readUTF();
-        replyPort = input.readInt();
     }
 
     /**
@@ -63,7 +59,5 @@ public class ListRequest extends RMIRequest {
      */
     protected void writeData(DataOutput output) throws IOException {
         output.write(getOperation());
-        output.writeUTF(getOurAddr());
-        output.writeInt(getReplyPort());
     }
 }

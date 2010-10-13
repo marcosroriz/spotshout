@@ -29,8 +29,6 @@ import java.io.IOException;
  * Lookup Request Protocol
  * ----------------------------------------------------------------------------
  * Byte:        Opcode
- * UTF:         Address
- * INT:         Reply Port
  * UTF:         Remote Interface Name
  */
 public class LookupRequest extends RMIRequest {
@@ -65,8 +63,6 @@ public class LookupRequest extends RMIRequest {
      */
     protected void readData(DataInput input) throws IOException {
         // We have already readed operation for the manual reflection
-        ourAddr = input.readUTF();
-        replyPort = input.readInt();
         remoteInterfaceName = input.readUTF();
     }
 
@@ -79,8 +75,6 @@ public class LookupRequest extends RMIRequest {
      */
     protected void writeData(DataOutput output) throws IOException {
         output.write(getOperation());
-        output.writeUTF(getOurAddr());
-        output.writeInt(getReplyPort());
         output.writeUTF(remoteInterfaceName);
     }
 }

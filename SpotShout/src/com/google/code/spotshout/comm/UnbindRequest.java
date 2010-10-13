@@ -29,8 +29,6 @@ import java.io.IOException;
  * Unbind Request Protocol
  * ----------------------------------------------------------------------------
  * Byte:        Opcode
- * UTF:         Address
- * INT:         Reply Port
  * UTF:         Remote Interface Name
  */
 public class UnbindRequest extends RMIRequest {
@@ -64,8 +62,6 @@ public class UnbindRequest extends RMIRequest {
      */
     protected void readData(DataInput input) throws IOException {
         // We have already readed operation for the manual reflection
-        ourAddr = input.readUTF();
-        replyPort = input.readInt();
         remoteInterfaceName = input.readUTF();
     }
 
@@ -78,8 +74,14 @@ public class UnbindRequest extends RMIRequest {
      */
     protected void writeData(DataOutput output) throws IOException {
         output.write(getOperation());
-        output.writeUTF(getOurAddr());
-        output.writeInt(getReplyPort());
         output.writeUTF(remoteInterfaceName);
+    }
+
+    /**
+     * Get the remote interface name (as desired).
+     * @return desired name.
+     */
+    public String getRemoteInterfaceName() {
+        return remoteInterfaceName;
     }
 }

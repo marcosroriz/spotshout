@@ -17,7 +17,8 @@
 
 package com.google.code.spotshout.comm;
 
-import com.google.code.spotshout.remote.RemoteGarbageCollector;
+import java.io.DataOutput;
+import java.io.IOException;
 
 /**
  * This class represent a generic RMI Request (Protocol). Each operation will
@@ -28,31 +29,22 @@ import com.google.code.spotshout.remote.RemoteGarbageCollector;
  */
 public abstract class RMIRequest extends RMIOperation {
 
-    /**
-     * Our address (MAC).
-     */
-    protected String ourAddr;
-
-    /**
-     * The operation reply port.
-     */
-    protected int replyPort;
-
     public RMIRequest() {
     }
 
     public RMIRequest(byte op) {
         operation = op;
-        ourAddr = System.getProperty("IEEE_ADDRESS");
-        replyPort = RemoteGarbageCollector.getFreePort();
     }
 
-    // Getters
-    public int getReplyPort() {
-        return replyPort;
+        /**
+     * For the protocol data:
+     * @see com.google.code.spotshout.comm.BindRequest
+     *
+     * For method explanation:
+     * @see com.google.code.spotshout.comm.RMIRequest#writeData(java.io.DataOutput)
+     */
+    protected void writeData(DataOutput output) throws IOException {
     }
 
-    public String getOurAddr() {
-        return ourAddr;
-    }
+    
 }

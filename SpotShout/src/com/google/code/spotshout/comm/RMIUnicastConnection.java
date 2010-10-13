@@ -70,9 +70,9 @@ public class RMIUnicastConnection {
      * Abstract a unicast connection between Spots and {@link Registry}.
      * @param targetAddr - the registry address (MAC).
      * @param targetPort - the registry port.
-     * @throws RemoteException - on error
+     * @throws RemoteException - on remote error
      */
-    public RMIUnicastConnection(String addr, int port) throws RemoteException {
+    public RMIUnicastConnection(String addr, int port) throws RemoteException, TimeoutException {
         protocol = "radiostream";
         targetAddr = addr;
         targetPort = port;
@@ -80,13 +80,16 @@ public class RMIUnicastConnection {
         try {
             connection = (RadiostreamConnection) Connector.open(uri);
             connection.setTimeout(TIMEOUT);
-        } catch (IOException ex) {
+        } catch (TimeoutException ex) {
+            throw new TimeoutException("TimeoutException on " + uri);
+        }
+        catch (IOException ex) {
             throw new RemoteException(RMIUnicastConnection.class,
                     "Failed to comunicate with: " + uri);
         }
     }
-
-    public void writeRequest(RMIRequest request) throws RemoteException, TimeoutException {
+    
+    public void writeRequest(RMIRequest request) throws RemoteException {
         try {
             this.request = request;
             DataOutputStream dos = connection.openDataOutputStream();
