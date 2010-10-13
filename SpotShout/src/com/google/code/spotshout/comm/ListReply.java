@@ -20,7 +20,6 @@ package com.google.code.spotshout.comm;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
-import java.rmi.RemoteException;
 
 /**
  * This class represent the List Reply of the RMI Protocol. It implements
@@ -66,18 +65,14 @@ public class ListReply extends RMIReply {
      * For method explanation:
      * @see com.google.code.spotshout.comm.RMIOperation#readData(java.io.DataInput)
      */
-    protected void readData(DataInput input) throws RemoteException {
-        try {
-            operation = input.readByte();
-            operationStatus = input.readByte();
-            int listSize = input.readInt();
+    protected void readData(DataInput input) throws IOException {
+        operation = input.readByte();
+        operationStatus = input.readByte();
+        int listSize = input.readInt();
 
-            names = new String[listSize];
-            for (int i = 0; i < listSize; i++)
-                names[i] = input.readUTF();
-        } catch (IOException ex) {
-            throw new RemoteException(ListReply.class, "Error on reading list reply");
-        }
+        names = new String[listSize];
+        for (int i = 0; i < listSize; i++)
+            names[i] = input.readUTF();
     }
 
     /**
@@ -87,18 +82,14 @@ public class ListReply extends RMIReply {
      * For method explanation:
      * @see com.google.code.spotshout.comm.RMIOperation#writeData(java.io.DataOutput)
      */
-    protected void writeData(DataOutput output) throws RemoteException {
-        try {
-            output.write(getOperation());
-            output.write(getOperationStatus());
+    protected void writeData(DataOutput output) throws IOException {
+        output.write(getOperation());
+        output.write(getOperationStatus());
 
-            output.writeInt(getListSize());
+        output.writeInt(getListSize());
 
-            for (int i = 0; i < names.length; i++)
-                output.writeUTF(names[i]);
-        } catch (IOException ex) {
-            throw new RemoteException(ListReply.class, "Error on writting list reply");
-        }
+        for (int i = 0; i < names.length; i++)
+            output.writeUTF(names[i]);
     }
 
     // Getters

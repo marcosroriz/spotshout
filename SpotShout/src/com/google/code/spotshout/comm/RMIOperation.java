@@ -40,19 +40,20 @@ public abstract class RMIOperation {
      * by each operation [i.e. -- Protocol] on the input.
      *
      * @param input - the inputStream that the request data should be read.
-     * @throws RemoteException - in case of a failure in communication or if the
-     *                           data comes corrupted.
+     * @throws IOException - in case of a failure in communication or if the
+     *                       data comes corrupted.
      */
-    protected abstract void readData(DataInput input) throws RemoteException;
+    protected abstract void readData(DataInput input) throws IOException;
 
     /**
      * This method will read the opcode of the input so that we can manually
      * instantiate the correct operation and inject it's data by calling readData
      * on it.
      * @param input - the inputStream that the request data should be read.
-     * @throws RemoteException
+     * @throws IOException - in case of a failure in communication or if the
+     *                       data comes corrupted.
      */
-    protected void readOpcode(DataInput input) throws RemoteException {
+    protected void readOpcode(DataInput input) throws IOException {
         try {
             operation = input.readByte();
         } catch (IOException ex) {
@@ -66,10 +67,10 @@ public abstract class RMIOperation {
      * by each operation [i.e. -- Protocol] on the output.
      *
      * @param output - the outputStream that the request data should be written.
-     * @throws RemoteException - in case of a failure in communication or if the
+     * @throws IOException - in case of a failure in communication or if the
      *                           data comes corrupted.
      */
-    protected abstract void writeData(DataOutput output) throws RemoteException;
+    protected abstract void writeData(DataOutput output) throws IOException;
 
     // Getters
     public byte getOperation() {

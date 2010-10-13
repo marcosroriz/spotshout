@@ -21,7 +21,6 @@ import com.google.code.spotshout.remote.RemoteGarbageCollector;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
-import java.rmi.RemoteException;
 
 /**
  * This class represent the Bind Request of the RMI Protocol. It implements
@@ -84,18 +83,13 @@ public class BindRequest extends RMIRequest {
      * For method explanation:
      * @see com.google.code.spotshout.comm.RMIRequest#readData(java.io.DataInput) 
      */
-    protected void readData(DataInput input) throws RemoteException {
-        try {
-            // We have already readed operation for the manual reflection
-            ourAddr = input.readUTF();
-            replyPort = input.readInt();
-            skelPort = input.readInt();
-            remoteInterfaceName = input.readUTF();
-            remoteFullName = input.readUTF();
-        } catch (IOException ex) {
-            throw new RemoteException(BindRequest.class,
-                    "Error on reading bind()");
-        }
+    protected void readData(DataInput input) throws IOException {
+        // We have already readed operation for the manual reflection
+        ourAddr = input.readUTF();
+        replyPort = input.readInt();
+        skelPort = input.readInt();
+        remoteInterfaceName = input.readUTF();
+        remoteFullName = input.readUTF();
     }
 
     /**
@@ -105,18 +99,13 @@ public class BindRequest extends RMIRequest {
      * For method explanation:
      * @see com.google.code.spotshout.comm.RMIRequest#writeData(java.io.DataOutput)
      */
-    protected void writeData(DataOutput output) throws RemoteException {
-        try {
-            output.write(getOperation());
-            output.writeUTF(getOurAddr());
-            output.writeInt(getReplyPort());
-            output.writeInt(getSkelPort());
-            output.writeUTF(remoteInterfaceName);
-            output.writeUTF(remoteFullName);
-        } catch (IOException ex) {
-            throw new RemoteException(BindRequest.class,
-                    "Error on writting bind(" + remoteInterfaceName + ")");
-        }
+    protected void writeData(DataOutput output) throws IOException {
+        output.write(getOperation());
+        output.writeUTF(getOurAddr());
+        output.writeInt(getReplyPort());
+        output.writeInt(getSkelPort());
+        output.writeUTF(remoteInterfaceName);
+        output.writeUTF(remoteFullName);
     }
 
     /**

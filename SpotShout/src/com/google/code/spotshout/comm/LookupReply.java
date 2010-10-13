@@ -21,7 +21,6 @@ import com.google.code.spotshout.remote.Stub;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
-import java.rmi.RemoteException;
 
 /**
  * This class represent the Lookup Reply of the RMI Protocol. It implements
@@ -101,20 +100,16 @@ public class LookupReply extends RMIReply {
      * For method explanation:
      * @see com.google.code.spotshout.comm.RMIOperation#readData(java.io.DataInput)
      */
-    protected void readData(DataInput input) throws RemoteException {
-        try {
-            operation = input.readByte();
-            operationStatus = input.readByte();
+    protected void readData(DataInput input) throws IOException {
+        operation = input.readByte();
+        operationStatus = input.readByte();
 
-            if (operationStatus != ProtocolOpcode.OPERATION_OK) {
-                exception = input.readByte();
-            } else {
-                remoteAddr = input.readUTF();
-                remotePort = input.readInt();
-                remoteFullName = input.readUTF();
-            }
-        } catch (IOException ex) {
-            throw new RemoteException(LookupReply.class, "Error on reading lookup reply");
+        if (operationStatus != ProtocolOpcode.OPERATION_OK) {
+            exception = input.readByte();
+        } else {
+            remoteAddr = input.readUTF();
+            remotePort = input.readInt();
+            remoteFullName = input.readUTF();
         }
     }
 
@@ -125,20 +120,16 @@ public class LookupReply extends RMIReply {
      * For method explanation:
      * @see com.google.code.spotshout.comm.RMIOperation#writeData(java.io.DataOutput)
      */
-    protected void writeData(DataOutput output) throws RemoteException {
-        try {
-            output.write(getOperation());
-            output.write(getOperationStatus());
+    protected void writeData(DataOutput output) throws IOException {
+        output.write(getOperation());
+        output.write(getOperationStatus());
 
-            if (operationStatus != ProtocolOpcode.OPERATION_OK) {
-                output.write(getException());
-            } else {
-                output.writeUTF(remoteAddr);
-                output.writeInt(remotePort);
-                output.writeUTF(remoteFullName);
-            }
-        } catch (IOException ex) {
-            throw new RemoteException(LookupReply.class, "Error on writting lookup reply");
+        if (operationStatus != ProtocolOpcode.OPERATION_OK) {
+            output.write(getException());
+        } else {
+            output.writeUTF(remoteAddr);
+            output.writeInt(remotePort);
+            output.writeUTF(remoteFullName);
         }
     }
 
@@ -149,20 +140,15 @@ public class LookupReply extends RMIReply {
      *                the given Remote Interface.
      * @throws ClassNotFoundException if the class cannot be initialized.
      */
-    public Stub createStub() throws ClassNotFoundException {
-        try {
-            Class stubClass = Class.forName(remoteFullName + "_Stub");
-            Stub stub = (Stub) stubClass.newInstance();
-            stub.setTargetAddr(remoteAddr);
-            stub.setTargetPort(remotePort);
-            //stub.setTargetName(remoteName);
-            //@TODO Preciso do nome anunciado da classe? Mas não estou ouvihndo na thread? So se for pra GC.
-
-            return stub;
-        } catch (Exception ex) {
-            throw new ClassNotFoundException("Error on Skeleton: "
-                    + remoteFullName + "_Skel initialization");
-        }
+    public Stub createStub() throws ClassNotFoundException, InstantiationException,
+            IllegalAccessException {
+        Class stubClass = Class.forName(remoteFullName + "_Stub");
+        Stub stub = (Stub) stubClass.newInstance();
+        stub.setTargetAddr(remoteAddr);
+        stub.setTargetPort(remotePort);
+        //stub.setTargetName(remoteName);
+        //@TODO Preciso do nome anunciado da classe? Mas não estou ouvihndo na thread? So se for pra GC.
+        return stub;
     }
 
     // Getters

@@ -20,7 +20,6 @@ package com.google.code.spotshout.comm;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
-import java.rmi.RemoteException;
 
 /**
  * This class represent the Unbind Reply of the RMI Protocol. It implements
@@ -49,16 +48,12 @@ public class UnbindReply extends RMIReply {
      * For method explanation:
      * @see com.google.code.spotshout.comm.RMIOperation#readData(java.io.DataInput)
      */
-    protected void readData(DataInput input) throws RemoteException {
-        try {
-            operation = input.readByte();
-            operationStatus = input.readByte();
+    protected void readData(DataInput input) throws IOException {
+        operation = input.readByte();
+        operationStatus = input.readByte();
 
-            if (operationStatus != ProtocolOpcode.OPERATION_OK)
-                exception = input.readByte();
-        } catch (IOException ex) {
-            throw new RemoteException(UnbindReply.class, "Error on reading unbind reply");
-        }
+        if (operationStatus != ProtocolOpcode.OPERATION_OK)
+            exception = input.readByte();
     }
 
     /**
@@ -68,15 +63,11 @@ public class UnbindReply extends RMIReply {
      * For method explanation:
      * @see com.google.code.spotshout.comm.RMIOperation#writeData(java.io.DataOutput)
      */
-    protected void writeData(DataOutput output) throws RemoteException {
-                try {
-            output.write(getOperation());
-            output.write(getOperationStatus());
+    protected void writeData(DataOutput output) throws IOException {
+        output.write(getOperation());
+        output.write(getOperationStatus());
 
-            if (operationStatus != ProtocolOpcode.OPERATION_OK)
-                output.write(getException());
-        } catch (IOException ex) {
-            throw new RemoteException(UnbindReply.class, "Error on writting unbind reply");
-        }
+        if (operationStatus != ProtocolOpcode.OPERATION_OK)
+            output.write(getException());
     }
 }
