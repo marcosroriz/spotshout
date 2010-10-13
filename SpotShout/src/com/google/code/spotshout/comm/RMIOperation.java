@@ -54,12 +54,7 @@ public abstract class RMIOperation {
      *                       data comes corrupted.
      */
     protected void readOpcode(DataInput input) throws IOException {
-        try {
-            operation = input.readByte();
-        } catch (IOException ex) {
-            throw new RemoteException(RMIOperation.class,
-                    "Error on reading operation code");
-        }
+        operation = input.readByte();
     }
 
     /**
