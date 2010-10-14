@@ -28,28 +28,29 @@ public class ProtocolOpcode {
     public static final byte OPERATION_NOK              = -1;
     public static final byte OPERATION_OK               = 100;
 
-
     // Announcing Operations (Not Reliable :/)
     public static final byte HOST_ADDR_REQUEST          = 1;
     public static final byte HOST_ADDR_REPLY            = 2;
-    public static final byte INVOKE_REQUEST             = 3;
-    public static final byte INVOKE_REPLY               = 4;
+    public static final byte REGISTRY_REQUEST           = 3;
+    public static final byte REGISTRY_REPLY             = 4;
+    public static final byte INVOKE_REQUEST             = 5;
+    public static final byte INVOKE_REPLY               = 6;
 
     // RMI Opcodes
-    public static final byte BIND_REQUEST               = 5;
-    public static final byte BIND_REPLY                 = 6;
-    public static final byte LIST_REQUEST               = 7;
-    public static final byte LIST_REPLY                 = 8;
-    public static final byte LOOKUP_REQUEST             = 9;
-    public static final byte LOOKUP_REPLY               = 10;
-    public static final byte REBIND_REQUEST             = 11;
-    public static final byte REBIND_REPLY               = 12;
-    public static final byte UNBIND_REQUEST             = 13;
-    public static final byte UNBIND_REPLY               = 14;
+    public static final byte BIND_REQUEST               = 7;
+    public static final byte BIND_REPLY                 = 8;
+    public static final byte LIST_REQUEST               = 9;
+    public static final byte LIST_REPLY                 = 10;
+    public static final byte LOOKUP_REQUEST             = 11;
+    public static final byte LOOKUP_REPLY               = 12;
+    public static final byte REBIND_REQUEST             = 13;
+    public static final byte REBIND_REPLY               = 14;
+    public static final byte UNBIND_REQUEST             = 15;
+    public static final byte UNBIND_REPLY               = 16;
 
     // RMI Exceptions
-    public static final byte EXCEPTION_ALREADY_BOUND    = 15;
-    public static final byte EXCEPTION_NOT_BOUND        = 16;
-    public static final byte EXCEPTION_NULL_POINT       = 17;
-    public static final byte EXCEPTION_REMOTE           = 18;
+    public static final byte EXCEPTION_ALREADY_BOUND    = 17;
+    public static final byte EXCEPTION_NOT_BOUND        = 18;
+    public static final byte EXCEPTION_NULL_POINT       = 19;
+    public static final byte EXCEPTION_REMOTE           = 20;
 }

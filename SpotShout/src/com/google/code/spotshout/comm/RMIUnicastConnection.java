@@ -22,7 +22,6 @@ import com.sun.spot.peripheral.TimeoutException;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.rmi.RemoteException;
-import javax.microedition.io.Connector;
 
 /**
  * This class abstract the details of creating a unicast connection between SPOTs
@@ -32,29 +31,9 @@ import javax.microedition.io.Connector;
 public class RMIUnicastConnection {
 
     /**
-     * Timeout in milliseconds before throwing a TimeoutException
-     */
-    private int TIMEOUT = 5000;
-
-    /**
      * The wrapped connection.
      */
     private RadiostreamConnection connection;
-
-    /**
-     * The protocol used (radiogram, radiostream, tcp or udp).
-     */
-    private String protocol;
-
-    /**
-     * The target address (MAC).
-     */
-    private String targetAddr;
-
-    /**
-     * The target port.
-     */
-    private int targetPort;
 
     /**
      * The RMI operation request of this connection.
@@ -70,34 +49,18 @@ public class RMIUnicastConnection {
      * Abstract a unicast connection between Spots and {@link Registry}.
      * @param targetAddr - the registry address (MAC).
      * @param targetPort - the registry port.
-     * @throws RemoteException - on remote error
+     * @throws IOException - on a given remote error (timeout) or data corruption.
      */
-    public RMIUnicastConnection(String addr, int port) throws RemoteException, TimeoutException {
-        protocol = "radiostream";
-        targetAddr = addr;
-        targetPort = port;
-        String uri = protocol + "://" + targetAddr + ":" + targetPort;
-        try {
-            connection = (RadiostreamConnection) Connector.open(uri);
-            connection.setTimeout(TIMEOUT);
-        } catch (TimeoutException ex) {
-            throw new TimeoutException("TimeoutException on " + uri);
-        }
-        catch (IOException ex) {
-            throw new RemoteException(RMIUnicastConnection.class,
-                    "Failed to comunicate with: " + uri);
-        }
+    public RMIUnicastConnection(String addr, int port) throws IOException {
+        connection = (RadiostreamConnection)
+                HandShake.connect(ProtocolOpcode.REGISTRY_REQUEST, addr, port);
     }
     
-    public void writeRequest(RMIRequest request) throws RemoteException {
-        try {
-            this.request = request;
-            DataOutputStream dos = connection.openDataOutputStream();
-            request.writeData(dos);
-            dos.flush();
-        } catch (IOException ex) {
-            throw new RemoteException("Remote Exception on Opening Data Output Stream");
-        }
+    public void writeRequest(RMIRequest request) throws IOException {
+        this.request = request;
+        DataOutputStream dos = connection.openDataOutputStream();
+        request.writeData(dos);
+        dos.flush();
     }
 
     public RMIReply readReply() throws RemoteException {

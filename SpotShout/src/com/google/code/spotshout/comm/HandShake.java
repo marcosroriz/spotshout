@@ -17,7 +17,10 @@
 
 package com.google.code.spotshout.comm;
 
+import com.google.code.spotshout.RMIProperties;
+import com.google.code.spotshout.remote.RemoteGarbageCollector;
 import com.sun.spot.io.j2me.radiogram.RadiogramConnection;
+import com.sun.spot.io.j2me.radiostream.RadiostreamConnection;
 import java.io.IOException;
 import javax.microedition.io.Connection;
 import javax.microedition.io.Connector;
@@ -27,25 +30,58 @@ import javax.microedition.io.Datagram;
  * This class represents the handshake to make a reliable connection between
  * two points on PAN. It uses datagram (non reliable) data to announce to the
  * other point the data necessary to establish the connection.
+ *
+ * Protocol for HandShake:
+ *
+ * HandShake Request
+ * ----------------------------------------------------------------------------
+ * Byte:        Opcode
+ * INT:         Client Reliable Port
+ *
+ *
+ * HandShake Reply
+ * ----------------------------------------------------------------------------
+ * INT:         Server Reliable Port
  */
 public class HandShake {
 
-    public Connection connect(byte operation,  String addr, int targetPort,
-            ) throws IOException {
+    /**
+     * Connect two devices in PAN. First it sends a unreliable package to the
+     * other point of the connection sending the address and port which will
+     * be created the reliable connection. The other point will then send the
+     *
+     * @param operation - the given announce operation
+     * @param targetAddr - the target address (MAC)
+     * @param targetPort - the target announce port
+     * @return a reliable {@link Connection}.
+     * @throws IOException - if there is an error during connection such as
+     *                       timeout or data corruption.
+     */
+    public static Connection connect(byte operation, String targetAddr, int targetPort)
+            throws IOException {
+        String uri = RMIProperties.UNRELIABLE_PROTOCOL + "://" + targetAddr + ":" + targetPort;
         RadiogramConnection rCon = (RadiogramConnection)
-                Connector.open("radiogram://" + addr + ":" + port,
-                Connector.READ_WRITE, true);
+                Connector.open(uri, Connector.READ_WRITE, true);
+        
+        rCon.setTimeout(RMIProperties.TIMEOUT);
         Datagram dg = rCon.newDatagram(150);
         dg.reset();
 
+        // Writting protocol data
+        // We're going to reuse the port for unreliable and then reliable connection.
+        int port = RemoteGarbageCollector.getFreePort();
         dg.write(operation);
-        dg.write());
+        dg.writeInt(port);
         rCon.send(dg);
 
+        // Reading protocol answer
+        rCon.receive(dg);
+        int serverReliablePort = dg.readInt();
 
-        // Closing the connection
-        dg.reset();
+        // Closing Unreliable connection
         rCon.close();
-        return null;
+
+        uri = RMIProperties.RELIABLE_PROTOCOL + "://" + targetAddr + ":" + serverReliablePort;
+        return Connector.open(uri, Connector.READ_WRITE, true);
     }
 }
