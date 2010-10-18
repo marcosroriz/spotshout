@@ -17,9 +17,6 @@
 
 package com.google.code.spotshout.comm;
 
-import java.io.DataOutput;
-import java.io.IOException;
-
 /**
  * This class represent a generic RMI Request (Protocol). Each operation will
  * inherit this class and specify it's detail, overwriting the writeData method
@@ -35,16 +32,4 @@ public abstract class RMIRequest extends RMIOperation {
     public RMIRequest(byte op) {
         operation = op;
     }
-
-        /**
-     * For the protocol data:
-     * @see com.google.code.spotshout.comm.BindRequest
-     *
-     * For method explanation:
-     * @see com.google.code.spotshout.comm.RMIRequest#writeData(java.io.DataOutput)
-     */
-    protected void writeData(DataOutput output) throws IOException {
-    }
-
-    
 }

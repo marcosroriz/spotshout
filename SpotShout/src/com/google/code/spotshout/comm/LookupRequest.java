@@ -59,7 +59,7 @@ public class LookupRequest extends RMIRequest {
      * @see com.google.code.spotshout.comm.LookupRequest
      *
      * For method explanation:
-     * @see com.google.code.spotshout.comm.RMIRequest#readData(java.io.DataInput)
+     * @see com.google.code.spotshout.comm.RMIOperation#readData(java.io.DataInput)
      */
     protected void readData(DataInput input) throws IOException {
         // We have already readed operation for the manual reflection
@@ -71,7 +71,7 @@ public class LookupRequest extends RMIRequest {
      * @see com.google.code.spotshout.comm.LookupRequest
      *
      * For method explanation:
-     * @see com.google.code.spotshout.comm.RMIRequest#writeData(java.io.DataOutput)
+     * @see com.google.code.spotshout.comm.RMIOperation#writeData(java.io.DataOutput)
      */
     protected void writeData(DataOutput output) throws IOException {
         output.write(getOperation());

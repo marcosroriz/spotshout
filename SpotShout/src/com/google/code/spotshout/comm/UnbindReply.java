@@ -49,7 +49,7 @@ public class UnbindReply extends RMIReply {
      * @see com.google.code.spotshout.comm.RMIOperation#readData(java.io.DataInput)
      */
     protected void readData(DataInput input) throws IOException {
-        operation = input.readByte();
+        // We have already readed operation for the manual reflection
         operationStatus = input.readByte();
 
         if (operationStatus != ProtocolOpcode.OPERATION_OK)

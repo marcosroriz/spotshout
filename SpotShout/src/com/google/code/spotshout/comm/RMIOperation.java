@@ -45,18 +45,6 @@ public abstract class RMIOperation {
     protected abstract void readData(DataInput input) throws IOException;
 
     /**
-     * This method will read the opcode of the input so that we can manually
-     * instantiate the correct operation and inject it's data by calling readData
-     * on it.
-     * @param input - the inputStream that the request data should be read.
-     * @throws IOException - in case of a failure in communication or if the
-     *                       data comes corrupted.
-     */
-    protected void readOpcode(DataInput input) throws IOException {
-        operation = input.readByte();
-    }
-
-    /**
      * This method define the order and fields that it's going to be written
      * by each operation [i.e. -- Protocol] on the output.
      *
