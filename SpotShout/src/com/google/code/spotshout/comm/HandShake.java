@@ -20,7 +20,6 @@ package com.google.code.spotshout.comm;
 import com.google.code.spotshout.RMIProperties;
 import com.google.code.spotshout.remote.RemoteGarbageCollector;
 import com.sun.spot.io.j2me.radiogram.RadiogramConnection;
-import com.sun.spot.io.j2me.radiostream.RadiostreamConnection;
 import java.io.IOException;
 import javax.microedition.io.Connection;
 import javax.microedition.io.Connector;
@@ -81,6 +80,7 @@ public class HandShake {
         // Closing Unreliable connection
         rCon.close();
 
+        // Opening and returning Reliable Connection
         uri = RMIProperties.RELIABLE_PROTOCOL + "://" + targetAddr + ":" + serverReliablePort;
         return Connector.open(uri, Connector.READ_WRITE, true);
     }

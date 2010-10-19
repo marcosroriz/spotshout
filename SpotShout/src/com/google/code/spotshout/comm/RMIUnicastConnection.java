@@ -57,6 +57,14 @@ public class RMIUnicastConnection {
     }
 
     /**
+     * Close this connection.
+     * @throws IOException - on a given remote error (timeout) or data corruption.
+     */
+    public void close() throws IOException {
+        connection.close();
+    }
+
+    /**
      * Reads a RMI Request on this connection.
      * @return a specific RMI Request.
      * @throws IOException - on a given remote error (timeout) or data corruption.
@@ -154,7 +162,7 @@ public class RMIUnicastConnection {
      * @throws IOException - in case of a failure in communication or if the
      *                       data comes corrupted.
      */
-    protected byte readOpcode(DataInput input) throws IOException {
+    private byte readOpcode(DataInput input) throws IOException {
         return input.readByte();
     }
 }
