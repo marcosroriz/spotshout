@@ -64,12 +64,8 @@ public class SpotRegistry implements Registry {
             throws AlreadyBoundException, NullPointerException, RemoteException {
 
         // Exceptions
-        if (name == null) {
-            throw new NullPointerException("Bind name is null.");
-        }
-        if (obj == null) {
-            throw new NullPointerException("Remote object is null.");
-        }
+        if (name == null) throw new NullPointerException("Bind name is null.");
+        if (obj == null) throw new NullPointerException("Remote object is null.");
 
         try {
             RadiostreamConnection con = (RadiostreamConnection) Connector.open(
@@ -231,7 +227,6 @@ public class SpotRegistry implements Registry {
 
             stub.setTargetAddr(addr);
             stub.setTargetPort(port);
-            stub.setTargetName(name);
 
             return (Remote) stub;
         } catch (InstantiationException ex) {

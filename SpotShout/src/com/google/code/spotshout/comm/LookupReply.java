@@ -49,12 +49,6 @@ public class LookupReply extends RMIReply {
     private int remotePort;
 
     /**
-     * Remote Interface Name (as announced).
-     * @TODO Preciso do nome anunciado da classe? Mas não estou ouvihndo na thread? So se for pra GC.
-     */
-    //private String remoteName;
-
-    /**
      * Remote Interface Full Qualified Name (including package).
      */
     private String remoteFullName;
@@ -146,8 +140,6 @@ public class LookupReply extends RMIReply {
         Stub stub = (Stub) stubClass.newInstance();
         stub.setTargetAddr(remoteAddr);
         stub.setTargetPort(remotePort);
-        //stub.setTargetName(remoteName);
-        //@TODO Preciso do nome anunciado da classe? Mas não estou ouvihndo na thread? So se for pra GC.
         return stub;
     }
 

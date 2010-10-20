@@ -21,16 +21,13 @@ package com.google.code.spotshout.remote;
  * This class represent the structure of a abstract Stub. Each Stub has to
  * inherit this class.
  */
-public abstract class Stub {
+public class Stub extends Thread {
 
-    /**
-     * Target (Remote) name.
-     */
-    private String targetName;
     /**
      * Target Address.
      */
     private String targetAddr;
+
     /**
      * Target Port.
      */
@@ -47,20 +44,12 @@ public abstract class Stub {
         return targetAddr;
     }
 
-    public void setTargetAddr(String targetAddr) {
-        this.targetAddr = targetAddr;
-    }
-
-    public String getTargetName() {
-        return targetName;
-    }
-
-    public void setTargetName(String targetName) {
-        this.targetName = targetName;
-    }
-
     public int getTargetPort() {
         return targetPort;
+    }
+
+    public void setTargetAddr(String targetAddr) {
+        this.targetAddr = targetAddr;
     }
 
     public void setTargetPort(int targetPort) {

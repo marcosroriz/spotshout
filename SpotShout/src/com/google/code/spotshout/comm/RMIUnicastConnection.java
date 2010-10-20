@@ -46,7 +46,7 @@ public class RMIUnicastConnection {
     private RMIReply reply;
 
     /**
-     * Abstract a unicast connection between Spots and {@link Registry}.
+     * Abstract a unicast connection between two points (Spot-Spot) or (Spot-Registry).
      * @param targetAddr - the registry address (MAC).
      * @param targetPort - the registry port.
      * @throws IOException - on a given remote error (timeout) or data corruption.
@@ -93,6 +93,7 @@ public class RMIUnicastConnection {
                         "Unsupported operation: " + operation);
         }
 
+        request.setOperation(operation);
         request.readData(connection.openDataInputStream());
         return request;
     }

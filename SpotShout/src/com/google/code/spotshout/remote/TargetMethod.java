@@ -33,14 +33,17 @@ public final class TargetMethod implements KSNSerializableInterface {
      * Method Name
      */
     private String methodName;
+
     /**
      * Method Signature (According to JVM Spec).
      */
     private String methodSignature;
+
     /**
      * Boolean value that identify if the method has a return.
      */
     private boolean returnable;
+
     /**
      * Method arguments (values). If argument are primitive they
      * will be Wrapped.

@@ -54,8 +54,12 @@ public abstract class RMIOperation {
      */
     protected abstract void writeData(DataOutput output) throws IOException;
 
-    // Getters
+    // Getters and Setters
     public byte getOperation() {
         return operation;
+    }
+
+    public void setOperation(byte operation) {
+        this.operation = operation;
     }
 }
