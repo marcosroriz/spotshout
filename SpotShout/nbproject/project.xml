@@ -10,6 +10,9 @@
     <configuration>
         <general-data xmlns="http://www.netbeans.org/ns/freeform-project/1">
             <name>SpotShout</name>
+        </general-data>
+        <general-data xmlns="http://www.netbeans.org/ns/freeform-project/2">
+            <name>SpotShout</name>
             <properties>
                 <property-file>${user.home}/.sunspot.properties</property-file>
                 <property-file>build.properties</property-file>
@@ -20,6 +23,12 @@
                     <label>src</label>
                     <type>java</type>
                     <location>src</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>SpotShout</label>
+                    <location>.</location>
+                    <encoding>UTF-8</encoding>
                 </source-folder>
             </folders>
             <ide-actions>
