@@ -17,7 +17,6 @@
 
 package com.google.code.spotshout.comm;
 
-import com.google.code.spotshout.remote.TargetMethod;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInput;
@@ -39,7 +38,7 @@ import ksn.io.ObjectOutputStream;
  * Obj:         Return value (wrapped) -
  *              One of the Serial* objects in com.google.code.spotshout.lang
  */
-public class InvokeReply extends RMIRequest {
+public class InvokeReply extends RMIReply {
 
     /**
      * Reply return value (wrapped).

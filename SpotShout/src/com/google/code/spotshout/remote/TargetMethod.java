@@ -18,6 +18,7 @@
 package com.google.code.spotshout.remote;
 
 import java.io.IOException;
+import java.io.Serializable;
 import ksn.io.KSNSerializableInterface;
 import ksn.io.ObjectInputStream;
 import ksn.io.ObjectOutputStream;
@@ -45,10 +46,15 @@ public final class TargetMethod implements KSNSerializableInterface {
     private boolean returnable;
 
     /**
+     * Number of arguments
+     */
+    int numberArgs;
+    
+    /**
      * Method arguments (values). If argument are primitive they
      * will be Wrapped.
      */
-    private Object[] args;
+    private Serializable[] args;
 
     /**
      * Empty Constructor for serialization.
@@ -56,20 +62,36 @@ public final class TargetMethod implements KSNSerializableInterface {
     public TargetMethod() {
     }
 
-    public TargetMethod(String mName, String mSig, boolean hasReturn, Object[] args) {
-        setMethodName(mName);
-        setMethodSignature(mSig);
-        setReturnable(hasReturn);
-        setArgs(args);
+    public TargetMethod(String mName, String mSig, boolean rn,
+            Serializable[] argList) {
+        methodName = mName;
+        methodSignature = mSig;
+        returnable = rn;
+        args = argList;
+        numberArgs = args.length;
     }
 
-    public Object[] getArgs() {
-        return args;
+    public void writeObjectOnSensor(ObjectOutputStream stream) throws IOException {
+        stream.writeUTF(methodName);
+        stream.writeUTF(methodSignature);
+        stream.writeBoolean(returnable);
+        stream.writeInt(numberArgs);
+
+        for (int i = 0; i < numberArgs; i++) {
+            stream.writeObject(args[i]);
+        }
     }
 
-    public void setArgs(Object[] args) {
-        if (args != null) {
-            this.args = args;
+    public void readObjectOnSensor(ObjectInputStream stream) throws IOException, ClassNotFoundException, IllegalAccessException, InstantiationException {
+        methodName = stream.readUTF();
+        methodSignature = stream.readUTF();
+        returnable = stream.readBoolean();
+        numberArgs = stream.readInt();
+
+        args = new Serializable[numberArgs];
+
+        for (int i = 0; i < numberArgs; i++) {
+            args[i] = (Serializable) stream.readObject();
         }
     }
 
@@ -77,29 +99,19 @@ public final class TargetMethod implements KSNSerializableInterface {
         return returnable;
     }
 
-    public void setReturnable(boolean returnable) {
-        this.returnable = returnable;
+    public Object[] getArgs() {
+        return args;
+    }
+
+    public int getArgsLenght() {
+        return numberArgs;
     }
 
     public String getMethodName() {
         return methodName;
     }
 
-    public void setMethodName(String methodName) {
-        this.methodName = methodName;
-    }
-
     public String getMethodSignature() {
         return methodSignature;
-    }
-
-    public void setMethodSignature(String methodSignature) {
-        this.methodSignature = methodSignature;
-    }
-
-    public void writeObjectOnSensor(ObjectOutputStream stream) throws IOException {
-    }
-
-    public void readObjectOnSensor(ObjectInputStream stream) throws IOException, ClassNotFoundException, IllegalAccessException, InstantiationException {
     }
 }
