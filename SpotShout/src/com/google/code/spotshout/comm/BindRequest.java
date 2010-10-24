@@ -72,6 +72,7 @@ public class BindRequest extends RMIRequest {
         this.remoteInterfaceName = remoteInterfaceName;
         this.remoteFullName = remoteFullName;
         this.skelPort = RemoteGarbageCollector.getFreePort();
+        RemoteGarbageCollector.registerPort(skelPort);
     }
 
     /**
