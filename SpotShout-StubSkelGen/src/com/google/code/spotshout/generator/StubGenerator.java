@@ -18,7 +18,7 @@ import javassist.NotFoundException;
 public class StubGenerator {
 
     private CtClass cc;
-    private String wrapperPkg = "com.google.code.spotshout.lang.Serial";
+    private String wrapperPkg = "Serial";
     private String tab = "\t";
 
     /**
@@ -30,22 +30,28 @@ public class StubGenerator {
         try {
             ClassPool pool = ClassPool.getDefault();
 
+            // Inserting user jar in classpath
             pool.insertClassPath(jarName);
+
+            // Importing stuff we might need
+            pool.importPackage("java.io");
+            pool.importPackage("java.rmi");
+            pool.importPackage("com.google.code.spotshout.comm");
+            pool.importPackage("com.google.code.spotshout.lang");
+            pool.importPackage("com.google.code.spotshout.remote");
+
+            // Making the class
             cc = pool.makeClass(pkgName + iName + "_Stub");
 
             // Setting the interface
             CtClass interf = pool.get(pkgName + iName);
             cc.setInterfaces(new CtClass[]{interf});
 
-                        
             // Setting SuperClass (Stub)
             CtClass stubGeneric = pool.get("com.google.code.spotshout.remote.Stub");
-            System.out.println(stubGeneric.getName());
-            System.out.println(stubGeneric.getURL());
-            
             cc.setSuperclass(stubGeneric);
 
-
+            // Making each method
             CtMethod methods[] = interf.getDeclaredMethods();
             for (int i = 0; i < methods.length; i++) {
                 makeMethod(interf, methods[i]);
@@ -94,10 +100,10 @@ public class StubGenerator {
             // Let's check if the argument number is different then zero,
             // if it's equal we don't need the overhead to serialize the
             // arguments.
-            methodText.append(tab + tab + "java.io.Serializable[] args = null;\n");
+            methodText.append(tab + tab + "Serializable[] args = null;\n");
             if (m.getParameterTypes().length != 0) {
                 // Making vector of arguments (objects)
-                methodText.append(tab + tab + "args = new java.io.Serializable ["
+                methodText.append(tab + tab + "args = new Serializable ["
                         + parTypes.length + "];\n");
 
                 for (int i = 0; i < parTypes.length; i++) {
@@ -108,19 +114,18 @@ public class StubGenerator {
             }
 
             // Creating TargetMethod
-            methodText.append("\n" + tab + tab + "com.google.code.spotshout.remote.TargetMethod m ");
-            methodText.append("= new com.google.code.spotshout.remote.TargetMethod(");
+            methodText.append("\n" + tab + tab + "TargetMethod m ");
+            methodText.append("= new TargetMethod(");
             methodText.append("\"" + m.getName() + "\"" + ", \"" + m.getSignature() + "\", "
                     + hasReturn(m.getReturnType().getName()) + ", args);\n");
 
 
-            // Creating InvokeRequest
-            methodText.append(tab + tab + "com.google.code.spotshout.comm.InvokeRequest invReq ");
-            methodText.append("= new com.google.code.spotshout.comm.InvokeRequest(m);\n");
+           // Creating InvokeRequest
+            methodText.append(tab + tab + "InvokeRequest invReq = new InvokeRequest(m);\n");
 
             // Creating Connection
-            methodText.append(tab + tab + "com.google.code.spotshout.comm.RMIUnicastConnection conn ");
-            methodText.append("= new com.google.code.spotshout.comm.RMIUnicastConnection(");
+            methodText.append(tab + tab + "RMIUnicastConnection conn ");
+            methodText.append("= RMIUnicastConnection.makeClientConnection(");
             methodText.append("getTargetAddr(), getTargetPort());\n");
 
             // Writting Request
@@ -129,12 +134,23 @@ public class StubGenerator {
             // Listen to reply and return ONLY if method has return
             if (hasReturn(m.getReturnType().getName())) {
                 // Listen to reply
-                methodText.append(tab + tab + "com.google.code.spotshout.comm.InvokeReply invReply ");
-                methodText.append("= (com.google.code.spotshout.comm.InvokeReply) conn.readReply();\n");
+                methodText.append(tab + tab + "InvokeReply invReply ");
+                methodText.append("= (InvokeReply) conn.readReply();\n");
+
+                // Close connection
+                methodText.append(tab + tab + "conn.close();\n");
 
                 // Return value (Unwrapping)
-                methodText.append("\n" + tab + tab + "return ((" + wrapper(m.getReturnType().getName()) + ")"
-                        + "invReply.getReturnValue()).getValue();\n");
+                methodText.append("\n" + tab + tab + "return ((");
+                if (m.getReturnType().isPrimitive()) {
+                    methodText.append(wrapper(m.getReturnType().getName()));
+                } else {
+                    methodText.append(m.getReturnType().getName());
+                }
+                methodText.append(")invReply.getReturnValue()).getValue();\n");
+            } else {
+                // Close connection
+                methodText.append(tab + tab + "conn.close();\n");
             }
 
             // Exceptions --'
@@ -178,7 +194,7 @@ public class StubGenerator {
         } else if (keyword.equals("short")) {
             objType = "Short";
         }
-        
+
         return wrapperPkg + objType;
     }
 
