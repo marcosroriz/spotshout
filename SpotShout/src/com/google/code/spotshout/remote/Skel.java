@@ -17,18 +17,26 @@
 
 package com.google.code.spotshout.remote;
 
+import com.google.code.spotshout.comm.RMIReply;
+import com.google.code.spotshout.comm.RMIRequest;
 import java.rmi.Remote;
 
 /**
  * This class represent the structure of a abstract Skeleton. Each Skeleton has
  * to inherit this class.
  */
-public abstract class Skel {
+public abstract class Skel extends Thread {
 
     /**
      * Remote object that the skell will dispatch the request.
      */
     private Remote remote;
+
+    /**
+     * The port which this Skel will listen (non reliable), to make reliable
+     * connections with Stubs.
+     */
+    private int port;
 
     /**
      * Empty constructor for reflection.
@@ -37,14 +45,16 @@ public abstract class Skel {
     }
 
     /**
-     * Process a receiving call/invoke method request.
+     * Process a receiving call/invoke RMI request.
      * @param method - the method meta-data and it's arguments.
-     * @return the return value as a Object:
-     *    - if it's a simple type it will be Wrapped and UnWrapped on the Stub
-     *    - if the method has no return (void) it will return null to the
-     *      protocol and won't send the answer/reply to the caller.
+     * @return - the RMI Reply object, if the request doesn't have a return, i.e.
+     *           void, return null
      */
-    public abstract Object invokeRequest(TargetMethod method);
+    public abstract RMIReply service(RMIRequest method);
+
+    public int getPort() {
+        return port;
+    }
 
     public Remote getRemote() {
         return remote;
@@ -52,5 +62,9 @@ public abstract class Skel {
 
     public void setRemote(Remote remote) {
         this.remote = remote;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
     }
 }

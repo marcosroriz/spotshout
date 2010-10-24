@@ -17,11 +17,14 @@
 
 package com.google.code.spotshout.comm;
 
+import com.google.code.spotshout.RMIProperties;
 import com.sun.spot.io.j2me.radiostream.RadiostreamConnection;
 import java.io.DataInput;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.rmi.RemoteException;
+import javax.microedition.io.Connection;
+import javax.microedition.io.Connector;
 
 /**
  * This class abstract the details of creating a unicast connection between SPOTs
@@ -45,15 +48,37 @@ public class RMIUnicastConnection {
      */
     private RMIReply reply;
 
+    private RMIUnicastConnection(Connection conn) {
+        this.connection = (RadiostreamConnection) conn;
+    }
+
     /**
      * Abstract a unicast connection between two points (Spot-Spot) or (Spot-Registry).
-     * @param targetAddr - the registry address (MAC).
-     * @param targetPort - the registry port.
+     * @param addr - the server address (MAC).
+     * @param port - the server port.
      * @throws IOException - on a given remote error (timeout) or data corruption.
      */
-    public RMIUnicastConnection(String addr, int port) throws IOException {
-        connection = (RadiostreamConnection)
-                HandShake.connect(ProtocolOpcode.REGISTRY_REQUEST, addr, port);
+    public static RMIUnicastConnection makeClientConnection(String addr, int port)
+            throws IOException {
+        RadiostreamConnection conn = (RadiostreamConnection)
+                Client.connect(ProtocolOpcode.REGISTRY_REQUEST, addr, port);
+        conn.setTimeout(RMIProperties.TIMEOUT);
+        return new RMIUnicastConnection(conn);
+    }
+
+    /**
+     * Abstract a unicast connection between two points (Spot-Spot) or (Spot-Registry).
+     * @param addr - the client address (MAC).
+     * @param port - the client port.
+     * @throws IOException - on a given remote error (timeout) or data corruption.
+     */
+    public static RMIUnicastConnection makeServerConnection(String addr, int port)
+            throws IOException {
+        String uri = RMIProperties.RELIABLE_PROTOCOL + "://" + addr + ":" + port;
+        RadiostreamConnection conn = (RadiostreamConnection)
+                Connector.open(uri, Connector.READ_WRITE, true);
+        conn.setTimeout(RMIProperties.TIMEOUT);
+        return new RMIUnicastConnection(conn);
     }
 
     /**
@@ -75,6 +100,9 @@ public class RMIUnicastConnection {
         switch (operation) {
             case ProtocolOpcode.BIND_REQUEST:
                 request = new BindRequest();
+                break;
+            case ProtocolOpcode.INVOKE_REQUEST:
+                request = new InvokeRequest();
                 break;
             case ProtocolOpcode.LIST_REQUEST:
                 request = new ListRequest();
@@ -109,6 +137,9 @@ public class RMIUnicastConnection {
         switch (operation) {
             case ProtocolOpcode.BIND_REQUEST:
                 reply = new BindReply();
+                break;
+            case ProtocolOpcode.INVOKE_REQUEST:
+                reply = new InvokeReply();
                 break;
             case ProtocolOpcode.LIST_REQUEST:
                 reply = new ListReply();

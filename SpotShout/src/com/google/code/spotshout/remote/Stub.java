@@ -21,7 +21,7 @@ package com.google.code.spotshout.remote;
  * This class represent the structure of a abstract Stub. Each Stub has to
  * inherit this class.
  */
-public class Stub {
+public abstract class Stub {
 
     /**
      * Target Address.

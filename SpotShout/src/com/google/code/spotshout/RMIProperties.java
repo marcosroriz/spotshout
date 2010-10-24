@@ -14,7 +14,7 @@ public class RMIProperties {
     /**
      * Timeout in milliseconds before throwing a TimeoutException
      */
-    public static final int TIMEOUT = 5000;
+    public static final int TIMEOUT = 10000;
 
     /**
      * Unreliable protocol

@@ -26,23 +26,23 @@ import javax.microedition.io.Connector;
 import javax.microedition.io.Datagram;
 
 /**
- * This class represents the handshake to make a reliable connection between
- * two points on PAN. It uses datagram (non reliable) data to announce to the
- * other point the data necessary to establish the connection.
+ * This class represents the client handshake to make a reliable connection
+ * between two points on PAN. It uses datagram (non reliable) data to announce
+ * to the other point the data necessary to establish the connection.
  *
  * Protocol for HandShake:
  *
- * HandShake Request
+ * Client HandShake Request
  * ----------------------------------------------------------------------------
  * Byte:        Opcode
  * INT:         Client Reliable Port
  *
  *
- * HandShake Reply
+ * Server HandShake Reply
  * ----------------------------------------------------------------------------
  * INT:         Server Reliable Port
  */
-public class HandShake {
+public class Client {
 
     /**
      * Connect two devices in PAN. First it sends a unreliable package to the

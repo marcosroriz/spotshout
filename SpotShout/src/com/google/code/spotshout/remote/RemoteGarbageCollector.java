@@ -18,4 +18,8 @@ public class RemoteGarbageCollector {
     public static synchronized int getFreePort() {
         return 0;
     }
+
+    public static synchronized void registerPort(int port) {
+
+    }
 }
