@@ -33,7 +33,8 @@ import ksn.io.ObjectOutputStream;
  *
  * Invoke Reply Protocol
  * ----------------------------------------------------------------------------
- * Byte:        Opcode
+ * Byte:        Operation Status
+ * (Opt) Byte:  Exception
  * Int:         The size of a byte vector to serialize the reply.
  * Obj:         Return value (wrapped) -
  *              One of the Serial* objects in com.google.code.spotshout.lang
@@ -74,15 +75,21 @@ public class InvokeReply extends RMIReply {
      */
     protected void readData(DataInput input) throws IOException {
         try {
-            // We have already readed operation for the manual reflection
-            int length = input.readInt();
+            operationStatus = input.readByte();
 
-            byte[] data = new byte[length];
-            input.readFully(data);
+            if (operationStatus != ProtocolOpcode.OPERATION_OK) {
+                exception = input.readByte();
+            } else {
+                // We have already readed operation for the manual reflection
+                int length = input.readInt();
 
-            ByteArrayInputStream bin = new ByteArrayInputStream(data);
-            ObjectInputStream oin = new ObjectInputStream(bin);
-            returnValue = (KSNSerializableInterface) oin.readObject();
+                byte[] data = new byte[length];
+                input.readFully(data);
+
+                ByteArrayInputStream bin = new ByteArrayInputStream(data);
+                ObjectInputStream oin = new ObjectInputStream(bin);
+                returnValue = (KSNSerializableInterface) oin.readObject();
+            }
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -100,9 +107,12 @@ public class InvokeReply extends RMIReply {
         ObjectOutputStream oos = new ObjectOutputStream(bout);
         oos.writeObject(returnValue);
 
-        output.write(getOperation());
-        output.write(bout.size());
-        output.write(bout.toByteArray());
+        if (operationStatus != ProtocolOpcode.OPERATION_OK) {
+            output.write(getException());
+        } else {
+            output.write(bout.size());
+            output.write(bout.toByteArray());
+        }
     }
 
     // Getter

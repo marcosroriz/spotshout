@@ -32,7 +32,6 @@ public class SampleStub extends Stub implements SampleRemIF {
             conn.writeRequest(invReq);
 
             InvokeReply invReply = (InvokeReply) conn.readReply();
-
             conn.close();
 
             return ((SerialInt) invReply.getReturnValue()).getValue();

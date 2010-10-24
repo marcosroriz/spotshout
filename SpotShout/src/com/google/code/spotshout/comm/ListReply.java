@@ -28,7 +28,6 @@ import java.io.IOException;
  *
  * List Reply Protocol
  * ----------------------------------------------------------------------------
- * Byte:        Opcode
  * Byte:        Status
  * Int:         List Size
  * Strings:     Element Name
@@ -66,7 +65,6 @@ public class ListReply extends RMIReply {
      * @see com.google.code.spotshout.comm.RMIOperation#readData(java.io.DataInput)
      */
     protected void readData(DataInput input) throws IOException {
-        // We have already readed operation for the manual reflection
         operationStatus = input.readByte();
         int listSize = input.readInt();
 
@@ -83,9 +81,7 @@ public class ListReply extends RMIReply {
      * @see com.google.code.spotshout.comm.RMIOperation#writeData(java.io.DataOutput)
      */
     protected void writeData(DataOutput output) throws IOException {
-        output.write(getOperation());
         output.write(getOperationStatus());
-
         output.writeInt(getListSize());
 
         for (int i = 0; i < names.length; i++)

@@ -29,7 +29,6 @@ import java.io.IOException;
  *
  * Lookup Reply Protocol
  * ---------------------------------------------------------------
- * Byte:        Opcode
  * Byte:        Status
  * (Opt) Byte:  Exception
  * String:      Remote Reference Address
@@ -115,7 +114,6 @@ public class LookupReply extends RMIReply {
      * @see com.google.code.spotshout.comm.RMIOperation#writeData(java.io.DataOutput)
      */
     protected void writeData(DataOutput output) throws IOException {
-        output.write(getOperation());
         output.write(getOperationStatus());
 
         if (operationStatus != ProtocolOpcode.OPERATION_OK) {

@@ -40,6 +40,7 @@ public abstract class RMIReply extends RMIOperation {
 
     public RMIReply(byte op) {
         operation = op;
+        operationStatus = ProtocolOpcode.OPERATION_OK;
     }
 
     /**

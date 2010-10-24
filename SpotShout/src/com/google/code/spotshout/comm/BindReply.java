@@ -28,7 +28,6 @@ import java.io.IOException;
  *
  * Bind Reply Protocol
  * ----------------------------------------------------------------------------
- * Byte:        Opcode
  * Byte:        Status
  * (Opt) Byte:  Exception
  */
@@ -64,7 +63,6 @@ public class BindReply extends RMIReply {
      * @see com.google.code.spotshout.comm.RMIOperation#writeData(java.io.DataOutput) 
      */
     protected void writeData(DataOutput output) throws IOException {
-        output.write(getOperation());
         output.write(getOperationStatus());
 
         if (operationStatus != ProtocolOpcode.OPERATION_OK)

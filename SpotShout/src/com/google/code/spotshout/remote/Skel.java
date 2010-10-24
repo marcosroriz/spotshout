@@ -29,7 +29,7 @@ public abstract class Skel extends Server {
     /**
      * Remote object that the skell will dispatch the request.
      */
-    private Remote remote;
+    protected Remote remote;
 
     /**
      * Empty constructor for reflection.

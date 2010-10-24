@@ -157,7 +157,7 @@ public class RMIUnicastConnection {
                 throw new RemoteException(RMIUnicastConnection.class,
                         "Unsupported Operation: " + operation);
         }
-
+        
         reply.readData(connection.openDataInputStream());
         return reply;
     }

@@ -66,6 +66,7 @@ public abstract class Server implements Runnable {
                 if (reply != null) {
                     reliableCon.writeReply(reply);
                 }
+                reliableCon.close();
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
@@ -104,15 +105,16 @@ public abstract class Server implements Runnable {
                     int clientPort = dg.readInt();
                     int serverPort = RemoteGarbageCollector.getFreePort();
 
-                    // Initiate reliable connection
-                    Tunnel t = new Tunnel(dg.getAddress(), clientPort);
-
                     // Send server reliable port
                     dg.reset();
                     dg.writeInt(serverPort);
+
+                    // Initiate reliable connection
+                    Tunnel tunnel = new Tunnel(dg.getAddress(), clientPort);
+                    Thread t = new Thread(tunnel);
+                    t.start();
                 } catch (Exception ex) {
                     ex.printStackTrace();
-                } finally {
                     rCon.close();
                     rCon = (RadiogramConnection) Connector.open(uri);
                     dg = (Radiogram) rCon.newDatagram(rCon.getMaximumLength());
