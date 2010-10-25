@@ -9,10 +9,10 @@
     <type>org.netbeans.modules.ant.freeform</type>
     <configuration>
         <general-data xmlns="http://www.netbeans.org/ns/freeform-project/1">
-            <name>SpotShout-OnSpot</name>
+            <name>spotSHOUT-OnSensor</name>
         </general-data>
         <general-data xmlns="http://www.netbeans.org/ns/freeform-project/2">
-            <name>SpotShout-OnSpot</name>
+            <name>spotSHOUT-OnSensor</name>
             <properties>
                 <property-file>${user.home}/.sunspot.properties</property-file>
                 <property-file>build.properties</property-file>

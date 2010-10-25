@@ -101,7 +101,7 @@
     <target depends="init" name="javadoc">
         <delete dir="doc"/>
         <mkdir dir="doc"/>
-        <javadoc author="true" destdir="doc" doctitle="SpotShout -- SPOT-side (Version $(version}" packagenames="com.google.code.spotshout,java.rmi.registry" sourcepath="src" windowtitle="SpotShout -- SPOT-side (Version ${version})">
+        <javadoc author="true" destdir="doc" doctitle="spotSHOUT -- SPOT-side (Version $(version}" packagenames="com.google.code.spotshout,java.rmi.registry" sourcepath="src" windowtitle="spotSHOUT -- SPOT-side (Version ${version})">
 	    <classpath path="${sunspot.classpath}:${sunspot.bootclasspath}"/>
             <header><![CDATA[<b>My Project -- SPOT-side<br>v1.0</b>]]></header>
         </javadoc>
