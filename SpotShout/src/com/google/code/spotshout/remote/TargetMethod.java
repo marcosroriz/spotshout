@@ -41,11 +41,6 @@ public final class TargetMethod implements KSNSerializableInterface {
     private String methodSignature;
 
     /**
-     * Boolean value that identify if the method has a return.
-     */
-    private boolean returnable;
-
-    /**
      * Number of arguments
      */
     int numberArgs;
@@ -62,11 +57,9 @@ public final class TargetMethod implements KSNSerializableInterface {
     public TargetMethod() {
     }
 
-    public TargetMethod(String mName, String mSig, boolean rn,
-            Serializable[] argList) {
+    public TargetMethod(String mName, String mSig, Serializable[] argList) {
         methodName = mName;
         methodSignature = mSig;
-        returnable = rn;
         args = argList;
         numberArgs = args.length;
     }
@@ -74,7 +67,6 @@ public final class TargetMethod implements KSNSerializableInterface {
     public void writeObjectOnSensor(ObjectOutputStream stream) throws IOException {
         stream.writeUTF(methodName);
         stream.writeUTF(methodSignature);
-        stream.writeBoolean(returnable);
         stream.writeInt(numberArgs);
 
         for (int i = 0; i < numberArgs; i++) {
@@ -85,7 +77,6 @@ public final class TargetMethod implements KSNSerializableInterface {
     public void readObjectOnSensor(ObjectInputStream stream) throws IOException, ClassNotFoundException, IllegalAccessException, InstantiationException {
         methodName = stream.readUTF();
         methodSignature = stream.readUTF();
-        returnable = stream.readBoolean();
         numberArgs = stream.readInt();
 
         args = new Serializable[numberArgs];
@@ -93,10 +84,6 @@ public final class TargetMethod implements KSNSerializableInterface {
         for (int i = 0; i < numberArgs; i++) {
             args[i] = (Serializable) stream.readObject();
         }
-    }
-
-    public boolean isReturnable() {
-        return returnable;
     }
 
     public Object[] getArgs() {

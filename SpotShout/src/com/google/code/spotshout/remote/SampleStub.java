@@ -25,13 +25,16 @@ public class SampleStub extends Stub implements SampleRemIF {
             Serializable[] args = new Serializable[2];
             args[0] = new SerialInt(x);
             args[1] = new SerialInt(x);
-            TargetMethod m = new TargetMethod("add", "(II)I", true, args);
+            TargetMethod m = new TargetMethod("add", "(II)I", args);
             InvokeRequest invReq = new InvokeRequest(m);
 
             RMIUnicastConnection conn = RMIUnicastConnection.makeClientConnection(getTargetAddr(), getTargetPort());
             conn.writeRequest(invReq);
 
             InvokeReply invReply = (InvokeReply) conn.readReply();
+
+            if (invReply.exceptionHappened()) throw new RemoteException();
+            
             conn.close();
 
             return ((SerialInt) invReply.getReturnValue()).getValue();
