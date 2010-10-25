@@ -34,6 +34,7 @@ public class StubGenerator {
             pool.insertClassPath(jarName);
 
             // Importing stuff we might need
+            pool.importPackage(pkgName);
             pool.importPackage("java.io");
             pool.importPackage("java.rmi");
             pool.importPackage("com.google.code.spotshout.comm");
@@ -42,8 +43,8 @@ public class StubGenerator {
 
             // Making the class
             cc = pool.makeClass(pkgName + iName + "_Stub");
-
-            // Setting the interface
+            
+            // Getting and Setting the Remote Interface
             CtClass interf = pool.get(pkgName + iName);
             cc.setInterfaces(new CtClass[]{interf});
 
@@ -51,10 +52,13 @@ public class StubGenerator {
             CtClass stubGeneric = pool.get("com.google.code.spotshout.remote.Stub");
             cc.setSuperclass(stubGeneric);
 
+            // Making empty constructor
+            cc.makeClassInitializer();
+
             // Making each method
             CtMethod methods[] = interf.getDeclaredMethods();
             for (int i = 0; i < methods.length; i++) {
-                makeMethod(interf, methods[i]);
+                makeMethod(methods[i]);
             }
 
             cc.writeFile();
@@ -73,7 +77,7 @@ public class StubGenerator {
      * @param m - the method to create the stub
      * @throws NotFoundException - if the method cannot be loaded/founded
      */
-    private void makeMethod(CtClass interf, CtMethod m) throws NotFoundException {
+    private void makeMethod(CtMethod m) {
         try {
             // Access Modifier
             StringBuffer methodText = new StringBuffer("public ");
@@ -116,9 +120,7 @@ public class StubGenerator {
             // Creating TargetMethod
             methodText.append("\n" + tab + tab + "TargetMethod m ");
             methodText.append("= new TargetMethod(");
-            methodText.append("\"" + m.getName() + "\"" + ", \"" + m.getSignature() + "\", "
-                    + hasReturn(m.getReturnType().getName()) + ", args);\n");
-
+            methodText.append("\"" + m.getName() + "\"" + ", \"" + m.getSignature() + "\", args);\n");
 
            // Creating InvokeRequest
             methodText.append(tab + tab + "InvokeRequest invReq = new InvokeRequest(m);\n");
@@ -137,6 +139,10 @@ public class StubGenerator {
                 methodText.append(tab + tab + "InvokeReply invReply ");
                 methodText.append("= (InvokeReply) conn.readReply();\n");
 
+                // Checking for exception
+                methodText.append(tab + tab + "if (invReply.exceptionHappened())");
+                methodText.append(" throw new RemoteException();\n\n");
+
                 // Close connection
                 methodText.append(tab + tab + "conn.close();\n");
 
@@ -154,17 +160,17 @@ public class StubGenerator {
             }
 
             // Exceptions --'
-            methodText.append(tab + "} catch (java.io.IOException ex) {\n");
-            methodText.append(tab + tab + "throw new java.rmi.RemoteException(\"Remote Exception on ");
+            methodText.append(tab + "} catch (IOException ex) {\n");
+            methodText.append(tab + tab + "throw new RemoteException(\"Remote Exception on ");
             methodText.append(m.getName() + "()\");");
-            methodText.append(tab + "\n" + tab + "}\n}\n\n");
+            methodText.append(tab + "\n" + tab + "}\n}\n");
 
             System.out.println("----------------------\n\nImprimindo: \n" + methodText.toString());
             CtMethod ctM = CtNewMethod.make(methodText.toString(), cc);
             cc.addMethod(ctM);
-        } catch (CannotCompileException e) {
+        } catch (Exception ex) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+            ex.printStackTrace();
         }
     }
 

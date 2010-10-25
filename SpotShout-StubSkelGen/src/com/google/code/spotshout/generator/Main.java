@@ -13,6 +13,8 @@ public class Main {
 
     public static void main(String[] args) {
         StubGenerator sg = new StubGenerator();
+        SkelGenerator sk = new SkelGenerator();
         sg.makeClass("SpotShout-0.0.1.jar", "com.google.code.spotshout.remote.", "SampleRemIF");
+        sk.makeClass("SpotShout-0.0.1.jar", "com.google.code.spotshout.remote.", "SampleRemIF");
     }
 }
