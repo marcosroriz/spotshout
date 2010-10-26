@@ -17,7 +17,14 @@
 
 package com.google.code.spotshout.remote;
 
+import com.google.code.spotshout.comm.BindReply;
+import com.google.code.spotshout.comm.BindRequest;
+import com.google.code.spotshout.comm.ListReply;
+import com.google.code.spotshout.comm.ListRequest;
+import com.google.code.spotshout.comm.LookupReply;
+import com.google.code.spotshout.comm.LookupRequest;
 import com.google.code.spotshout.comm.ProtocolOpcode;
+import com.google.code.spotshout.comm.RMIUnicastConnection;
 import com.sun.spot.io.j2me.radiostream.RadiostreamConnection;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -50,15 +57,15 @@ public class SpotRegistry implements Registry {
      */
     private int srvPort;
 
-    /**
-     * Hashtable to locally binded remote objects.
-     */
-    private Hashtable localBindTable;
+    public SpotRegistry(String srvAddress, int srvPort) {
+        ourAddress = System.getProperty("IEEE_ADDRESS");
+        srvAddress = srvAddress;
+        srvPort = srvPort;
+    }
 
     /**
      * (non-javadoc)
      * @see java.rmi.registry.Registry#bind(java.lang.String, java.rmi.Remote)
-     * @TODO rola de passar o nome completo (incluindo pacote) da ref remota?
      */
     public void bind(String name, String remoteFullName, Remote obj)
             throws AlreadyBoundException, NullPointerException, RemoteException {
@@ -68,49 +75,19 @@ public class SpotRegistry implements Registry {
         if (obj == null) throw new NullPointerException("Remote object is null.");
 
         try {
-            RadiostreamConnection con = (RadiostreamConnection) Connector.open(
-                    "tcp://" + srvAddress + ":" + srvPort);
-            DataOutputStream conOut = con.openDataOutputStream();
-            DataInputStream conIn = con.openDataInputStream();
+            RMIUnicastConnection conn = RMIUnicastConnection.makeClientConnection(srvAddress, srvPort);
+            BindRequest request = new BindRequest(name, remoteFullName);
+            conn.writeRequest(request);
+            BindReply reply = (BindReply) conn.readReply();
 
-            /*
-             * Bind Request Protocol
-             * ---------------------------------------------------------------
-             * Byte:        Opcode
-             * UTF:         Address
-             * UTF:         Remote Interface Desired Name
-             * UTF:         Remote Interface Full Qualified Name
-             */
-            conOut.write(ProtocolOpcode.BIND_REQUEST);
-            conOut.writeUTF(ourAddress);
-            conOut.writeUTF(name);
-            conOut.writeUTF(remoteFullName);
+            if (reply.exceptionHappened()) throw new AlreadyBoundException(SpotRegistry.class, "AlreadyBound on Bind");
 
-            /*
-             * Bind Reply Protocol
-             * ---------------------------------------------------------------
-             * Byte:        Opcode
-             * Byte:        Status
-             * (Opt) Byte:  Exception
-             */
-            byte opcode = conIn.readByte();
-            byte status = conIn.readByte();
-
-            if (opcode != ProtocolOpcode.BIND_REPLY) {
-                throw new RemoteException(SpotRegistry.class, "Error binding at nameserver");
-            }
-
-            if (status == ProtocolOpcode.OPERATION_NOK) {
-                byte exception = conIn.readByte();
-                throw new AlreadyBoundException(SpotRegistry.class, "AlreadyBound on Bind");
-            }
-
-            // Binding Locally
-            // @TODO -- fazer cada skel em uma thread, ou uma thread toda pro registro.
+            // Initiating Skel and it's Thread
             Class skelClass = Class.forName(remoteFullName + "_Skel");
             Skel skel = (Skel) skelClass.newInstance();
             skel.setRemote(obj);
-            localBindTable.put(name, skel);
+            (new Thread(skel)).start();
+            
         } catch (InstantiationException ex) {
             ex.printStackTrace();
             throw new RemoteException(SpotRegistry.class, "Skeleton not found");
@@ -131,36 +108,13 @@ public class SpotRegistry implements Registry {
      */
     public String[] list() throws RemoteException {
         try {
-            RadiostreamConnection con = (RadiostreamConnection) Connector.open(
-                    "tcp://" + srvAddress + ":" + srvPort);
-            DataOutputStream conOut = con.openDataOutputStream();
-            DataInputStream conIn = con.openDataInputStream();
 
-            /*
-             * List Request Protocol
-             * ---------------------------------------------------------------
-             * Byte:        Opcode
-             * UTF:         Address
-             */
-            conOut.write(ProtocolOpcode.LIST_REQUEST);
-            conOut.writeUTF(ourAddress);
+            RMIUnicastConnection conn = RMIUnicastConnection.makeClientConnection(srvAddress, srvPort);
+            ListRequest request = new ListRequest();
+            conn.writeRequest(request);
+            ListReply reply = (ListReply) conn.readReply();
 
-            /*
-             * List Reply Protocol
-             * ---------------------------------------------------------------
-             * Byte:        Opcode
-             * Int:         List Size
-             * String:      Elements name
-             */
-            byte opcode = conIn.readByte();
-            int listSize = conIn.readInt();
-            String list[] = new String[listSize];
-
-            for (int i = 0; i < listSize; i++) {
-                list[i] = conIn.readUTF();
-            }
-
-            return list;
+            return reply.getNames();
         } catch (IOException ex) {
             ex.printStackTrace();
             throw new RemoteException(SpotRegistry.class, "Error on list()");
@@ -175,72 +129,33 @@ public class SpotRegistry implements Registry {
             NullPointerException, RemoteException {
 
         // Exceptions
-        if (name == null) {
-            throw new NullPointerException("Lookup name is null.");
-        }
+        if (name == null) throw new NullPointerException("Lookup name is null.");
 
         try {
-            RadiostreamConnection con = (RadiostreamConnection) Connector.open(
-                    "tcp://" + srvAddress + ":" + srvPort);
-            DataOutputStream conOut = con.openDataOutputStream();
-            DataInputStream conIn = con.openDataInputStream();
+            RMIUnicastConnection conn = RMIUnicastConnection.makeClientConnection(srvAddress, srvPort);
+            LookupRequest request = new LookupRequest(name);
+            conn.writeRequest(request);
+            LookupReply reply = (LookupReply) conn.readReply();
 
-            /*
-             * Lookup Request Protocol
-             * ---------------------------------------------------------------
-             * Byte:        Opcode
-             * UTF:         Address
-             * UTF:         Remote Interface Name
-             */
-            conOut.write(ProtocolOpcode.LOOKUP_REQUEST);
-            conOut.writeUTF(ourAddress);
-            conOut.writeUTF(name);
-
-            /*
-             * Lookup Reply Protocol
-             * ---------------------------------------------------------------
-             * Byte:        Opcode
-             * Byte:        Status
-             * (Opt) Byte:  Exception
-             * String:      Remote Reference Address
-             * Int:         Remote Reference Port
-             * String:      Remote Full Qualified Name
-             */
-            byte opcode = conIn.readByte();
-            byte status = conIn.readByte();
-
-            if (opcode != ProtocolOpcode.LOOKUP_REPLY) {
-                throw new RemoteException(SpotRegistry.class, "Error looking up at nameserver");
-            }
-
-            if (status == ProtocolOpcode.OPERATION_NOK) {
-                byte exception = conIn.readByte();
-                throw new NotBoundException(SpotRegistry.class, "NotBound on nameserver");
-            }
-
-            String addr = conIn.readUTF();
-            int port = conIn.readInt();
-            String remoteFullName = conIn.readUTF();
-
-            Class stubClass = Class.forName(remoteFullName + "_Stub");
+            // Creating Stub
+            Class stubClass = Class.forName(reply.getRemoteFullName() + "_Stub");
             Stub stub = (Stub) stubClass.newInstance();
-
-            stub.setTargetAddr(addr);
-            stub.setTargetPort(port);
+            stub.setTargetAddr(reply.getRemoteAddr());
+            stub.setTargetPort(reply.getRemotePort());
 
             return (Remote) stub;
         } catch (InstantiationException ex) {
             ex.printStackTrace();
-            throw new RemoteException(SpotRegistry.class, "Error on Skeleton initialization");
+            throw new RemoteException(SpotRegistry.class, "Error on Stub initialization");
         } catch (IllegalAccessException ex) {
             ex.printStackTrace();
-            throw new RemoteException(SpotRegistry.class, "Skeleton not found");
+            throw new RemoteException(SpotRegistry.class, "Stub not found");
         } catch (ClassNotFoundException ex) {
             ex.printStackTrace();
-            throw new RemoteException(SpotRegistry.class, "Skeleton not found");
+            throw new RemoteException(SpotRegistry.class, "Stub not found");
         } catch (IOException ex) {
             ex.printStackTrace();
-            throw new RemoteException(SpotRegistry.class, "Error on bind()");
+            throw new RemoteException(SpotRegistry.class, "Error on lookup()");
         }
     }
 
@@ -258,18 +173,5 @@ public class SpotRegistry implements Registry {
      */
     public void unbind(String name) throws NotBoundException,
             NullPointerException, RemoteException {
-    }
-
-    /**
-     * This method clean up a remote name returning the package that contains
-     * this interface.
-     * Ex: foo.bar.RemoteInterface
-     * Returns: foo.bar
-     * @param fullName - the name of the remote interface
-     * @return the cleaned up name of the package that holds this interface.
-     */
-    private String getRemotePackage(String fullName) {
-        int lastIdx = fullName.lastIndexOf('.');
-        return fullName.substring(0, lastIdx);
     }
 }

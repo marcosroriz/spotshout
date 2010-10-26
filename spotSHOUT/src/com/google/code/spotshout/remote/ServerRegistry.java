@@ -28,6 +28,12 @@ import com.google.code.spotshout.comm.ProtocolOpcode;
 import com.google.code.spotshout.comm.RMIReply;
 import com.google.code.spotshout.comm.RMIRequest;
 import com.google.code.spotshout.comm.Server;
+import java.io.IOException;
+import java.rmi.AlreadyBoundException;
+import java.rmi.NotBoundException;
+import java.rmi.Remote;
+import java.rmi.RemoteException;
+import java.rmi.registry.Registry;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
@@ -36,7 +42,7 @@ import java.util.Vector;
  * This class represents the Server Registry.
  * @TODO More doc
  */
-public class ServerRegistry extends Server {
+public class ServerRegistry extends Server implements Registry {
 
     /**
      * Registry table
@@ -119,6 +125,73 @@ public class ServerRegistry extends Server {
             default:
         }
         return null;
+    }
+
+    public void bind(String name, String remoteFullName, Remote obj) 
+            throws AlreadyBoundException, NullPointerException, RemoteException {
+            try {BindRequest request = new BindRequest(name, remoteFullName);
+            BindReply reply = (BindReply) bind(request);
+
+            if (reply.exceptionHappened()) {
+                throw new AlreadyBoundException(SpotRegistry.class, "AlreadyBound on Bind");
+            }
+
+            // Initiating Skel and it's Thread
+            Class skelClass = Class.forName(remoteFullName + "_Skel");
+            Skel skel = (Skel) skelClass.newInstance();
+            skel.setRemote(obj);
+            (new Thread(skel)).start();
+            
+        } catch (InstantiationException ex) {
+            ex.printStackTrace();
+            throw new RemoteException(SpotRegistry.class, "Skeleton not found");
+        } catch (IllegalAccessException ex) {
+            ex.printStackTrace();
+        } catch (ClassNotFoundException ex) {
+            ex.printStackTrace();
+            throw new RemoteException(SpotRegistry.class, "Skeleton not found");
+        }
+    }
+
+    public String[] list() throws RemoteException {
+        ListRequest request = new ListRequest();
+        ListReply reply = (ListReply) list(request);
+
+        return reply.getNames();
+    }
+
+    public Remote lookup(String name) throws NotBoundException,
+            NullPointerException, RemoteException {
+        // Exceptions
+        if (name == null) throw new NullPointerException("Lookup name is null.");
+
+        try {
+            LookupRequest request = new LookupRequest(name);
+            LookupReply reply = (LookupReply) lookup(request);
+
+            // Creating Stub
+            Class stubClass = Class.forName(reply.getRemoteFullName() + "_Stub");
+            Stub stub = (Stub) stubClass.newInstance();
+            stub.setTargetAddr(reply.getRemoteAddr());
+            stub.setTargetPort(reply.getRemotePort());
+
+            return (Remote) stub;
+        } catch (InstantiationException ex) {
+            ex.printStackTrace();
+            throw new RemoteException(SpotRegistry.class, "Error on Stub initialization");
+        } catch (IllegalAccessException ex) {
+            ex.printStackTrace();
+            throw new RemoteException(SpotRegistry.class, "Stub not found");
+        } catch (ClassNotFoundException ex) {
+            ex.printStackTrace();
+            throw new RemoteException(SpotRegistry.class, "Stub not found");
+        }
+    }
+
+    public void rebind(String name, String remoteFullName, Remote obj) throws NullPointerException, RemoteException {
+    }
+
+    public void unbind(String name) throws NotBoundException, NullPointerException, RemoteException {
     }
 
 }

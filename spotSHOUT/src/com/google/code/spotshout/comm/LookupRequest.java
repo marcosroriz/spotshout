@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions
  * and limitations under the License.
  */
-
 package com.google.code.spotshout.comm;
 
 import java.io.DataInput;
@@ -52,6 +51,7 @@ public class LookupRequest extends RMIRequest {
     public LookupRequest(String remoteInterfaceName) {
         super(ProtocolOpcode.LOOKUP_REQUEST);
         this.remoteInterfaceName = remoteInterfaceName;
+        this.setRemoteAddress(System.getProperty("IEEE_ADDRESS"));
     }
 
     /**

@@ -25,4 +25,9 @@ public final class LocateRegistry {
 
     private LocateRegistry() {
     }
+
+    public static Registry createRegistry() {
+        //
+        return null;
+    }
 }
