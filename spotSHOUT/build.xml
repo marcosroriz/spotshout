@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><project basedir="." default="help" name="SpotShout">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><project basedir="." default="help" name="spotSHOUT">
 
 <!-- You may freely edit this file. See commented blocks below for -->
 <!-- some examples of how to customize the build. -->
@@ -103,7 +103,7 @@
         <mkdir dir="doc"/>
         <javadoc author="true" destdir="doc" doctitle="spotSHOUT -- SPOT-side (Version $(version}" packagenames="com.google.code.spotshout,java.rmi.registry" sourcepath="src" windowtitle="spotSHOUT -- SPOT-side (Version ${version})">
 	    <classpath path="${sunspot.classpath}:${sunspot.bootclasspath}"/>
-            <header><![CDATA[<b>My Project -- SPOT-side<br>v1.0</b>]]></header>
+            <header><![CDATA[<b>spotSHOUT -- SPOT-side<br>v1.0</b>]]></header>
         </javadoc>
     </target>
 

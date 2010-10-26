@@ -77,4 +77,9 @@ public class LookupRequest extends RMIRequest {
         output.write(getOperation());
         output.writeUTF(remoteInterfaceName);
     }
+
+    // Getter
+    public String getRemoteInterfaceName() {
+        return remoteInterfaceName;
+    }
 }
