@@ -28,7 +28,6 @@ import com.google.code.spotshout.comm.ProtocolOpcode;
 import com.google.code.spotshout.comm.RMIReply;
 import com.google.code.spotshout.comm.RMIRequest;
 import com.google.code.spotshout.comm.Server;
-import java.io.IOException;
 import java.rmi.AlreadyBoundException;
 import java.rmi.NotBoundException;
 import java.rmi.Remote;
