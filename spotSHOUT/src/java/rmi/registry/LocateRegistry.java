@@ -17,17 +17,43 @@
 
 package java.rmi.registry;
 
+import com.google.code.spotshout.RMIProperties;
+import com.google.code.spotshout.remote.ServerRegistry;
+import com.google.code.spotshout.remote.SpotRegistry;
+import java.rmi.RemoteException;
+
 /**
  * LocateRegistry is the class used to obtain/create a reference to a given
  * registry (host + port).
  */
 public final class LocateRegistry {
 
-    private LocateRegistry() {
-    }
+    private static Registry reg;
+    
+    private LocateRegistry() {}
 
     public static Registry createRegistry() {
-        //
+        reg = new ServerRegistry();
+        return reg;
+    }
+
+    public static Registry getRegistry() {
+        //TODO discover :/
         return null;
+    }
+
+    public static Registry getRegistry(int port) throws RemoteException {
+        if (reg == null) throw new RemoteException("No registry running here");
+        else return reg;
+    }
+
+    public static Registry getRegistry(String host) {
+        reg = new SpotRegistry(host, RMIProperties.SERVER_PORT);
+        return reg;
+    }
+
+    public static Registry getRegistry(String host, int port) {
+        reg = new SpotRegistry(host, RMIProperties.SERVER_PORT);
+        return reg;
     }
 }
