@@ -26,8 +26,6 @@ import com.sun.spot.io.j2me.radiogram.Radiogram;
 import com.sun.spot.io.j2me.radiogram.RadiogramConnection;
 import java.io.IOException;
 import java.rmi.RemoteException;
-import java.util.Enumeration;
-import java.util.Vector;
 import javax.microedition.io.Connector;
 import javax.microedition.io.Datagram;
 
@@ -35,28 +33,27 @@ import javax.microedition.io.Datagram;
  * LocateRegistry is the class used to obtain/create a reference to a given
  * registry (host + port).
  */
-public final class LocateRegistry {
+public class LocateRegistry {
 
     private static Registry reg;
     
-    private LocateRegistry() {}
+    protected  LocateRegistry() {}
 
     public static Registry createRegistry() {
         (new Thread(new DiscoverRegistry())).start();
-        /*reg = new ServerRegistry();
+
+        reg = new ServerRegistry();
         (new Thread((ServerRegistry)reg)).start();
-        return reg;*/
-        return null;
+        return reg;
     }
 
-    public static Registry getRegistry() {
-        Vector v = discoverSrv();
-        Enumeration e = v.elements();
-
-        while (e.hasMoreElements()) {
-            System.out.println(e.nextElement());
-        }
-        return null;
+    public static Registry getRegistry() throws IOException {
+        System.out.println("INIT DISCOVERY");
+        String addr = discoverSrv();
+        System.out.println("END DISCOVERY");
+        System.out.println("Endereco dessa porra e" + addr);
+        reg = new SpotRegistry(addr, RMIProperties.RMI_SERVER_PORT);
+        return reg;
     }
 
     public static Registry getRegistry(int port) throws RemoteException {
@@ -74,44 +71,48 @@ public final class LocateRegistry {
         return reg;
     }
 
-    private static Vector discoverSrv() {
+    private static String discoverSrv() throws IOException {
         RadiogramConnection rCon = null;
         Datagram dg = null;
-        Vector v = new Vector(2);
-        try {
-            String uri = RMIProperties.UNRELIABLE_PROTOCOL + "://broadcast:" + RMIProperties.UNRELIABLE_DISCOVER_HOST_PORT;
-            rCon = (RadiogramConnection) Connector.open(uri);
-            dg = rCon.newDatagram(50);  // only sending 12 bytes of data
-            dg.reset();
+        String serverAddr = null;
+        int numberTry = 0;
+        
+        while (numberTry < RMIProperties.NUMBER_OF_TRIES) {
+            try {
+                String uri = RMIProperties.UNRELIABLE_PROTOCOL + "://broadcast:" + RMIProperties.UNRELIABLE_DISCOVER_HOST_PORT;
+                rCon = (RadiogramConnection) Connector.open(uri);
+                dg = rCon.newDatagram(rCon.getMaximumLength());
+                dg.reset();
 
-            dg.write(ProtocolOpcode.HOST_ADDR_REQUEST);
-            rCon.send(dg);
+                dg.write(ProtocolOpcode.HOST_ADDR_REQUEST);
+                rCon.send(dg);
 
-            // Closing the connection
-            dg.reset();
-            rCon.close();
+                // Closing the connection
+                dg.reset();
+                rCon.close();
 
-            // Waiting for answer
-            uri = RMIProperties.UNRELIABLE_PROTOCOL + "://:" + RMIProperties.UNRELIABLE_DISCOVER_CLIENT_PORT;
-            rCon = (RadiogramConnection) Connector.open(uri);
-            dg = (Radiogram) rCon.newDatagram(rCon.getMaximumLength());
-            rCon.setTimeout(RMIProperties.TIMEOUT);
+                // Waiting for answer
+                uri = RMIProperties.UNRELIABLE_PROTOCOL + "://:" + RMIProperties.UNRELIABLE_DISCOVER_CLIENT_PORT;
+                rCon = (RadiogramConnection) Connector.open(uri);
+                dg = (Radiogram) rCon.newDatagram(rCon.getMaximumLength());
+                rCon.setTimeout(RMIProperties.TIMEOUT);
 
-            // Reading protocol answer
-            rCon.receive(dg);
+                // Reading protocol answer
+                rCon.receive(dg);
+                serverAddr = dg.readUTF();
 
-            String serverAddr = dg.readUTF();
-            int serverPort = dg.readInt();
-
-            // Closing Unreliable connection
-            rCon.close();
-            dg.reset();
-
-            v.addElement(serverAddr);
-            v.addElement(new Integer(serverPort));
-        } catch (IOException ex) {
-            ex.printStackTrace();
+                // Closing Unreliable connection
+                rCon.close();
+                dg.reset();
+                break;
+            } catch (IOException ex) {
+                numberTry++;
+                rCon.close();
+                dg.reset();
+                if (numberTry == RMIProperties.NUMBER_OF_TRIES) throw new IOException();
+            }
         }
-        return v;
+        System.out.println("NUMBER RETRY ON DISCOVERY : " + numberTry);
+        return serverAddr;
     }
 }

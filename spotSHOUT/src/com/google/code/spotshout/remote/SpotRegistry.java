@@ -55,8 +55,8 @@ public class SpotRegistry implements Registry {
 
     public SpotRegistry(String srvAddress, int srvPort) {
         ourAddress = System.getProperty("IEEE_ADDRESS");
-        srvAddress = srvAddress;
-        srvPort = srvPort;
+        this.srvAddress = srvAddress;
+        this.srvPort = srvPort;
     }
 
     /**
@@ -104,13 +104,16 @@ public class SpotRegistry implements Registry {
      * @see java.rmi.registry.Registry#list() 
      */
     public String[] list() throws RemoteException {
+        System.out.println("INITIATED LIST REQUEST");
         try {
-
             RMIUnicastConnection conn = RMIUnicastConnection.
                     makeClientConnection(ProtocolOpcode.REGISTRY_REQUEST, srvAddress, srvPort);
             ListRequest request = new ListRequest();
             conn.writeRequest(request);
-            ListReply reply = (ListReply) conn.readReply();
+                    System.out.println("ENDED LIST REQUEST");
+        System.out.println("WAITING LIST REPLY");
+        ListReply reply = (ListReply) conn.readReply();
+        System.out.println("ENDED LIST REPLY");
 
             return reply.getNames();
         } catch (IOException ex) {

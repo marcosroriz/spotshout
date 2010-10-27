@@ -78,6 +78,7 @@ public class ServerRegistry extends Server implements Registry {
     }
 
     private RMIReply list(ListRequest request) {
+        System.out.println("TREATING LIST REQUEST");
         String[] names = new String[registryTable.size()];
         Enumeration e = registryTable.keys();
 
@@ -88,6 +89,7 @@ public class ServerRegistry extends Server implements Registry {
         
         ListReply reply = new ListReply(names);
         reply.setOperationStatus(ProtocolOpcode.OPERATION_OK);
+        System.out.println("FINISHED TREATING LIST REQUEST");
         return reply;
     }
 

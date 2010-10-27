@@ -63,7 +63,7 @@ public class RMIUnicastConnection {
             int port) throws IOException {
         RadiostreamConnection conn = (RadiostreamConnection)
                 Client.connect(op, addr, port);
-        conn.setTimeout(RMIProperties.TIMEOUT);
+        //conn.setTimeout(RMIProperties.TIMEOUT);
         return new RMIUnicastConnection(conn);
     }
 
@@ -75,10 +75,11 @@ public class RMIUnicastConnection {
      */
     public static RMIUnicastConnection makeServerConnection(String addr, int port)
             throws IOException {
+        System.out.println("Start Making server connection on:" + addr + ":" + port);
         String uri = RMIProperties.RELIABLE_PROTOCOL + "://" + addr + ":" + port;
-        RadiostreamConnection conn = (RadiostreamConnection)
-                Connector.open(uri, Connector.READ_WRITE, true);
-        conn.setTimeout(RMIProperties.TIMEOUT);
+        RadiostreamConnection conn = (RadiostreamConnection) Connector.open(uri);
+        System.out.println("Ended server connection");
+        //conn.setTimeout(RMIProperties.TIMEOUT);
         return new RMIUnicastConnection(conn);
     }
 
@@ -96,8 +97,10 @@ public class RMIUnicastConnection {
      * @throws IOException - on a given remote error (timeout) or data corruption.
      */
     public RMIRequest readRequest() throws IOException {
-        byte operation = readOpcode(connection.openDataInputStream());
-
+        System.out.println("LEts try to read the mother fucking operation header");
+        DataInput di = connection.openDataInputStream();
+        byte operation = readOpcode(di);
+        System.out.println("OPeration of this shit: " + operation);
         switch (operation) {
             case ProtocolOpcode.BIND_REQUEST:
                 request = new BindRequest();
@@ -122,8 +125,10 @@ public class RMIUnicastConnection {
                         "Unsupported operation: " + operation);
         }
 
+        System.out.println("Start reading request data");
         request.setOperation(operation);
-        request.readData(connection.openDataInputStream());
+        request.readData(di);
+        System.out.println("Endede reading request data");
         return request;
     }
 
@@ -133,6 +138,7 @@ public class RMIUnicastConnection {
      * @throws IOException  - on a given remote error (timeout) or data corruption.
      */
     public RMIReply readReply() throws IOException {
+        System.out.println("LEts identify the fucking operation");
         byte operation = request.getOperation();
 
         switch (operation) {
@@ -158,8 +164,10 @@ public class RMIUnicastConnection {
                 throw new RemoteException(RMIUnicastConnection.class,
                         "Unsupported Operation: " + operation);
         }
-        
+
+        System.out.println("Start reading data back beattch");
         reply.readData(connection.openDataInputStream());
+        System.out.println("Ended reading data back beattch");
         return reply;
     }
 
@@ -197,5 +205,9 @@ public class RMIUnicastConnection {
      */
     private byte readOpcode(DataInput input) throws IOException {
         return input.readByte();
+    }
+
+    public String toString() {
+        return "Local port of this shit " + connection.getLocalPort();
     }
 }

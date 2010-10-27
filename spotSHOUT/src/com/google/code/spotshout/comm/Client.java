@@ -59,56 +59,89 @@ public class Client {
      */
     public static Connection connect(byte operation, String targetAddr, int targetPort)
             throws IOException {
-        String uri = RMIProperties.UNRELIABLE_PROTOCOL + "://" + targetAddr + ":" + targetPort;
-        RadiogramConnection rCon = (RadiogramConnection)
-                Connector.open(uri, Connector.READ_WRITE, true);
-        
-        rCon.setTimeout(RMIProperties.TIMEOUT);
-        Datagram dg = rCon.newDatagram(rCon.getMaximumLength());
-        dg.reset();
+        RadiogramConnection rCon = null;
+        Datagram dg = null;
+        Connection connect = null;
+        int numberTry = 0;
 
-        // Writting protocol data
-        // We're going to reuse the port for unreliable and then reliable connection.
-        int port = RemoteGarbageCollector.getFreePort();
-        dg.write(operation);
-        dg.writeInt(port);
-        rCon.send(dg);
+        while (numberTry < RMIProperties.NUMBER_OF_TRIES) {
+            try {
+                String uri = RMIProperties.UNRELIABLE_PROTOCOL + "://" + targetAddr + ":" + targetPort;
+                rCon = (RadiogramConnection) Connector.open(uri, Connector.READ_WRITE, true);
 
-        // Closing the Connection
-        dg.reset();
-        rCon.close();
+                System.out.println("TOU AKI?");
 
-        // Waiting for unreliable Reply
-        int clientUnreliablePort = 0;
-        switch (operation) {
-            case ProtocolOpcode.HOST_ADDR_REQUEST:
-                clientUnreliablePort = RMIProperties.UNRELIABLE_DISCOVER_CLIENT_PORT;
+                rCon.setTimeout(RMIProperties.TIMEOUT);
+                dg = rCon.newDatagram(rCon.getMaximumLength());
+                dg.reset();
+
+                System.out.println("TOU AKI?v2");
+
+                // Writting protocol data
+                // We're going to reuse the port for unreliable and then reliable connection.
+                int port = RemoteGarbageCollector.getFreePort();
+                dg.write(operation);
+                dg.writeInt(port);
+                rCon.send(dg);
+
+                System.out.println("TOU AKI?v3");
+
+                // Closing the Connection
+                dg.reset();
+                rCon.close();
+
+                // Waiting for unreliable Reply
+                int clientUnreliablePort = 0;
+                switch (operation) {
+                    case ProtocolOpcode.HOST_ADDR_REQUEST:
+                        clientUnreliablePort = RMIProperties.UNRELIABLE_DISCOVER_CLIENT_PORT;
+                        break;
+                    case ProtocolOpcode.INVOKE_REQUEST:
+                        clientUnreliablePort = RMIProperties.UNRELIABLE_INVOKE_CLIENT_PORT;
+                        break;
+                    case ProtocolOpcode.REGISTRY_REQUEST:
+                        clientUnreliablePort = RMIProperties.UNRELIABLE_REGISTRY_CLIENT_PORT;
+                        break;
+                    default:
+                        clientUnreliablePort = RMIProperties.UNRELIABLE_REGISTRY_CLIENT_PORT;
+                }
+
+                System.out.println("TOU AKI?v4");
+
+                // Waiting for answer
+                uri = RMIProperties.UNRELIABLE_PROTOCOL + "://:" + clientUnreliablePort;
+                rCon = (RadiogramConnection) Connector.open(uri);
+                dg = (Radiogram) rCon.newDatagram(rCon.getMaximumLength());
+                rCon.setTimeout(RMIProperties.TIMEOUT);
+
+                // Reading protocol answer
+                rCon.receive(dg);
+                int serverReliablePort = dg.readInt();
+                System.out.println("TOU AKI?v5");
+
+                // Closing Unreliable connection
+                rCon.close();
+
+                // Opening and returning Reliable Connection
+                uri = RMIProperties.RELIABLE_PROTOCOL + "://" + targetAddr + ":" + serverReliablePort;
+                connect = Connector.open(uri);
+                System.out.println("Making RELIABLE CLIENT CONNECTION WITH SERVER ON:");
+                System.out.println(targetAddr + ":" + serverReliablePort);
                 break;
-            case ProtocolOpcode.INVOKE_REQUEST:
-                clientUnreliablePort = RMIProperties.UNRELIABLE_INVOKE_CLIENT_PORT;
-                break;
-            case ProtocolOpcode.REGISTRY_REQUEST:
-                clientUnreliablePort = RMIProperties.UNRELIABLE_REGISTRY_CLIENT_PORT;
-                break;
-            default:
-                clientUnreliablePort = RMIProperties.UNRELIABLE_REGISTRY_CLIENT_PORT;
+            } catch (Exception e) {
+                try {
+                    numberTry++;
+                    rCon.close();
+                    dg.reset();
+                    if (numberTry == RMIProperties.NUMBER_OF_TRIES) {
+                        throw new IOException();
+                    }
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }
         }
-
-        // Waiting for answer
-        uri = RMIProperties.UNRELIABLE_PROTOCOL + "://:" + clientUnreliablePort;
-        rCon = (RadiogramConnection) Connector.open(uri);
-        dg = (Radiogram) rCon.newDatagram(rCon.getMaximumLength());
-        rCon.setTimeout(RMIProperties.TIMEOUT);
-
-        // Reading protocol answer
-        rCon.receive(dg);
-        int serverReliablePort = dg.readInt();
-
-        // Closing Unreliable connection
-        rCon.close();
-
-        // Opening and returning Reliable Connection
-        uri = RMIProperties.RELIABLE_PROTOCOL + "://" + targetAddr + ":" + serverReliablePort;
-        return Connector.open(uri, Connector.READ_WRITE, true);
+        System.out.println("NUMBER OF RETRY ON CLIENT CONNECTION: " + numberTry);
+        return connect;
     }
 }
