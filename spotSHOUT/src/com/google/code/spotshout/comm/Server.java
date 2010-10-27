@@ -22,6 +22,7 @@ import com.sun.spot.io.j2me.radiogram.Radiogram;
 import com.sun.spot.io.j2me.radiogram.RadiogramConnection;
 import java.io.IOException;
 import javax.microedition.io.Connector;
+import javax.microedition.io.Datagram;
 
 /**
  * This class represents the server handshake to make a reliable connection
@@ -42,6 +43,7 @@ import javax.microedition.io.Connector;
  *
  * Server HandShake Reply
  * ----------------------------------------------------------------------------
+ * (Opt)String: Server Address
  * INT:         Server Reliable Port
  */
 public abstract class Server implements Runnable {
@@ -72,20 +74,77 @@ public abstract class Server implements Runnable {
             }
         }
     }
+
+    /**
+     * This class sends unreliable reply with the objective to obtain a reliable
+     * connection.
+     */
+    public class UnreliableReply implements Runnable {
+
+        String clientAddr;
+        int port;
+        int unreliablePort;
+
+        public UnreliableReply(Datagram dg, int serverPort, int unrPort)
+                throws IOException {
+            clientAddr = dg.readUTF();
+            port = serverPort;
+            unreliablePort = unrPort;
+        }
+
+        public void run() {
+            RadiogramConnection rCon = null;
+            try {
+                String uri = RMIProperties.UNRELIABLE_PROTOCOL + "://"
+                        + clientAddr + ":" + unreliablePort;
+
+                rCon = (RadiogramConnection) Connector.open(uri);
+                rCon.setTimeout(RMIProperties.TIMEOUT);
+                Radiogram dg = (Radiogram) rCon.newDatagram(rCon.getMaximumLength());
+
+                dg.reset();
+                if (discover) dg.writeUTF(srvAddr);
+                dg.writeInt(port);
+                rCon.send(dg);
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    rCon.close();
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        }
+    }
     
     /**
      * The port which this Server will listen (non reliable), to establish
      * reliable connections.
      */
-    private int port;
+    protected int port;
+
+    /**
+     * Our server address.
+     */
+    protected String srvAddr;
+
+    /**
+     * Is this a discover registry ??
+     */
+    protected boolean discover;
     
+    public Server() {
+        port = RMIProperties.RMI_SERVER_PORT;
+        srvAddr = System.getProperty("IEEE_ADDRESS");
+    }
+
     /*
      * Process a receiving call/invoke RMI request.
      * @param request - the request meta-data and it's arguments.
      * @return - the RMI Reply object, if the request doesn't have a return, i.e.
      *           void, return null
      */
-
     public abstract RMIReply service(RMIRequest request);
 
     /**
@@ -93,7 +152,7 @@ public abstract class Server implements Runnable {
      */
     public void run() {
         try {
-            String uri = RMIProperties.UNRELIABLE_PROTOCOL + "://" + getPort();
+            String uri = RMIProperties.UNRELIABLE_PROTOCOL + "://:" + port;
             RadiogramConnection rCon = (RadiogramConnection) Connector.open(uri);
             Radiogram dg = (Radiogram) rCon.newDatagram(rCon.getMaximumLength());
 
@@ -102,35 +161,50 @@ public abstract class Server implements Runnable {
                 try {
                     // Receive Unreliable Request
                     rCon.receive(dg);
-                    int clientPort = dg.readInt();
-                    int serverPort = RemoteGarbageCollector.getFreePort();
+                    byte operation = dg.readByte();
+                    int clientReliablePort = dg.readInt();
 
-                    // Send server reliable port
-                    dg.reset();
-                    dg.writeInt(serverPort);
+                    int clientUnreliablePort = 0;
+                    switch (operation) {
+                        case ProtocolOpcode.HOST_ADDR_REQUEST:
+                            clientUnreliablePort = RMIProperties.UNRELIABLE_DISCOVER_CLIENT_PORT;
+                            break;
+                        case ProtocolOpcode.INVOKE_REQUEST:
+                            clientUnreliablePort = RMIProperties.UNRELIABLE_INVOKE_CLIENT_PORT;
+                            break;
+                        case ProtocolOpcode.REGISTRY_REQUEST:
+                            clientUnreliablePort = RMIProperties.UNRELIABLE_REGISTRY_CLIENT_PORT;
+                            break;
+                        default:
+                            clientUnreliablePort = RMIProperties.UNRELIABLE_REGISTRY_CLIENT_PORT;
+                    }
 
-                    // Initiate reliable connection
-                    Tunnel tunnel = new Tunnel(dg.getAddress(), clientPort);
-                    Thread t = new Thread(tunnel);
-                    t.start();
+                    if (discover) {
+                        // Send unreliable reply
+                        UnreliableReply ur = new UnreliableReply(dg, 0, clientUnreliablePort);
+                        (new Thread(ur)).start();
+                    } else {
+                        int serverPort = RemoteGarbageCollector.getFreePort();
+
+                        // Initiate reliable connection on this point
+                        Tunnel tunnel = new Tunnel(dg.getAddress(), clientReliablePort);
+                        (new Thread(tunnel)).start();
+
+                        // Send unreliable reply
+                        UnreliableReply ur = new UnreliableReply(dg, serverPort, clientUnreliablePort);
+                        (new Thread(ur)).start();
+                    }
                 } catch (Exception ex) {
                     ex.printStackTrace();
                     rCon.close();
                     rCon = (RadiogramConnection) Connector.open(uri);
                     dg = (Radiogram) rCon.newDatagram(rCon.getMaximumLength());
+                } finally {
+                    rCon.close();
                 }
             }
         } catch (IOException ex) {
             ex.printStackTrace();
         }
-    }
-
-    // Sets and Getters
-    public int getPort() {
-        return port;
-    }
-
-    public void setPort(int port) {
-        this.port = port;
     }
 }

@@ -54,14 +54,15 @@ public class RMIUnicastConnection {
 
     /**
      * Abstract a unicast connection between two points (Spot-Spot) or (Spot-Registry).
+     * @param op - the operation.
      * @param addr - the server address (MAC).
      * @param port - the server port.
      * @throws IOException - on a given remote error (timeout) or data corruption.
      */
-    public static RMIUnicastConnection makeClientConnection(String addr, int port)
-            throws IOException {
+    public static RMIUnicastConnection makeClientConnection(byte op, String addr,
+            int port) throws IOException {
         RadiostreamConnection conn = (RadiostreamConnection)
-                Client.connect(ProtocolOpcode.REGISTRY_REQUEST, addr, port);
+                Client.connect(op, addr, port);
         conn.setTimeout(RMIProperties.TIMEOUT);
         return new RMIUnicastConnection(conn);
     }

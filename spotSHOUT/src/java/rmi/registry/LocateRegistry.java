@@ -18,8 +18,11 @@
 package java.rmi.registry;
 
 import com.google.code.spotshout.RMIProperties;
+import com.google.code.spotshout.comm.ProtocolOpcode;
+import com.google.code.spotshout.remote.DiscoverRegistry;
 import com.google.code.spotshout.remote.ServerRegistry;
 import com.google.code.spotshout.remote.SpotRegistry;
+import com.sun.spot.io.j2me.radiogram.Radiogram;
 import com.sun.spot.io.j2me.radiogram.RadiogramConnection;
 import java.io.IOException;
 import java.rmi.RemoteException;
@@ -39,9 +42,11 @@ public final class LocateRegistry {
     private LocateRegistry() {}
 
     public static Registry createRegistry() {
-        reg = new ServerRegistry();
+        (new Thread(new DiscoverRegistry())).start();
+        /*reg = new ServerRegistry();
         (new Thread((ServerRegistry)reg)).start();
-        return reg;
+        return reg;*/
+        return null;
     }
 
     public static Registry getRegistry() {
@@ -60,12 +65,12 @@ public final class LocateRegistry {
     }
 
     public static Registry getRegistry(String host) {
-        reg = new SpotRegistry(host, RMIProperties.SERVER_PORT);
+        reg = new SpotRegistry(host, RMIProperties.RMI_SERVER_PORT);
         return reg;
     }
 
     public static Registry getRegistry(String host, int port) {
-        reg = new SpotRegistry(host, RMIProperties.SERVER_PORT);
+        reg = new SpotRegistry(host, RMIProperties.RMI_SERVER_PORT);
         return reg;
     }
 
@@ -74,20 +79,36 @@ public final class LocateRegistry {
         Datagram dg = null;
         Vector v = new Vector(2);
         try {
-            String uri = RMIProperties.UNRELIABLE_PROTOCOL + "://broadcast:" + RMIProperties.DISCOVER_PORT;
+            String uri = RMIProperties.UNRELIABLE_PROTOCOL + "://broadcast:" + RMIProperties.UNRELIABLE_DISCOVER_HOST_PORT;
             rCon = (RadiogramConnection) Connector.open(uri);
             dg = rCon.newDatagram(50);  // only sending 12 bytes of data
             dg.reset();
 
-            dg.writeUTF(System.getProperty("IEEE_ADDRESS"));
+            dg.write(ProtocolOpcode.HOST_ADDR_REQUEST);
             rCon.send(dg);
 
-            // Reading stuff here ;)
+            // Closing the connection
+            dg.reset();
+            rCon.close();
+
+            // Waiting for answer
+            uri = RMIProperties.UNRELIABLE_PROTOCOL + "://:" + RMIProperties.UNRELIABLE_DISCOVER_CLIENT_PORT;
+            rCon = (RadiogramConnection) Connector.open(uri);
+            dg = (Radiogram) rCon.newDatagram(rCon.getMaximumLength());
+            rCon.setTimeout(RMIProperties.TIMEOUT);
+
+            // Reading protocol answer
+            rCon.receive(dg);
+
+            String serverAddr = dg.readUTF();
+            int serverPort = dg.readInt();
+
+            // Closing Unreliable connection
+            rCon.close();
             dg.reset();
 
-            rCon.receive(dg);
-            v.addElement(dg.readUTF());
-            v.addElement(new Integer(dg.readInt()));
+            v.addElement(serverAddr);
+            v.addElement(new Integer(serverPort));
         } catch (IOException ex) {
             ex.printStackTrace();
         }

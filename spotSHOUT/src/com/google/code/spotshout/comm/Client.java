@@ -19,6 +19,7 @@ package com.google.code.spotshout.comm;
 
 import com.google.code.spotshout.RMIProperties;
 import com.google.code.spotshout.remote.RemoteGarbageCollector;
+import com.sun.spot.io.j2me.radiogram.Radiogram;
 import com.sun.spot.io.j2me.radiogram.RadiogramConnection;
 import java.io.IOException;
 import javax.microedition.io.Connection;
@@ -63,7 +64,7 @@ public class Client {
                 Connector.open(uri, Connector.READ_WRITE, true);
         
         rCon.setTimeout(RMIProperties.TIMEOUT);
-        Datagram dg = rCon.newDatagram(150);
+        Datagram dg = rCon.newDatagram(rCon.getMaximumLength());
         dg.reset();
 
         // Writting protocol data
@@ -72,6 +73,32 @@ public class Client {
         dg.write(operation);
         dg.writeInt(port);
         rCon.send(dg);
+
+        // Closing the Connection
+        dg.reset();
+        rCon.close();
+
+        // Waiting for unreliable Reply
+        int clientUnreliablePort = 0;
+        switch (operation) {
+            case ProtocolOpcode.HOST_ADDR_REQUEST:
+                clientUnreliablePort = RMIProperties.UNRELIABLE_DISCOVER_CLIENT_PORT;
+                break;
+            case ProtocolOpcode.INVOKE_REQUEST:
+                clientUnreliablePort = RMIProperties.UNRELIABLE_INVOKE_CLIENT_PORT;
+                break;
+            case ProtocolOpcode.REGISTRY_REQUEST:
+                clientUnreliablePort = RMIProperties.UNRELIABLE_REGISTRY_CLIENT_PORT;
+                break;
+            default:
+                clientUnreliablePort = RMIProperties.UNRELIABLE_REGISTRY_CLIENT_PORT;
+        }
+
+        // Waiting for answer
+        uri = RMIProperties.UNRELIABLE_PROTOCOL + "://:" + clientUnreliablePort;
+        rCon = (RadiogramConnection) Connector.open(uri);
+        dg = (Radiogram) rCon.newDatagram(rCon.getMaximumLength());
+        rCon.setTimeout(RMIProperties.TIMEOUT);
 
         // Reading protocol answer
         rCon.receive(dg);

@@ -52,7 +52,7 @@ public class ServerRegistry extends Server implements Registry {
     private Hashtable registryTable;
 
     public ServerRegistry() {
-        setPort(RMIProperties.SERVER_PORT);
+        port = RMIProperties.RMI_SERVER_PORT;
         registryTable = new Hashtable();
     }
 

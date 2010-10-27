@@ -25,9 +25,6 @@ import com.google.code.spotshout.comm.LookupReply;
 import com.google.code.spotshout.comm.LookupRequest;
 import com.google.code.spotshout.comm.ProtocolOpcode;
 import com.google.code.spotshout.comm.RMIUnicastConnection;
-import com.sun.spot.io.j2me.radiostream.RadiostreamConnection;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.rmi.AlreadyBoundException;
 import java.rmi.NotBoundException;
@@ -35,7 +32,6 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.rmi.registry.Registry;
 import java.util.Hashtable;
-import javax.microedition.io.Connector;
 
 /**
  * Implements the RMI Registry for the Spot side.
@@ -75,7 +71,8 @@ public class SpotRegistry implements Registry {
         if (obj == null) throw new NullPointerException("Remote object is null.");
 
         try {
-            RMIUnicastConnection conn = RMIUnicastConnection.makeClientConnection(srvAddress, srvPort);
+            RMIUnicastConnection conn = RMIUnicastConnection.
+                    makeClientConnection(ProtocolOpcode.REGISTRY_REQUEST, srvAddress, srvPort);
             BindRequest request = new BindRequest(name, remoteFullName);
             conn.writeRequest(request);
             BindReply reply = (BindReply) conn.readReply();
@@ -109,7 +106,8 @@ public class SpotRegistry implements Registry {
     public String[] list() throws RemoteException {
         try {
 
-            RMIUnicastConnection conn = RMIUnicastConnection.makeClientConnection(srvAddress, srvPort);
+            RMIUnicastConnection conn = RMIUnicastConnection.
+                    makeClientConnection(ProtocolOpcode.REGISTRY_REQUEST, srvAddress, srvPort);
             ListRequest request = new ListRequest();
             conn.writeRequest(request);
             ListReply reply = (ListReply) conn.readReply();
@@ -132,7 +130,8 @@ public class SpotRegistry implements Registry {
         if (name == null) throw new NullPointerException("Lookup name is null.");
 
         try {
-            RMIUnicastConnection conn = RMIUnicastConnection.makeClientConnection(srvAddress, srvPort);
+            RMIUnicastConnection conn = RMIUnicastConnection.
+                    makeClientConnection(ProtocolOpcode.REGISTRY_REQUEST, srvAddress, srvPort);
             LookupRequest request = new LookupRequest(name);
             conn.writeRequest(request);
             LookupReply reply = (LookupReply) conn.readReply();
