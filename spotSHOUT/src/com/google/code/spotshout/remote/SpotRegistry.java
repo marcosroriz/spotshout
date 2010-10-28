@@ -26,11 +26,11 @@ import com.google.code.spotshout.comm.LookupRequest;
 import com.google.code.spotshout.comm.ProtocolOpcode;
 import com.google.code.spotshout.comm.RMIUnicastConnection;
 import java.io.IOException;
-import java.rmi.AlreadyBoundException;
-import java.rmi.NotBoundException;
-import java.rmi.Remote;
-import java.rmi.RemoteException;
-import java.rmi.registry.Registry;
+import spot.rmi.AlreadyBoundException;
+import spot.rmi.NotBoundException;
+import spot.rmi.Remote;
+import spot.rmi.RemoteException;
+import spot.rmi.registry.Registry;
 import java.util.Hashtable;
 
 /**
@@ -83,8 +83,8 @@ public class SpotRegistry implements Registry {
             Class skelClass = Class.forName(remoteFullName + "_Skel");
             Skel skel = (Skel) skelClass.newInstance();
             skel.setRemote(obj);
+            skel.setPort(request.getSkelPort());
             (new Thread(skel)).start();
-            
         } catch (InstantiationException ex) {
             ex.printStackTrace();
             throw new RemoteException(SpotRegistry.class, "Skeleton not found");
@@ -140,6 +140,7 @@ public class SpotRegistry implements Registry {
             LookupReply reply = (LookupReply) conn.readReply();
 
             // Creating Stub
+            System.out.println("Stub name : " + reply.getRemoteFullName() + "_Stub");
             Class stubClass = Class.forName(reply.getRemoteFullName() + "_Stub");
             Stub stub = (Stub) stubClass.newInstance();
             stub.setTargetAddr(reply.getRemoteAddr());

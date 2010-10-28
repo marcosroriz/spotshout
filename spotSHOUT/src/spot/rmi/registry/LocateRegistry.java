@@ -103,7 +103,7 @@ public class LocateRegistry {
                 // Waiting for answer
                 uri = RMIProperties.UNRELIABLE_PROTOCOL + "://:" + RMIProperties.UNRELIABLE_DISCOVER_CLIENT_PORT;
                 rCon = (RadiogramConnection) Connector.open(uri);
-                dg = (Radiogram) rCon.newDatagram(rCon.getMaximumLength());
+                dg = (Radiogram) rCon.newDatagram(40);
                 rCon.setTimeout(RMIProperties.TIMEOUT);
 
                 // Reading protocol answer

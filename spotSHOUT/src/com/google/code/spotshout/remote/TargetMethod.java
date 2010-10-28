@@ -31,14 +31,9 @@ import ksn.io.ObjectOutputStream;
 public final class TargetMethod implements KSNSerializableInterface {
 
     /**
-     * Method Name
+     * The method ordered number (generated in stubs/skel).
      */
-    private String methodName;
-
-    /**
-     * Method Signature (According to JVM Spec).
-     */
-    private String methodSignature;
+    private int methodNumber;
 
     /**
      * Number of arguments
@@ -57,16 +52,14 @@ public final class TargetMethod implements KSNSerializableInterface {
     public TargetMethod() {
     }
 
-    public TargetMethod(String mName, String mSig, Serializable[] argList) {
-        methodName = mName;
-        methodSignature = mSig;
+    public TargetMethod(int mNumber, Serializable[] argList) {
+        methodNumber = mNumber;
         args = argList;
         numberArgs = args.length;
     }
 
     public void writeObjectOnSensor(ObjectOutputStream stream) throws IOException {
-        stream.writeUTF(methodName);
-        stream.writeUTF(methodSignature);
+        stream.writeInt(methodNumber);
         stream.writeInt(numberArgs);
 
         for (int i = 0; i < numberArgs; i++) {
@@ -75,8 +68,7 @@ public final class TargetMethod implements KSNSerializableInterface {
     }
 
     public void readObjectOnSensor(ObjectInputStream stream) throws IOException, ClassNotFoundException, IllegalAccessException, InstantiationException {
-        methodName = stream.readUTF();
-        methodSignature = stream.readUTF();
+        methodNumber = stream.readInt();
         numberArgs = stream.readInt();
 
         args = new Serializable[numberArgs];
@@ -94,11 +86,7 @@ public final class TargetMethod implements KSNSerializableInterface {
         return numberArgs;
     }
 
-    public String getMethodName() {
-        return methodName;
-    }
-
-    public String getMethodSignature() {
-        return methodSignature;
+    public int getMethodNumber() {
+        return methodNumber;
     }
 }

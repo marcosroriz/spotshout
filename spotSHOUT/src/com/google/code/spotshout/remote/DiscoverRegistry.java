@@ -21,10 +21,6 @@ import com.google.code.spotshout.RMIProperties;
 import com.google.code.spotshout.comm.RMIReply;
 import com.google.code.spotshout.comm.RMIRequest;
 import com.google.code.spotshout.comm.Server;
-import com.sun.spot.io.j2me.radiogram.Radiogram;
-import com.sun.spot.io.j2me.radiogram.RadiogramConnection;
-import java.io.IOException;
-import javax.microedition.io.Connector;
 
 /**
  * This class represents the Discover Registry.

@@ -28,11 +28,11 @@ import com.google.code.spotshout.comm.ProtocolOpcode;
 import com.google.code.spotshout.comm.RMIReply;
 import com.google.code.spotshout.comm.RMIRequest;
 import com.google.code.spotshout.comm.Server;
-import java.rmi.AlreadyBoundException;
-import java.rmi.NotBoundException;
-import java.rmi.Remote;
-import java.rmi.RemoteException;
-import java.rmi.registry.Registry;
+import spot.rmi.AlreadyBoundException;
+import spot.rmi.NotBoundException;
+import spot.rmi.Remote;
+import spot.rmi.RemoteException;
+import spot.rmi.registry.Registry;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
@@ -130,7 +130,8 @@ public class ServerRegistry extends Server implements Registry {
 
     public void bind(String name, String remoteFullName, Remote obj) 
             throws AlreadyBoundException, NullPointerException, RemoteException {
-            try {BindRequest request = new BindRequest(name, remoteFullName);
+        try {
+            BindRequest request = new BindRequest(name, remoteFullName);
             BindReply reply = (BindReply) bind(request);
 
             if (reply.exceptionHappened()) {
@@ -138,17 +139,21 @@ public class ServerRegistry extends Server implements Registry {
             }
 
             // Initiating Skel and it's Thread
+            System.out.println(remoteFullName + "_Skel");
+            Class.forName("com.google.code.spotshout.remote.TargetMethod");
             Class skelClass = Class.forName(remoteFullName + "_Skel");
             Skel skel = (Skel) skelClass.newInstance();
             skel.setRemote(obj);
+            skel.setPort(request.getSkelPort());
             (new Thread(skel)).start();
-            
+            System.out.println("passamo ae");
         } catch (InstantiationException ex) {
             ex.printStackTrace();
             throw new RemoteException(SpotRegistry.class, "Skeleton not found");
         } catch (IllegalAccessException ex) {
             ex.printStackTrace();
         } catch (ClassNotFoundException ex) {
+            System.out.println(remoteFullName + "_Skell");
             ex.printStackTrace();
             throw new RemoteException(SpotRegistry.class, "Skeleton not found");
         }

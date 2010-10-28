@@ -63,7 +63,6 @@ public abstract class Server implements Runnable {
 
         public void run() {
             try {
-                System.out.println(reliableCon.toString());
                 RMIRequest req = reliableCon.readRequest();
                 RMIReply reply = service(req);
                 if (reply != null) {
@@ -100,13 +99,13 @@ public abstract class Server implements Runnable {
             try {
                 String uri = RMIProperties.UNRELIABLE_PROTOCOL + "://"
                         + clientAddr + ":" + unreliablePort;
-
+                
                 rCon = (RadiogramConnection) Connector.open(uri);
-                rCon.setTimeout(RMIProperties.TIMEOUT);
                 dg = (Radiogram) rCon.newDatagram(rCon.getMaximumLength());
-
                 if (discover) dg.writeUTF(srvAddr);
                 if (!discover) dg.writeInt(port);
+                rCon.setTimeout(RMIProperties.TIMEOUT);
+
                 rCon.send(dg);
 
                 // Closing Unreliable connection
@@ -168,10 +167,8 @@ public abstract class Server implements Runnable {
                     rCon.receive(dg);
                     byte operation = dg.readByte();
                     int clientReliablePort = 0;
-                    if (!discover) {
-                         clientReliablePort = dg.readInt();
-                    }
-                    
+
+                    if (!discover) clientReliablePort = dg.readInt();
                     int clientUnreliablePort = 0;
                     switch (operation) {
                         case ProtocolOpcode.HOST_ADDR_REQUEST:
@@ -217,5 +214,9 @@ public abstract class Server implements Runnable {
         } catch (IOException ex) {
             ex.printStackTrace();
         }
+    }
+
+    public void setPort(int port) {
+        this.port = port;
     }
 }

@@ -18,7 +18,7 @@
 package com.google.code.spotshout.remote;
 
 import com.google.code.spotshout.comm.Server;
-import java.rmi.Remote;
+import spot.rmi.Remote;
 
 /**
  * This class represent the structure of a abstract Skeleton. Each Skeleton has

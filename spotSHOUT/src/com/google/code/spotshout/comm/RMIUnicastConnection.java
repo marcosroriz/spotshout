@@ -22,7 +22,7 @@ import com.sun.spot.io.j2me.radiostream.RadiostreamConnection;
 import java.io.DataInput;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.rmi.RemoteException;
+import spot.rmi.RemoteException;
 import javax.microedition.io.Connection;
 import javax.microedition.io.Connector;
 
@@ -63,7 +63,7 @@ public class RMIUnicastConnection {
             int port) throws IOException {
         RadiostreamConnection conn = (RadiostreamConnection)
                 Client.connect(op, addr, port);
-        //conn.setTimeout(RMIProperties.TIMEOUT);
+        //conn.setTimeout(RMIProperties.RELIABLE_TIMEOUT);
         return new RMIUnicastConnection(conn);
     }
 
@@ -138,7 +138,7 @@ public class RMIUnicastConnection {
      * @throws IOException  - on a given remote error (timeout) or data corruption.
      */
     public RMIReply readReply() throws IOException {
-        System.out.println("LEts identify the fucking operation");
+        System.out.println("Lets identify the fucking operation");
         byte operation = request.getOperation();
 
         switch (operation) {
@@ -177,10 +177,15 @@ public class RMIUnicastConnection {
      * @throws IOException - on a given remote error (timeout) or data corruption.
      */
     public void writeRequest(RMIRequest request) throws IOException {
-        this.request = request;
-        DataOutputStream dos = connection.openDataOutputStream();
-        request.writeData(dos);
-        dos.flush();
+        try {
+            Thread.sleep(RMIProperties.WAIT_LITTLE_TIME);
+            this.request = request;
+            DataOutputStream dos = connection.openDataOutputStream();
+            request.writeData(dos);
+            dos.flush();
+        } catch (InterruptedException ex) {
+            ex.printStackTrace();
+        }
     }
 
     /**
@@ -189,10 +194,15 @@ public class RMIUnicastConnection {
      * @throws IOException - on a given remote error (timeout) or data corruption.
      */
     public void writeReply(RMIReply reply) throws IOException {
-        this.reply = reply;
-        DataOutputStream dos = connection.openDataOutputStream();
-        reply.writeData(dos);
-        dos.flush();
+        try {
+            Thread.sleep(RMIProperties.WAIT_LITTLE_TIME);
+            this.reply = reply;
+            DataOutputStream dos = connection.openDataOutputStream();
+            reply.writeData(dos);
+            dos.flush();
+        } catch (InterruptedException ex) {
+            ex.printStackTrace();
+        }
     }
 
     /**

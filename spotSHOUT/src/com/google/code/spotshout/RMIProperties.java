@@ -44,7 +44,12 @@ public class RMIProperties {
     /**
      * Timeout in milliseconds before throwing a TimeoutException
      */
-    public static final int TIMEOUT = 10000;
+    public static final int TIMEOUT = 5000;
+
+    /**
+     * Timeout in milliseconds on a reliable connection
+     */
+    public static final int WAIT_LITTLE_TIME = 4000;
 
     /**
      * Reliable protocol
