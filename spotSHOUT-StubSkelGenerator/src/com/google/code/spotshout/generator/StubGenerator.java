@@ -4,68 +4,72 @@
  */
 package com.google.code.spotshout.generator;
 
-import javassist.CannotCompileException;
-import javassist.ClassPool;
-import javassist.CtClass;
-import javassist.CtMethod;
-import javassist.CtNewMethod;
+import java.io.File;
+import java.lang.reflect.Method;
+import java.net.URL;
+import java.net.URLClassLoader;
 import javassist.NotFoundException;
+
 
 /**
  * StubGenerator will create a specific stub for the SpotSHOUT RMI library with
- * the help of Javassist a bytecode library from JBoss.
+ * Java Reflection.
  */
 public class StubGenerator {
 
-    private CtClass cc;
     private String wrapperPkg = "Serial";
     private String tab = "\t";
 
-    /**
-     * Creates a Stub {@link Class} file from a {@link Remote} interface.
-     *
-     * @param iName - the name of the remote interface
-     */
-    public void makeClass(String jarName, String pkgName, String iName) {
-        try {
-            ClassPool pool = ClassPool.getDefault();
+    public String makeClass(String jarName, String pkgName, String iName) throws Exception {
+        File jar = new File(jarName);
+        URLClassLoader urlLoader = new URLClassLoader(new URL[]{jar.toURI().toURL()});
 
-            // Inserting user jar in classpath
-            pool.insertClassPath(jarName);
+        Class remoteInterface = urlLoader.loadClass(pkgName + "." + iName);
 
-            // Importing stuff we might need
-            pool.importPackage(pkgName);
-            pool.importPackage("java.io");
-            pool.importPackage("java.rmi");
-            pool.importPackage("com.google.code.spotshout.comm");
-            pool.importPackage("com.google.code.spotshout.lang");
-            pool.importPackage("com.google.code.spotshout.remote");
+        StringBuffer classText = new StringBuffer();
+        classText.append(header(remoteInterface));
+        classText.append(body(remoteInterface));
 
-            // Making the class
-            cc = pool.makeClass(pkgName + iName + "_Stub");
-            
-            // Getting and Setting the Remote Interface
-            CtClass interf = pool.get(pkgName + iName);
-            cc.setInterfaces(new CtClass[]{interf});
+        return classText.toString();
+    }
 
-            // Setting SuperClass (Stub)
-            CtClass stubGeneric = pool.get("com.google.code.spotshout.remote.Stub");
-            cc.setSuperclass(stubGeneric);
+    private String header(Class remoteInterface) {
+        StringBuffer sb = new StringBuffer();
 
-            // Making empty constructor
-            cc.makeClassInitializer();
+        if (remoteInterface.getPackage().getName() != "")
+            sb.append("package " + remoteInterface.getPackage().getName() + ";\n\n");
 
-            // Making each method
-            CtMethod methods[] = interf.getDeclaredMethods();
-            for (int i = 0; i < methods.length; i++) {
-                makeMethod(methods[i]);
-            }
+        sb.append("import java.io.*;\n");
+        sb.append("import ksn.io.*;\n");
+        sb.append("import spot.rmi.*;\n");
+        sb.append("import spot.rmi.registry.*;\n");
+        sb.append("import com.google.code.spotshout.*;\n");
+        sb.append("import com.google.code.spotshout.comm.*;\n");
+        sb.append("import com.google.code.spotshout.lang.*;\n");
+        sb.append("import com.google.code.spotshout.remote.*;\n\n");
 
-            cc.writeFile();
-            //cc.writeFile("tmp/");
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+        return sb.toString();
+    }
+
+    private String body(Class remoteInterface) {
+        StringBuffer sb = new StringBuffer();
+
+        sb.append("public class " + remoteInterface.getSimpleName() + "_Stub ");
+        sb.append("extends Stub " + "implements " + remoteInterface.getSimpleName() + " {\n\n");
+        sb.append(emptyConstructor(remoteInterface));
+
+        Method[] methods = sort(remoteInterface.getDeclaredMethods());
+        for (int i = 0; i < methods.length; i++)
+            sb.append(makeMethod(methods[i], i));
+
+        sb.append("\n}");
+        return sb.toString();
+    }
+
+    private String emptyConstructor(Class remoteInteface) {
+        StringBuffer sb = new StringBuffer();
+        sb.append(tab + "public " + remoteInteface.getSimpleName() + "_Stub() {}\n\n");
+        return sb.toString();
     }
 
     /**
@@ -77,10 +81,11 @@ public class StubGenerator {
      * @param m - the method to create the stub
      * @throws NotFoundException - if the method cannot be loaded/founded
      */
-    private void makeMethod(CtMethod m) {
+    private String makeMethod(Method m, int methodNumber) {
+        StringBuffer methodText = new StringBuffer();
         try {
             // Access Modifier
-            StringBuffer methodText = new StringBuffer("public ");
+            methodText.append(tab + "public ");
 
             // Return type
             methodText.append(m.getReturnType().getName() + " ");
@@ -89,91 +94,110 @@ public class StubGenerator {
             methodText.append(m.getName() + "(");
 
             // Parameters
-            CtClass parTypes[] = m.getParameterTypes();
+            Class parTypes[] = m.getParameterTypes();
             for (int i = 0; i < parTypes.length; i++) {
                 methodText.append(parTypes[i].getName() + " p" + i);
                 if (i < parTypes.length - 1) {
                     methodText.append(", ");
                 }
             }
-            methodText.append(") {\n");
+            methodText.append(") throws RemoteException {\n");
 
             // Body -----------------------------------------------------------
-            methodText.append(tab + "try {\n");
+            methodText.append(tab + tab + "try {\n");
 
             // Let's check if the argument number is different then zero,
             // if it's equal we don't need the overhead to serialize the
             // arguments.
-            methodText.append(tab + tab + "Serializable[] args = null;\n");
+            methodText.append(tab + tab + tab + "Serializable[] args = null;\n");
             if (m.getParameterTypes().length != 0) {
                 // Making vector of arguments (objects)
-                methodText.append(tab + tab + "args = new Serializable ["
+                methodText.append(tab + tab + tab + "args = new Serializable ["
                         + parTypes.length + "];\n");
 
                 for (int i = 0; i < parTypes.length; i++) {
-                    methodText.append(tab + tab + "args[" + i + "] = ");
+                    methodText.append(tab + tab + tab + "args[" + i + "] = ");
                     methodText.append("new " + wrapper(parTypes[i].getName()) + "(");
                     methodText.append("p" + i + ");\n");
                 }
             }
 
             // Creating TargetMethod
-            methodText.append("\n" + tab + tab + "TargetMethod m ");
+            methodText.append("\n" + tab + tab + tab + "TargetMethod m ");
             methodText.append("= new TargetMethod(");
-            methodText.append("\"" + m.getName() + "\"" + ", \"" + m.getSignature() + "\", args);\n");
+            methodText.append(methodNumber + ", args);\n");
 
            // Creating InvokeRequest
-            methodText.append(tab + tab + "InvokeRequest invReq = new InvokeRequest(m);\n");
+            methodText.append(tab + tab + tab + "InvokeRequest invReq = new InvokeRequest(m);\n");
 
             // Creating Connection
-            methodText.append(tab + tab + "RMIUnicastConnection conn ");
+            methodText.append(tab + tab + tab + "RMIUnicastConnection conn ");
             methodText.append("= RMIUnicastConnection.makeClientConnection(");
-            methodText.append("getTargetAddr(), getTargetPort());\n");
+            methodText.append("ProtocolOpcode.INVOKE_REQUEST, getTargetAddr(), getTargetPort());\n");
 
             // Writting Request
-            methodText.append(tab + tab + "conn.writeRequest(invReq);\n\n");
+            methodText.append(tab + tab + tab + "conn.writeRequest(invReq);\n\n");
 
             // Listen to reply and return ONLY if method has return
             if (hasReturn(m.getReturnType().getName())) {
                 // Listen to reply
-                methodText.append(tab + tab + "InvokeReply invReply ");
+                methodText.append(tab + tab + tab + "InvokeReply invReply ");
                 methodText.append("= (InvokeReply) conn.readReply();\n");
 
                 // Checking for exception
-                methodText.append(tab + tab + "if (invReply.exceptionHappened())");
+                methodText.append(tab + tab + tab + "if (invReply.exceptionHappened())");
                 methodText.append(" throw new RemoteException();\n\n");
 
                 // Close connection
-                methodText.append(tab + tab + "conn.close();\n");
+                methodText.append(tab + tab + tab + "conn.close();\n");
 
                 // Return value (Unwrapping)
-                methodText.append("\n" + tab + tab + "return ((");
-                if (m.getReturnType().isPrimitive()) {
+                methodText.append("\n" + tab + tab + tab + "return ((");
+                if (m.getReturnType().isPrimitive())
                     methodText.append(wrapper(m.getReturnType().getName()));
-                } else {
+                else
                     methodText.append(m.getReturnType().getName());
-                }
                 methodText.append(")invReply.getReturnValue()).getValue();\n");
             } else {
                 // Close connection
-                methodText.append(tab + tab + "conn.close();\n");
+                methodText.append(tab + tab + tab + "conn.close();\n");
             }
 
             // Exceptions --'
-            methodText.append(tab + "} catch (IOException ex) {\n");
-            methodText.append(tab + tab + "throw new RemoteException(\"Remote Exception on ");
+            methodText.append(tab + tab + "} catch (IOException ex) {\n");
+            methodText.append(tab + tab + tab + "throw new RemoteException(\"Remote Exception on ");
             methodText.append(m.getName() + "()\");");
-            methodText.append(tab + "\n" + tab + "}\n}\n");
-
-            System.out.println("----------------------\n\nImprimindo: \n" + methodText.toString());
-            CtMethod ctM = CtNewMethod.make(methodText.toString(), cc);
-            cc.addMethod(ctM);
+            methodText.append(tab + tab + "\n" + tab + tab + "}\n " + tab + "}\n");
         } catch (Exception ex) {
             // TODO Auto-generated catch block
             ex.printStackTrace();
         }
+        methodText.append("\n");
+        return methodText.toString();
     }
 
+
+    private Method[] sort(Method[] methods) {
+        int leastGuy = 0;
+        String leastMethod = methods[0].toGenericString();
+        String currentMethod = leastMethod;
+        for (int i = 0; i < methods.length; i++) {
+            leastMethod = methods[i].toGenericString();
+            leastGuy = i;
+            for (int j = i; j < methods.length; j++) {
+                currentMethod = methods[j].toGenericString();
+                if (leastMethod.compareTo(currentMethod) > 0) {
+                    leastMethod = currentMethod;
+                    leastGuy = j;
+                }
+            }
+            Method aux = methods[i];
+            methods[i] = methods[leastGuy];
+            methods[leastGuy] = aux;
+        }
+        return methods;
+    }
+    
     /**
      * Gets the name of a wrapper of a given type.
      *

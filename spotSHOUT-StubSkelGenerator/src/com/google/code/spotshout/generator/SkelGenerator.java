@@ -4,161 +4,161 @@
  */
 package com.google.code.spotshout.generator;
 
-import java.io.IOException;
-import javassist.ClassPool;
-import javassist.CtClass;
-import javassist.CtMethod;
-import javassist.CtNewMethod;
-import javassist.NotFoundException;
-import javax.management.NotCompliantMBeanException;
+import java.io.File;
+import java.lang.reflect.Method;
+import java.net.URL;
+import java.net.URLClassLoader;
 
 /**
  * SkelGenerator will create a specific skel for the SpotSHOUT RMI library with
- * the help of Javassist a bytecode library from JBoss.
+ * the help of Java Reflection.
  */
 public class SkelGenerator {
 
-    private CtClass cc;
     private String wrapperPkg = "Serial";
     private String tab = "\t";
 
-    /**
-     * Creates a Skel {@link Class} file from a {@link Remote} interface.
-     *
-     * @param iName - the name of the remote interface
-     */
-    public void makeClass(String jarName, String pkgName, String iName) {
-        try {
-            ClassPool pool = ClassPool.getDefault();
+    public String makeClass(String jarName, String pkgName, String iName) throws Exception {
+        File jar = new File(jarName);
+        URLClassLoader urlLoader = new URLClassLoader(new URL[]{jar.toURI().toURL()});
 
-            // Inserting user jar in classpath
-            pool.insertClassPath(jarName);
+        Class remoteInterface = urlLoader.loadClass(pkgName + "." + iName);
 
-            // Importing stuff we might need
-            pool.importPackage(pkgName);
-            pool.importPackage("java.io");
-            pool.importPackage("ksn.io");
-            pool.importPackage("java.rmi");
-            pool.importPackage("com.google.code.spotshout.comm");
-            pool.importPackage("com.google.code.spotshout.lang");
-            pool.importPackage("com.google.code.spotshout.remote");
-
-            // Making the class
-            cc = pool.makeClass(pkgName + iName + "_Skel");
-
-            // Getting and Setting(?) the Remote Interface
-            CtClass interf = pool.get(pkgName + iName);
-            // cc.setInterfaces(new CtClass[]{interf});
-
-            // Setting SuperClass (Skel)
-            CtClass skelGeneric = pool.get("com.google.code.spotshout.remote.Skel");
-            cc.setSuperclass(skelGeneric);
-
-            // Making empty constructor
-            cc.makeClassInitializer();
-
-            // Making serving method
-            makeServingMethod(interf);
-
-            cc.writeFile();
-            //cc.writeFile("tmp/");
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+        StringBuffer classText = new StringBuffer();
+        classText.append(header(remoteInterface));
+        classText.append(body(remoteInterface));
+        
+        return classText.toString();
     }
 
-    /**
-     * Creates a stub method for the stub class, this method will wrap the
-     * arguments and then create a InvokeRequest and send on to a
-     * RMIUnicastConnection.
-     *
-     * @param interf - the class interface
-     * @param m - the method to create the stub
-     * @throws NotFoundException - if the method cannot be loaded/founded
-     */
-    private void makeServingMethod(CtClass interf) {
-        try {
-            // Method Signature
-            StringBuffer methodText = new StringBuffer("public RMIReply service(RMIRequest request) {\n");
+    private String header(Class remoteInterface) {
+        StringBuffer sb = new StringBuffer();
 
-            // Basic data
-            methodText.append(tab + "try {\n");
-            methodText.append(tab + tab + "TargetMethod method = ((InvokeRequest) request).getMethod();\n");
-            methodText.append(tab + tab + "KSNSerializableInterface returnValue = null;\n");
-            methodText.append(tab + tab + interf.getSimpleName() + " remoteObj = (" + interf.getSimpleName() + ") remote;\n\n");
+        if (remoteInterface.getPackage().getName() != "")
+            sb.append("package " + remoteInterface.getPackage().getName() + ";\n\n");
 
-            // Finding right method to call
-            CtMethod methods[] = interf.getDeclaredMethods();
+        sb.append("import java.io.*;\n");
+        sb.append("import ksn.io.*;\n");
+        sb.append("import spot.rmi.*;\n");
+        sb.append("import spot.rmi.registry.*;\n");
+        sb.append("import com.google.code.spotshout.*;\n");
+        sb.append("import com.google.code.spotshout.comm.*;\n");
+        sb.append("import com.google.code.spotshout.lang.*;\n");
+        sb.append("import com.google.code.spotshout.remote.*;\n\n");
 
-            for (int i = 0; i < methods.length; i++) {
-                if (i == 0) methodText.append(tab + tab + "if ");
-                else methodText.append(tab + tab + "else if ");
-                
-                methodText.append("((method.getMethodName().equals(\"");
-                methodText.append(methods[i].getName() + "\"))");
-                methodText.append(" && (method.getMethodSignature().equals(\"");
-                methodText.append(methods[i].getSignature() + "\"))) {\n");
+        return sb.toString();
+    }
+
+    private String body(Class remoteInterface) {
+        StringBuffer sb = new StringBuffer();
+
+        sb.append("public class " + remoteInterface.getSimpleName() + "_Skel extends Skel {\n\n");
+        sb.append(emptyConstructor(remoteInterface));
+        sb.append(serviceMethod(remoteInterface));
+        sb.append("\n}");
+        return sb.toString();
+    }
+
+    private String emptyConstructor(Class remoteInteface) {
+        StringBuffer sb = new StringBuffer();
+        sb.append(tab + "public " + remoteInteface.getSimpleName() + "_Skel() {}\n\n");
+        return sb.toString();
+    }
+
+    private String serviceMethod(Class remoteInterface) {
+        StringBuffer sb = new StringBuffer();
+
+        // Method Signature
+        sb.append(tab + "public RMIReply service(RMIRequest request) {\n");
+
+        // Basic data
+        sb.append(tab + tab + "try {\n");
+        sb.append(tab + tab + tab + "TargetMethod method = ((InvokeRequest) request).getMethod();\n");
+        sb.append(tab + tab + tab + "KSNSerializableInterface returnValue = null;\n");
+        sb.append(tab + tab + tab + remoteInterface.getSimpleName() + " remoteObj = (" + remoteInterface.getSimpleName() + ") remote;\n\n");
+
+        // Finding right method to call
+        Method methods[] = sort(remoteInterface.getDeclaredMethods());
+
+        for (int i = 0; i < methods.length; i++) {
+                if (i == 0) sb.append(tab + tab + tab + "if ");
+                else sb.append(tab + tab + tab + "else if ");
+
+                sb.append("(method.getMethodNumber() == " + i +") {\n");
 
                 // Unwrapping parameters
-                CtClass parTypes[] = methods[i].getParameterTypes();
+                Class[] parTypes = methods[i].getParameterTypes();
 
                 if (methods[i].getParameterTypes().length != 0) {
                     for (int j = 0; j < parTypes.length; j++) {
-                        if (parTypes[j].isPrimitive()) methodText.append(tab + tab + tab + parTypes[j].getName());
-                        else methodText.append(tab + tab + tab + parTypes[j].getName());
+                        if (parTypes[j].isPrimitive()) sb.append(tab + tab + tab + tab + parTypes[j].getName());
+                        else sb.append(tab + tab + tab + tab + parTypes[j].getName());
 
-                        methodText.append(" p" + j + " = ((");
-                        if (parTypes[j].isPrimitive()) {
-                            methodText.append(wrapper(parTypes[j].getName()));
-                        } else {
-                            methodText.append(parTypes[j].getName());
-                        }
-                        methodText.append(")method.getArgs()[" + j + "]).getValue();\n");
+                        sb.append(" p" + j + " = ((");
+                        if (parTypes[j].isPrimitive()) sb.append(wrapper(parTypes[j].getName()));
+                        else sb.append(parTypes[j].getName());
+                        
+                        sb.append(")method.getArgs()[" + j + "]).getValue();\n");
                     }
                 }
 
                 // Invoking the target remote object
-                methodText.append(tab + tab + tab);
+                sb.append(tab + tab + tab + tab);
                 if (hasReturn(methods[i].getReturnType().getName())) {
-                    methodText.append("returnValue = new ");
-                    methodText.append(wrapper(methods[i].getReturnType().getName()) + "(");
+                    sb.append("returnValue = new ");
+                    sb.append(wrapper(methods[i].getReturnType().getName()) + "(");
                 }
-                methodText.append("remoteObj." + methods[i].getName());
-                methodText.append("(");
+                sb.append("remoteObj." + methods[i].getName());
+                sb.append("(");
                 for (int j = 0; j < parTypes.length; j++) {
-                    methodText.append("p" + j);
-                    if (j < parTypes.length - 1) methodText.append(", ");
+                    sb.append("p" + j);
+                    if (j < parTypes.length - 1) sb.append(", ");
                 }
-                methodText.append(")");
-                if (hasReturn(methods[i].getReturnType().getName())) methodText.append(")");
-                methodText.append(";\n\n");
+                sb.append(")");
+                if (hasReturn(methods[i].getReturnType().getName())) sb.append(")");
+                sb.append(";\n\n");
 
-                // Returning
-                if (hasReturn(methods[i].getReturnType().getName()))
-                    methodText.append(tab + tab + tab + "return new InvokeReply(returnValue);\n");
-                else
-                    methodText.append(tab + tab + tab + "return null;\n");
+            // Returning
+            if (hasReturn(methods[i].getReturnType().getName()))
+                sb.append(tab + tab + tab + tab + "return new InvokeReply(returnValue);\n");
+            else
+                sb.append(tab + tab + tab + tab + "return null;\n");
 
-                methodText.append(tab + tab + "}\n");
-            }
-            methodText.append(tab + tab + "return null;\n");
-            
-            // Exceptions --'
-            methodText.append(tab + "} catch (Exception ex) {\n");
-            methodText.append(tab + tab + "InvokeReply reply = new InvokeReply();\n");
-            methodText.append(tab + tab + "reply.setOperationStatus(ProtocolOpcode.OPERATION_NOK);\n");
-            methodText.append(tab + tab + "reply.setException(ProtocolOpcode.EXCEPTION_REMOTE);\n");
-            methodText.append(tab + tab + "return reply;\n");
-            methodText.append(tab + "}\n");
-            methodText.append("} ");
-            
-            System.out.println("----------------------\n\nImprimindo: \n\n\n" + methodText.toString());
-            CtMethod ctM = CtNewMethod.make(methodText.toString(), cc);
-            cc.addMethod(ctM);
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            sb.append(tab + tab + tab + "}\n");
         }
+        sb.append(tab + tab + tab + "return null;\n");
+
+        // Exceptions --'
+        sb.append(tab + tab + "} catch (Exception ex) {\n");
+        sb.append(tab + tab + tab + "InvokeReply reply = new InvokeReply();\n");
+        sb.append(tab + tab + tab + "reply.setOperationStatus(ProtocolOpcode.OPERATION_NOK);\n");
+        sb.append(tab + tab + tab + "reply.setException(ProtocolOpcode.EXCEPTION_REMOTE);\n");
+        sb.append(tab + tab + tab + "return reply;\n");
+        sb.append(tab + tab + "}\n");
+        sb.append(tab + "} ");
+
+        return sb.toString();
+    }
+
+    private Method[] sort(Method[] methods) {
+        int leastGuy = 0;
+        String leastMethod = methods[0].toGenericString();
+        String currentMethod = leastMethod;
+        for (int i = 0; i < methods.length; i++) {
+            leastMethod = methods[i].toGenericString();
+            leastGuy = i;
+            for (int j = i; j < methods.length; j++) {
+                currentMethod = methods[j].toGenericString();
+                if (leastMethod.compareTo(currentMethod) > 0) {
+                    leastMethod = currentMethod;
+                    leastGuy = j;
+                }
+            }
+            Method aux = methods[i];
+            methods[i] = methods[leastGuy];
+            methods[leastGuy] = aux;
+        }
+        return methods;
     }
 
     /**
