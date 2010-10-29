@@ -24,6 +24,10 @@ package com.google.code.spotshout.comm;
  */
 public class ProtocolOpcode {
 
+    // Datagram Status
+    public static final byte ACK                        = 99;
+    public static final byte NACK                       = 98;
+
     // RMI Operation Status
     public static final byte OPERATION_NOK              = -1;
     public static final byte OPERATION_OK               = 100;
@@ -45,12 +49,14 @@ public class ProtocolOpcode {
     public static final byte LOOKUP_REPLY               = 12;
     public static final byte REBIND_REQUEST             = 13;
     public static final byte REBIND_REPLY               = 14;
-    public static final byte UNBIND_REQUEST             = 15;
-    public static final byte UNBIND_REPLY               = 16;
+    public static final byte SHAKE_REQUEST              = 15;
+    public static final byte SHAKE_REPY                 = 16;
+    public static final byte UNBIND_REQUEST             = 17;
+    public static final byte UNBIND_REPLY               = 18;
 
     // RMI Exceptions
-    public static final byte EXCEPTION_ALREADY_BOUND    = 17;
-    public static final byte EXCEPTION_NOT_BOUND        = 18;
-    public static final byte EXCEPTION_NULL_POINT       = 19;
-    public static final byte EXCEPTION_REMOTE           = 20;
+    public static final byte EXCEPTION_ALREADY_BOUND    = 19;
+    public static final byte EXCEPTION_NOT_BOUND        = 20;
+    public static final byte EXCEPTION_NULL_POINT       = 21;
+    public static final byte EXCEPTION_REMOTE           = 22;
 }
