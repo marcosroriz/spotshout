@@ -60,4 +60,11 @@ public class RMIProperties {
      * Unreliable protocol
      */
     public static final String UNRELIABLE_PROTOCOL = "radiogram";
+
+
+    public static final boolean DEBUG = true;
+
+    public static final void log(String msg) {
+        if (DEBUG) System.out.println(msg);
+    }
 }

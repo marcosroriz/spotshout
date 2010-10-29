@@ -96,6 +96,8 @@ public class LocateRegistry {
                 dg.write(ProtocolOpcode.HOST_ADDR_REQUEST);
                 rCon.send(dg);
 
+                System.out.println("YO, I just sended this shit");
+
                 // Closing the connection
                 dg.reset();
                 rCon.close();
@@ -106,6 +108,7 @@ public class LocateRegistry {
                 dg = (Radiogram) rCon.newDatagram(40);
                 rCon.setTimeout(RMIProperties.TIMEOUT);
 
+                System.out.println("NOW IM WAITING :'( on " + uri);
                 // Reading protocol answer
                 rCon.receive(dg);
                 serverAddr = dg.readUTF();

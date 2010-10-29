@@ -18,13 +18,18 @@
 package com.google.code.spotshout.comm;
 
 import com.google.code.spotshout.RMIProperties;
-import com.sun.spot.io.j2me.radiostream.RadiostreamConnection;
-import java.io.DataInput;
+import com.sun.spot.io.j2me.radiogram.Radiogram;
+import com.sun.spot.io.j2me.radiogram.RadiogramConnection;
+import com.sun.spot.peripheral.TimeoutException;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import spot.rmi.RemoteException;
 import javax.microedition.io.Connection;
 import javax.microedition.io.Connector;
+import javax.microedition.io.Datagram;
+import spot.rmi.RemoteException;
 
 /**
  * This class abstract the details of creating a unicast connection between SPOTs
@@ -34,9 +39,14 @@ import javax.microedition.io.Connector;
 public class RMIUnicastConnection {
 
     /**
-     * The wrapped connection.
+     * The wrapped client connection.
      */
-    private RadiostreamConnection connection;
+    private RadiogramConnection clientConnection;
+
+    /**
+     * The wrapped server connection.
+     */
+    private RadiogramConnection serverConnection;
 
     /**
      * The RMI operation request of this connection.
@@ -48,8 +58,17 @@ public class RMIUnicastConnection {
      */
     private RMIReply reply;
 
-    private RMIUnicastConnection(Connection conn) {
-        this.connection = (RadiostreamConnection) conn;
+    /**
+     * Number of timeout exceptions.
+     */
+    private int numException;
+
+    private RMIUnicastConnection(Connection client, Connection server) {
+        clientConnection = (RadiogramConnection) client;
+        clientConnection.setTimeout(RMIProperties.TIMEOUT);
+        serverConnection = (RadiogramConnection) server;
+        serverConnection.setTimeout(RMIProperties.TIMEOUT * 2);
+        numException = 0;
     }
 
     /**
@@ -59,28 +78,33 @@ public class RMIUnicastConnection {
      * @param port - the server port.
      * @throws IOException - on a given remote error (timeout) or data corruption.
      */
-    public static RMIUnicastConnection makeClientConnection(byte op, String addr,
-            int port) throws IOException {
-        RadiostreamConnection conn = (RadiostreamConnection)
-                Client.connect(op, addr, port);
-        //conn.setTimeout(RMIProperties.RELIABLE_TIMEOUT);
-        return new RMIUnicastConnection(conn);
+    public static RMIUnicastConnection makeClientConnection(byte op, String addr, int port) throws IOException {
+        RMIProperties.log("Started Client Connection with: " + addr + ":" + port);
+        Client client = Client.connect(op, addr, RMIProperties.RMI_SERVER_PORT);
+        
+        String uri = RMIProperties.UNRELIABLE_PROTOCOL + "://" + addr + ":" + client.getServerPort();
+        RadiogramConnection conn = (RadiogramConnection) Connector.open(uri);
+
+        uri = RMIProperties.UNRELIABLE_PROTOCOL + "://:" + client.getClientPort();
+        RadiogramConnection srv = (RadiogramConnection) Connector.open(uri);
+        return new RMIUnicastConnection(conn, srv);
     }
 
     /**
      * Abstract a unicast connection between two points (Spot-Spot) or (Spot-Registry).
      * @param addr - the client address (MAC).
-     * @param port - the client port.
+     * @param clientPort - the client port.
      * @throws IOException - on a given remote error (timeout) or data corruption.
      */
-    public static RMIUnicastConnection makeServerConnection(String addr, int port)
+    public static RMIUnicastConnection makeServerConnection(String addr, int clientPort, int serverPort)
             throws IOException {
-        System.out.println("Start Making server connection on:" + addr + ":" + port);
-        String uri = RMIProperties.RELIABLE_PROTOCOL + "://" + addr + ":" + port;
-        RadiostreamConnection conn = (RadiostreamConnection) Connector.open(uri);
-        System.out.println("Ended server connection");
-        //conn.setTimeout(RMIProperties.TIMEOUT);
-        return new RMIUnicastConnection(conn);
+        RMIProperties.log("Started Client Connection with: " + addr + ":" + clientPort);
+        String uri = RMIProperties.UNRELIABLE_PROTOCOL + "://" + addr + ":" + clientPort;
+        RadiogramConnection conn = (RadiogramConnection) Connector.open(uri);
+
+        uri = RMIProperties.UNRELIABLE_PROTOCOL + "://:" + serverPort;
+        RadiogramConnection srv = (RadiogramConnection) Connector.open(uri);
+        return new RMIUnicastConnection(conn, srv);
     }
 
     /**
@@ -88,7 +112,33 @@ public class RMIUnicastConnection {
      * @throws IOException - on a given remote error (timeout) or data corruption.
      */
     public void close() throws IOException {
-        connection.close();
+        clientConnection.close();
+        serverConnection.close();
+    }
+
+    public RMIRequest readRequest() throws IOException {
+        RMIProperties.log("Started Reading Request");
+        Datagram clientDg = clientConnection.newDatagram(clientConnection.getMaximumLength());
+        Datagram serverDg = serverConnection.newDatagram(serverConnection.getMaximumLength());
+
+        clientDg.reset();
+        serverDg.reset();
+
+        int numberTry = 0;
+        while (numberTry < RMIProperties.NUMBER_OF_TRIES) {
+            try {
+                serverConnection.receive(serverDg);
+                readRequest((Radiogram) serverDg);
+                break;
+            } catch (TimeoutException e) {
+                clientDg.reset();
+                serverDg.reset();
+                numException++;
+                if (numberTry >= RMIProperties.NUMBER_OF_TRIES) throw new IOException();
+            }
+        }
+        RMIProperties.log("Finished Reading Request");
+        return request;
     }
 
     /**
@@ -96,11 +146,9 @@ public class RMIUnicastConnection {
      * @return a specific RMI Request.
      * @throws IOException - on a given remote error (timeout) or data corruption.
      */
-    public RMIRequest readRequest() throws IOException {
-        System.out.println("LEts try to read the mother fucking operation header");
-        DataInput di = connection.openDataInputStream();
-        byte operation = readOpcode(di);
-        System.out.println("OPeration of this shit: " + operation);
+    private RMIRequest readRequest(Radiogram serverDg) throws IOException {
+        byte operation = serverDg.readByte();
+        
         switch (operation) {
             case ProtocolOpcode.BIND_REQUEST:
                 request = new BindRequest();
@@ -125,12 +173,17 @@ public class RMIUnicastConnection {
                         "Unsupported operation: " + operation);
         }
 
-        System.out.println("Start reading request data");
-        request.setOperation(operation);
-        request.readData(di);
-        System.out.println("Endede reading request data");
+        // Reading data
+        int size = serverDg.readInt();
+        byte[] buff = new byte[size];
+        serverDg.readFully(buff);
+        ByteArrayInputStream bais = new ByteArrayInputStream(buff);
+        DataInputStream dis = new DataInputStream(bais);
+        request.readData(dis);
+
         return request;
     }
+
 
     /**
      * Read a RMI Reply on this connection.
@@ -138,9 +191,15 @@ public class RMIUnicastConnection {
      * @throws IOException  - on a given remote error (timeout) or data corruption.
      */
     public RMIReply readReply() throws IOException {
-        System.out.println("Lets identify the fucking operation");
-        byte operation = request.getOperation();
+        boolean acknowledge = false;
+        RMIProperties.log("Started Reading Reply");
+        Datagram clientDg = clientConnection.newDatagram(clientConnection.getMaximumLength());
+        Datagram serverDg = serverConnection.newDatagram(serverConnection.getMaximumLength());
+        
+        clientDg.reset();
+        serverDg.reset();
 
+        byte operation = request.getOperation();
         switch (operation) {
             case ProtocolOpcode.BIND_REQUEST:
                 reply = new BindReply();
@@ -165,9 +224,43 @@ public class RMIUnicastConnection {
                         "Unsupported Operation: " + operation);
         }
 
-        System.out.println("Start reading data back beattch");
-        reply.readData(connection.openDataInputStream());
-        System.out.println("Ended reading data back beattch");
+        int numberTry = 0;
+        while (numberTry < RMIProperties.NUMBER_OF_TRIES) {
+            try {
+                serverConnection.receive(serverDg);
+                
+                // Reading data
+                int size = serverDg.readInt();
+                byte[] buff = new byte[size];
+                serverDg.readFully(buff);
+                ByteArrayInputStream bais = new ByteArrayInputStream(buff);
+                DataInputStream dis = new DataInputStream(bais);
+                reply.readData(dis);
+
+                // Sending ack
+                clientDg.write(ProtocolOpcode.ACK);
+                clientConnection.send(clientDg);
+                clientConnection.send(clientDg);
+                clientConnection.send(clientDg);
+                clientConnection.send(clientDg);
+                clientConnection.send(clientDg);
+                clientConnection.send(clientDg);
+                clientConnection.send(clientDg);
+                clientConnection.send(clientDg);
+                clientConnection.send(clientDg);
+                clientConnection.send(clientDg);
+                clientConnection.send(clientDg);
+                clientConnection.send(clientDg);
+
+                break;
+            } catch (TimeoutException e) {
+                clientDg.reset();
+                serverDg.reset();
+                numException++;
+                if (numberTry >= RMIProperties.NUMBER_OF_TRIES) throw new IOException();
+            }
+        }
+        RMIProperties.log("Finished Reading Reply");
         return reply;
     }
 
@@ -177,15 +270,37 @@ public class RMIUnicastConnection {
      * @throws IOException - on a given remote error (timeout) or data corruption.
      */
     public void writeRequest(RMIRequest request) throws IOException {
-        try {
-            Thread.sleep(RMIProperties.WAIT_LITTLE_TIME);
-            this.request = request;
-            DataOutputStream dos = connection.openDataOutputStream();
-            request.writeData(dos);
-            dos.flush();
-        } catch (InterruptedException ex) {
-            ex.printStackTrace();
+        RMIProperties.log("Started Writting Request");
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        DataOutputStream daos = new DataOutputStream(baos);
+
+        Datagram clientDg = clientConnection.newDatagram(clientConnection.getMaximumLength());
+        Datagram serverDg = serverConnection.newDatagram(serverConnection.getMaximumLength());
+
+        clientDg.reset();
+        serverDg.reset();
+
+        this.request = request;
+        request.writeData(daos);
+
+        int numberTry = 0;
+        while (numberTry < RMIProperties.NUMBER_OF_TRIES) {
+            try {
+                clientDg.writeByte(request.getOperation());
+                clientDg.writeInt(baos.size());
+                clientDg.write(baos.toByteArray());
+
+                clientConnection.send(clientDg);
+                serverConnection.receive(serverDg);
+                if (serverDg.readByte() == ProtocolOpcode.ACK) break;
+            } catch (TimeoutException ex) {
+                clientDg.reset();
+                serverDg.reset();
+                numException++;
+                if (numberTry >= RMIProperties.NUMBER_OF_TRIES) throw new IOException();
+            }
         }
+        RMIProperties.log("Finished Writting Request");
     }
 
     /**
@@ -194,30 +309,35 @@ public class RMIUnicastConnection {
      * @throws IOException - on a given remote error (timeout) or data corruption.
      */
     public void writeReply(RMIReply reply) throws IOException {
-        try {
-            Thread.sleep(RMIProperties.WAIT_LITTLE_TIME);
-            this.reply = reply;
-            DataOutputStream dos = connection.openDataOutputStream();
-            reply.writeData(dos);
-            dos.flush();
-        } catch (InterruptedException ex) {
-            ex.printStackTrace();
+        RMIProperties.log("Started Writting Reply");
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        DataOutputStream daos = new DataOutputStream(baos);
+        Datagram clientDg = clientConnection.newDatagram(clientConnection.getMaximumLength());
+        Datagram serverDg = serverConnection.newDatagram(serverConnection.getMaximumLength());
+
+        clientDg.reset();
+        serverDg.reset();
+
+        this.reply = reply;
+        reply.writeData(daos);
+
+        int numberTry = 0;
+        while (numberTry < RMIProperties.NUMBER_OF_TRIES) {
+            try {
+                clientDg.writeByte(reply.getOperation());
+                clientDg.writeInt(baos.size());
+                clientDg.write(baos.toByteArray());
+
+                clientConnection.send(clientDg);
+                serverConnection.receive(serverDg);
+                if (serverDg.readByte() == ProtocolOpcode.ACK) break;
+            } catch (TimeoutException ex) {
+                clientDg.reset();
+                serverDg.reset();
+                numException++;
+                if (numberTry >= RMIProperties.NUMBER_OF_TRIES) throw new IOException();
+            }
         }
-    }
-
-    /**
-     * This method will read the opcode of the input so that we can manually
-     * instantiate the correct operation and inject it's data by calling readData
-     * on it.
-     * @param input - the inputStream that the request data should be read.
-     * @throws IOException - in case of a failure in communication or if the
-     *                       data comes corrupted.
-     */
-    private byte readOpcode(DataInput input) throws IOException {
-        return input.readByte();
-    }
-
-    public String toString() {
-        return "Local port of this shit " + connection.getLocalPort();
+        RMIProperties.log("Finished Writting Reply");
     }
 }

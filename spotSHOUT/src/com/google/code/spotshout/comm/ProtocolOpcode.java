@@ -39,18 +39,18 @@ public class ProtocolOpcode {
     public static final byte REGISTRY_REPLY             = 4;
     public static final byte INVOKE_REQUEST             = 5;
     public static final byte INVOKE_REPLY               = 6;
+    public static final byte SHAKE_REQUEST              = 7;
+    public static final byte SHAKE_REPY                 = 8;
 
     // RMI Opcodes
-    public static final byte BIND_REQUEST               = 7;
-    public static final byte BIND_REPLY                 = 8;
-    public static final byte LIST_REQUEST               = 9;
-    public static final byte LIST_REPLY                 = 10;
-    public static final byte LOOKUP_REQUEST             = 11;
-    public static final byte LOOKUP_REPLY               = 12;
-    public static final byte REBIND_REQUEST             = 13;
-    public static final byte REBIND_REPLY               = 14;
-    public static final byte SHAKE_REQUEST              = 15;
-    public static final byte SHAKE_REPY                 = 16;
+    public static final byte BIND_REQUEST               = 9;
+    public static final byte BIND_REPLY                 = 10;
+    public static final byte LIST_REQUEST               = 11;
+    public static final byte LIST_REPLY                 = 12;
+    public static final byte LOOKUP_REQUEST             = 13;
+    public static final byte LOOKUP_REPLY               = 14;
+    public static final byte REBIND_REQUEST             = 15;
+    public static final byte REBIND_REPLY               = 16;
     public static final byte UNBIND_REQUEST             = 17;
     public static final byte UNBIND_REPLY               = 18;
 

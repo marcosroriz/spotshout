@@ -57,8 +57,8 @@ public abstract class Server implements Runnable {
 
         private RMIUnicastConnection reliableCon;
 
-        public Tunnel(String addr, int port) throws IOException {
-            reliableCon = RMIUnicastConnection.makeServerConnection(addr, port);
+        public Tunnel(String addr, int serverPort, int clientPort) throws IOException {
+            reliableCon = RMIUnicastConnection.makeServerConnection(addr, clientPort, serverPort);
         }
 
         public void run() {
@@ -79,13 +79,13 @@ public abstract class Server implements Runnable {
      * This class sends unreliable reply with the objective to obtain a reliable
      * connection.
      */
-    public class UnreliableReply implements Runnable {
+    public class DatagramReply implements Runnable {
 
         String clientAddr;
         int port;
         int unreliablePort;
 
-        public UnreliableReply(String addr, int serverPort, int unrPort)
+        public DatagramReply(String addr, int serverPort, int unrPort)
                 throws IOException {
             clientAddr = addr;
             port = serverPort;
@@ -99,7 +99,9 @@ public abstract class Server implements Runnable {
             try {
                 String uri = RMIProperties.UNRELIABLE_PROTOCOL + "://"
                         + clientAddr + ":" + unreliablePort;
-                
+
+                System.out.println("I'm onpening and sending the reply to this guy: " + uri);
+                                
                 rCon = (RadiogramConnection) Connector.open(uri);
                 dg = (Radiogram) rCon.newDatagram(rCon.getMaximumLength());
                 if (discover) dg.writeUTF(srvAddr);
@@ -107,6 +109,7 @@ public abstract class Server implements Runnable {
                 rCon.setTimeout(RMIProperties.TIMEOUT);
 
                 rCon.send(dg);
+                System.out.println("Sended :D\n\n");
 
                 // Closing Unreliable connection
                 rCon.close();
@@ -122,6 +125,49 @@ public abstract class Server implements Runnable {
         }
     }
     
+    public class Dispatch implements Runnable {
+        private String clientAddr;
+        private int clientReliablePort;
+        private byte operation;
+        
+        public Dispatch(Radiogram rg) throws IOException {
+            clientAddr = rg.getAddress();
+            operation = rg.readByte();
+            if (!discover) clientReliablePort = rg.readInt();
+            else clientReliablePort = 0;
+            System.out.println("SOme data: " + clientAddr);
+        }
+
+        public void run() {
+            try {
+                int clientListeningPort = findClientListeningPort(operation);
+                int serverReliablePort = 0;
+                System.out.println("running");
+                if (!discover) {
+                    serverReliablePort = RemoteGarbageCollector.getFreePort();
+
+                    // Initiate reliable connection on this point
+                    (new Thread(new Tunnel(clientAddr, serverReliablePort, clientReliablePort))).start();
+                }
+
+                (new Thread(new DatagramReply(clientAddr, serverReliablePort, clientListeningPort))).start();
+            } catch (IOException ex) {}
+        }
+
+        private int findClientListeningPort(byte operation) {
+            switch (operation) {
+                case ProtocolOpcode.HOST_ADDR_REQUEST:
+                    return RMIProperties.UNRELIABLE_DISCOVER_CLIENT_PORT;
+                case ProtocolOpcode.INVOKE_REQUEST:
+                    return RMIProperties.UNRELIABLE_INVOKE_CLIENT_PORT;
+                case ProtocolOpcode.REGISTRY_REQUEST:
+                    return RMIProperties.UNRELIABLE_REGISTRY_CLIENT_PORT;
+                default:
+                    return RMIProperties.UNRELIABLE_REGISTRY_CLIENT_PORT;
+            }
+        }
+    }
+
     /**
      * The port which this Server will listen (non reliable), to establish
      * reliable connections.
@@ -137,19 +183,11 @@ public abstract class Server implements Runnable {
      * Is this a discover registry ??
      */
     protected boolean discover;
-    
+
     public Server() {
         port = RMIProperties.RMI_SERVER_PORT;
         srvAddr = System.getProperty("IEEE_ADDRESS");
     }
-
-    /*
-     * Process a receiving call/invoke RMI request.
-     * @param request - the request meta-data and it's arguments.
-     * @return - the RMI Reply object, if the request doesn't have a return, i.e.
-     *           void, return null
-     */
-    public abstract RMIReply service(RMIRequest request);
 
     /**
      * Listen for unreliable connections and make a reliable one with the client.
@@ -165,48 +203,12 @@ public abstract class Server implements Runnable {
                 try {
                     // Receive Unreliable Request
                     rCon.receive(dg);
-                    byte operation = dg.readByte();
-                    int clientReliablePort = 0;
-
-                    if (!discover) clientReliablePort = dg.readInt();
-                    int clientUnreliablePort = 0;
-                    switch (operation) {
-                        case ProtocolOpcode.HOST_ADDR_REQUEST:
-                            clientUnreliablePort = RMIProperties.UNRELIABLE_DISCOVER_CLIENT_PORT;
-                            break;
-                        case ProtocolOpcode.INVOKE_REQUEST:
-                            clientUnreliablePort = RMIProperties.UNRELIABLE_INVOKE_CLIENT_PORT;
-                            break;
-                        case ProtocolOpcode.REGISTRY_REQUEST:
-                            clientUnreliablePort = RMIProperties.UNRELIABLE_REGISTRY_CLIENT_PORT;
-                            break;
-                        default:
-                            clientUnreliablePort = RMIProperties.UNRELIABLE_REGISTRY_CLIENT_PORT;
-                    }
-
-                    if (discover) {
-                        // Send unreliable reply
-                        UnreliableReply ur = new UnreliableReply(dg.getAddress(), 0, clientUnreliablePort);
-                        (new Thread(ur)).start();
-                    } else {
-                        int serverReliablePort = RemoteGarbageCollector.getFreePort();
-
-                        // Initiate reliable connection on this point
-                        Tunnel tunnel = new Tunnel(dg.getAddress(), clientReliablePort);
-                        (new Thread(tunnel)).start();
-
-                        // Send unreliable reply
-                        UnreliableReply ur = new UnreliableReply(dg.getAddress(), serverReliablePort, clientUnreliablePort);
-                        (new Thread(ur)).start();
-                        
-                        System.out.println("Sending Unreliable to: " + dg.getAddress() + ":" + clientUnreliablePort);
-                        System.out.println("Started Tunnel to: " + dg.getAddress() + ":" + clientReliablePort);
-                        System.out.println("My tunnel part is: " + srvAddr + ":" + serverReliablePort );
-                    }
+                    System.out.println("Received a datagram!\\o/");
+                    (new Thread(new Dispatch(dg))).start();
                 } catch (Exception ex) {
                     dg.reset();
                     rCon.close();
-                    
+
                     rCon = (RadiogramConnection) Connector.open(uri);
                     dg = (Radiogram) rCon.newDatagram(rCon.getMaximumLength());
                 }
@@ -215,6 +217,14 @@ public abstract class Server implements Runnable {
             ex.printStackTrace();
         }
     }
+
+    /*
+     * Process a receiving call/invoke RMI request.
+     * @param request - the request meta-data and it's arguments.
+     * @return - the RMI Reply object, if the request doesn't have a return, i.e.
+     *           void, return null
+     */
+    public abstract RMIReply service(RMIRequest request);
 
     public void setPort(int port) {
         this.port = port;
