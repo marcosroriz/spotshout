@@ -26,7 +26,7 @@ package com.google.code.spotshout.comm;
  */
 public abstract class RMIRequest extends RMIOperation {
 
-    private String remoteAddress;
+    protected  String remoteAddress;
     
     public RMIRequest() {
     }
@@ -38,9 +38,5 @@ public abstract class RMIRequest extends RMIOperation {
     // Getters
     public String getRemoteAddress() {
         return remoteAddress;
-    }
-
-    public void setRemoteAddress(String remoteAddress) {
-        this.remoteAddress = remoteAddress;
     }
 }

@@ -36,31 +36,14 @@ import javax.microedition.io.Datagram;
  * Client HandShake Request
  * ----------------------------------------------------------------------------
  * Byte:        Opcode
- * INT:         Client Reliable Port
  *
  *
  * Server HandShake Reply
  * ----------------------------------------------------------------------------
- * INT:         Server Reliable Port
+ * INT:         Connection Reliable Port
  */
 public class Client {
 
-    public int serverPort;
-    public int clientPort;
-    
-    public Client(int serverPort, int clientPort) {
-        this.serverPort = serverPort;
-        this.clientPort = clientPort;
-    }
-
-    public int getClientPort() {
-        return clientPort;
-    }
-
-    public int getServerPort() {
-        return serverPort;
-    }
-    
     /**
      * Connect two devices in PAN. First it sends a unreliable package to the
      * other point of the connection sending the address and port which will
@@ -73,72 +56,48 @@ public class Client {
      * @throws IOException - if there is an error during connection such as
      *                       timeout or data corruption.
      */
-    public static Client connect(byte operation, String targetAddr, int targetPort)
+    public static Connection connect(byte operation, String targetAddr, int targetPort)
             throws IOException {
-        RadiogramConnection rCon = null;
+        RadiogramConnection unrCon = null;
         Datagram dg = null;
-        Client connect = null;
+        Connection connect = null;
         int numberTry = 0;
 
         while (numberTry < RMIProperties.NUMBER_OF_TRIES) {
             try {
                 String uri = RMIProperties.UNRELIABLE_PROTOCOL + "://" + targetAddr + ":" + targetPort;
-                rCon = (RadiogramConnection) Connector.open(uri, Connector.READ_WRITE, true);
+                unrCon = (RadiogramConnection) Connector.open(uri, Connector.READ_WRITE, true);
 
-                rCon.setTimeout(RMIProperties.TIMEOUT);
-                dg = rCon.newDatagram(rCon.getMaximumLength());
+                unrCon.setTimeout(RMIProperties.TIMEOUT);
+                dg = unrCon.newDatagram(unrCon.getMaximumLength());
                 dg.reset();
 
-                // Writting protocol data
-                // We're going to reuse the port for unreliable and then reliable connection.
-                int clientPort = RemoteGarbageCollector.getFreePort();
+                // Writting Request
                 dg.write(operation);
-                dg.writeInt(clientPort);
-                rCon.send(dg);
+                unrCon.send(dg);
+
+                // Receiving Reply
+                unrCon.receive(dg);
+                int reliablePort = dg.readInt();
 
                 // Closing the Connection
                 dg.reset();
-                rCon.close();
+                unrCon.close();
 
-                // Waiting for Unreliable Reply
-                int clientUnreliablePort = 0;
-                switch (operation) {
-                    case ProtocolOpcode.HOST_ADDR_REQUEST:
-                        clientUnreliablePort = RMIProperties.UNRELIABLE_DISCOVER_CLIENT_PORT;
-                        break;
-                    case ProtocolOpcode.INVOKE_REQUEST:
-                        clientUnreliablePort = RMIProperties.UNRELIABLE_INVOKE_CLIENT_PORT;
-                        break;
-                    case ProtocolOpcode.REGISTRY_REQUEST:
-                        clientUnreliablePort = RMIProperties.UNRELIABLE_REGISTRY_CLIENT_PORT;
-                        break;
-                    default:
-                        clientUnreliablePort = RMIProperties.UNRELIABLE_REGISTRY_CLIENT_PORT;
-                }
-
-                // Waiting for answer
-                uri = RMIProperties.UNRELIABLE_PROTOCOL + "://:" + clientUnreliablePort;
-                rCon = (RadiogramConnection) Connector.open(uri);
-                dg = (Radiogram) rCon.newDatagram(rCon.getMaximumLength());
-                rCon.setTimeout(RMIProperties.TIMEOUT);
-
-                // Reading protocol answer
-                rCon.receive(dg);
-                int serverReliablePort = dg.readInt();
-
-                // Closing Unreliable connection
-                rCon.close();
-
-                // Opening and returning reliable data
-                connect = new Client(clientPort, serverReliablePort);
+                // Opening and Returning Reliable Connection
+                RemoteGarbageCollector.registerPort(reliablePort);
+                uri = RMIProperties.RELIABLE_PROTOCOL + "://" + targetAddr + ":" + reliablePort;
+                connect = Connector.open(uri);
+                System.out.println("Making RELIABLE CLIENT CONNECTION WITH SERVER ON:" + uri);
                 break;
-            } catch (Exception e) {
+            } catch (IOException ex) {
                 numberTry++;
-                rCon.close();
+                unrCon.close();
                 dg.reset();
                 if (numberTry == RMIProperties.NUMBER_OF_TRIES) throw new IOException();
             }
         }
+        System.out.println("NUMBER OF RETRY ON CLIENT CONNECTION: " + numberTry);
         return connect;
     }
 }

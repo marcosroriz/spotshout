@@ -18,6 +18,8 @@
 package com.google.code.spotshout.comm;
 
 import com.google.code.spotshout.remote.RemoteGarbageCollector;
+import com.sun.spot.peripheral.radio.RadioFactory;
+import com.sun.spot.util.IEEEAddress;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
@@ -72,7 +74,9 @@ public class BindRequest extends RMIRequest {
         this.remoteInterfaceName = remoteInterfaceName;
         this.remoteFullName = remoteFullName;
         this.skelPort = RemoteGarbageCollector.getFreePort();
-        this.setRemoteAddress(System.getProperty("IEEE_ADDRESS"));
+        long ourAddr = RadioFactory.getRadioPolicyManager().getIEEEAddress();
+        remoteAddress = IEEEAddress.toDottedHex(ourAddr);
+        System.out.println("OUR ADDRESS IS : " + remoteAddress);
         RemoteGarbageCollector.registerPort(skelPort);
     }
 
@@ -88,6 +92,7 @@ public class BindRequest extends RMIRequest {
         skelPort = input.readInt();
         remoteInterfaceName = input.readUTF();
         remoteFullName = input.readUTF();
+        remoteAddress = input.readUTF();
     }
 
     /**
@@ -98,9 +103,11 @@ public class BindRequest extends RMIRequest {
      * @see com.google.code.spotshout.comm.RMIOperation#writeData(java.io.DataOutput)
      */
     protected void writeData(DataOutput output) throws IOException {
+        output.write(getOperation());
         output.writeInt(getSkelPort());
         output.writeUTF(remoteInterfaceName);
         output.writeUTF(remoteFullName);
+        output.writeUTF(remoteAddress);
     }
 
     /**

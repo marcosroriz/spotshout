@@ -99,6 +99,7 @@ public class InvokeRequest extends RMIRequest {
         ObjectOutputStream oos = new ObjectOutputStream(bout);
         oos.writeObject(method);
 
+        output.write(getOperation());
         output.write(bout.size());
         output.write(bout.toByteArray());
     }

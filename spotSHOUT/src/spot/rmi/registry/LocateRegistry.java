@@ -93,10 +93,9 @@ public class LocateRegistry {
                 dg = rCon.newDatagram(rCon.getMaximumLength());
                 dg.reset();
 
+                System.out.println("making another broadcast request to " + uri);
                 dg.write(ProtocolOpcode.HOST_ADDR_REQUEST);
                 rCon.send(dg);
-
-                System.out.println("YO, I just sended this shit");
 
                 // Closing the connection
                 dg.reset();
@@ -105,13 +104,13 @@ public class LocateRegistry {
                 // Waiting for answer
                 uri = RMIProperties.UNRELIABLE_PROTOCOL + "://:" + RMIProperties.UNRELIABLE_DISCOVER_CLIENT_PORT;
                 rCon = (RadiogramConnection) Connector.open(uri);
-                dg = (Radiogram) rCon.newDatagram(40);
+                dg = (Radiogram) rCon.newDatagram(rCon.getMaximumLength());
                 rCon.setTimeout(RMIProperties.TIMEOUT);
 
-                System.out.println("NOW IM WAITING :'( on " + uri);
+                System.out.println("waitting for host server addr reply at " + uri);
                 // Reading protocol answer
                 rCon.receive(dg);
-                serverAddr = dg.readUTF();
+                serverAddr = dg.getAddress();
 
                 // Closing Unreliable connection
                 rCon.close();

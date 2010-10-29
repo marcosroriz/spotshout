@@ -25,13 +25,14 @@ import com.google.code.spotshout.comm.LookupReply;
 import com.google.code.spotshout.comm.LookupRequest;
 import com.google.code.spotshout.comm.ProtocolOpcode;
 import com.google.code.spotshout.comm.RMIUnicastConnection;
+import com.sun.spot.peripheral.radio.RadioFactory;
+import com.sun.spot.util.IEEEAddress;
 import java.io.IOException;
 import spot.rmi.AlreadyBoundException;
 import spot.rmi.NotBoundException;
 import spot.rmi.Remote;
 import spot.rmi.RemoteException;
 import spot.rmi.registry.Registry;
-import java.util.Hashtable;
 
 /**
  * Implements the RMI Registry for the Spot side.
@@ -54,7 +55,8 @@ public class SpotRegistry implements Registry {
     private int srvPort;
 
     public SpotRegistry(String srvAddress, int srvPort) {
-        ourAddress = System.getProperty("IEEE_ADDRESS");
+        long ourAddr = RadioFactory.getRadioPolicyManager().getIEEEAddress();
+        ourAddress = IEEEAddress.toDottedHex(ourAddr);
         this.srvAddress = srvAddress;
         this.srvPort = srvPort;
     }

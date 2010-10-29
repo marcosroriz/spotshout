@@ -20,6 +20,8 @@ import com.google.code.spotshout.RMIProperties;
 import com.google.code.spotshout.remote.RemoteGarbageCollector;
 import com.sun.spot.io.j2me.radiogram.Radiogram;
 import com.sun.spot.io.j2me.radiogram.RadiogramConnection;
+import com.sun.spot.peripheral.radio.RadioFactory;
+import com.sun.spot.util.IEEEAddress;
 import java.io.IOException;
 import javax.microedition.io.Connector;
 import javax.microedition.io.Datagram;
@@ -38,13 +40,12 @@ import javax.microedition.io.Datagram;
  * Client HandShake Request
  * ----------------------------------------------------------------------------
  * Byte:        Opcode
- * (Opt)INT:    Client Reliable Port
  *
  *
  * Server HandShake Reply
  * ----------------------------------------------------------------------------
  * (Opt)String: Server Address
- * INT:         Server Reliable Port
+ * INT:         Connection Reliable Port
  */
 public abstract class Server implements Runnable {
 
@@ -57,8 +58,8 @@ public abstract class Server implements Runnable {
 
         private RMIUnicastConnection reliableCon;
 
-        public Tunnel(String addr, int serverPort, int clientPort) throws IOException {
-            reliableCon = RMIUnicastConnection.makeServerConnection(addr, clientPort, serverPort);
+        public Tunnel(String addr, int port) throws IOException {
+            reliableCon = RMIUnicastConnection.makeServerConnection(addr, port);
         }
 
         public void run() {
@@ -74,105 +75,12 @@ public abstract class Server implements Runnable {
             }
         }
     }
-
-    /**
-     * This class sends unreliable reply with the objective to obtain a reliable
-     * connection.
-     */
-    public class DatagramReply implements Runnable {
-
-        String clientAddr;
-        int port;
-        int unreliablePort;
-
-        public DatagramReply(String addr, int serverPort, int unrPort)
-                throws IOException {
-            clientAddr = addr;
-            port = serverPort;
-            unreliablePort = unrPort;
-        }
-
-        public void run() {
-            RadiogramConnection rCon = null;
-            Datagram dg = null;
-
-            try {
-                String uri = RMIProperties.UNRELIABLE_PROTOCOL + "://"
-                        + clientAddr + ":" + unreliablePort;
-
-                System.out.println("I'm onpening and sending the reply to this guy: " + uri);
-                                
-                rCon = (RadiogramConnection) Connector.open(uri);
-                dg = (Radiogram) rCon.newDatagram(rCon.getMaximumLength());
-                if (discover) dg.writeUTF(srvAddr);
-                if (!discover) dg.writeInt(port);
-                rCon.setTimeout(RMIProperties.TIMEOUT);
-
-                rCon.send(dg);
-                System.out.println("Sended :D\n\n");
-
-                // Closing Unreliable connection
-                rCon.close();
-                dg.reset();
-            } catch (Exception e) {
-                try {
-                    rCon.close();
-                    dg.reset();
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }
-            }
-        }
-    }
     
-    public class Dispatch implements Runnable {
-        private String clientAddr;
-        private int clientReliablePort;
-        private byte operation;
-        
-        public Dispatch(Radiogram rg) throws IOException {
-            clientAddr = rg.getAddress();
-            operation = rg.readByte();
-            if (!discover) clientReliablePort = rg.readInt();
-            else clientReliablePort = 0;
-            System.out.println("SOme data: " + clientAddr);
-        }
-
-        public void run() {
-            try {
-                int clientListeningPort = findClientListeningPort(operation);
-                int serverReliablePort = 0;
-                System.out.println("running");
-                if (!discover) {
-                    serverReliablePort = RemoteGarbageCollector.getFreePort();
-
-                    // Initiate reliable connection on this point
-                    (new Thread(new Tunnel(clientAddr, serverReliablePort, clientReliablePort))).start();
-                }
-
-                (new Thread(new DatagramReply(clientAddr, serverReliablePort, clientListeningPort))).start();
-            } catch (IOException ex) {}
-        }
-
-        private int findClientListeningPort(byte operation) {
-            switch (operation) {
-                case ProtocolOpcode.HOST_ADDR_REQUEST:
-                    return RMIProperties.UNRELIABLE_DISCOVER_CLIENT_PORT;
-                case ProtocolOpcode.INVOKE_REQUEST:
-                    return RMIProperties.UNRELIABLE_INVOKE_CLIENT_PORT;
-                case ProtocolOpcode.REGISTRY_REQUEST:
-                    return RMIProperties.UNRELIABLE_REGISTRY_CLIENT_PORT;
-                default:
-                    return RMIProperties.UNRELIABLE_REGISTRY_CLIENT_PORT;
-            }
-        }
-    }
-
     /**
      * The port which this Server will listen (non reliable), to establish
      * reliable connections.
      */
-    protected int port;
+    protected byte port;
 
     /**
      * Our server address.
@@ -183,39 +91,10 @@ public abstract class Server implements Runnable {
      * Is this a discover registry ??
      */
     protected boolean discover;
-
+    
     public Server() {
         port = RMIProperties.RMI_SERVER_PORT;
-        srvAddr = System.getProperty("IEEE_ADDRESS");
-    }
-
-    /**
-     * Listen for unreliable connections and make a reliable one with the client.
-     */
-    public void run() {
-        try {
-            String uri = RMIProperties.UNRELIABLE_PROTOCOL + "://:" + port;
-            RadiogramConnection rCon = (RadiogramConnection) Connector.open(uri);
-            Radiogram dg = (Radiogram) rCon.newDatagram(rCon.getMaximumLength());
-
-            while (true) {
-                dg.reset();
-                try {
-                    // Receive Unreliable Request
-                    rCon.receive(dg);
-                    System.out.println("Received a datagram!\\o/");
-                    (new Thread(new Dispatch(dg))).start();
-                } catch (Exception ex) {
-                    dg.reset();
-                    rCon.close();
-
-                    rCon = (RadiogramConnection) Connector.open(uri);
-                    dg = (Radiogram) rCon.newDatagram(rCon.getMaximumLength());
-                }
-            }
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
+        srvAddr = IEEEAddress.toDottedHex(RadioFactory.getRadioPolicyManager().getIEEEAddress());
     }
 
     /*
@@ -226,7 +105,58 @@ public abstract class Server implements Runnable {
      */
     public abstract RMIReply service(RMIRequest request);
 
-    public void setPort(int port) {
-        this.port = port;
+    /**
+     * Listen for unreliable connections and make a reliable one with the client.
+     */
+    public void run() {
+        try {
+            String uri = RMIProperties.UNRELIABLE_PROTOCOL + "://:" + port;
+            RadiogramConnection rCon = (RadiogramConnection) Connector.open(uri);
+            Datagram dg = (Datagram) rCon.newDatagram(rCon.getMaximumLength());
+            Datagram dgReply = (Datagram) rCon.newDatagram(rCon.getMaximumLength());
+
+
+            while (true) {
+                dg.reset();
+                try {
+                    // Receive Unreliable Request
+                    rCon.receive(dg);
+                    byte operation = dg.readByte();
+
+                    System.out.println("received request from " + dg.getAddress());
+                    
+                    if (discover) {
+                        String tempuri = "radiogram://" + dg.getAddress() + ":" + RMIProperties.UNRELIABLE_DISCOVER_CLIENT_PORT;
+                        RadiogramConnection tmp = (RadiogramConnection) Connector.open(tempuri);
+                        Datagram tmpDg = tmp.newDatagram(tmp.getMaximumLength());
+
+                        System.out.println("sending our addr to mothar fuckar " + tempuri);
+                        // Send unreliable reply
+                        tmpDg.writeByte(0);
+                        tmp.send(tmpDg);
+                        tmp.close();
+                        System.out.println("closed this connection");
+                    } else {
+                        dgReply.reset();
+                        dgReply.setAddress(dg.getAddress());
+                        int connectionPort = RemoteGarbageCollector.getFreePort();
+                        dgReply.writeInt(connectionPort);
+                        rCon.send(dgReply);
+
+                        // Initiate reliable connection on this point
+                        Tunnel tunnel = new Tunnel(dg.getAddress(), connectionPort);
+                        (new Thread(tunnel)).start();
+                    }
+                } catch (Exception ex) {
+                    dg.reset();
+                    rCon.close();
+                    
+                    rCon = (RadiogramConnection) Connector.open(uri);
+                    dg = (Radiogram) rCon.newDatagram(rCon.getMaximumLength());
+                }
+            }
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
     }
 }

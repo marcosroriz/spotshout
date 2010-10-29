@@ -5,6 +5,8 @@
 
 package com.google.code.spotshout.remote;
 
+import java.util.Random;
+
 /**
  *
  * @author Marcos Roriz
@@ -21,13 +23,10 @@ public class RemoteGarbageCollector {
      */
     public static synchronized int getFreePort() {
         while (true) {
-            if (currentPort > 230) currentPort = 0;
-            else if (isFree(currentPort)) {
-                int temp = currentPort;
-                currentPort++;
-                return temp;
-            } else {
-                currentPort++;
+            Random rand = new Random();
+            currentPort = 35 + rand.nextInt(200);
+            if ((currentPort < 230) && (isFree(currentPort))) {
+                return currentPort;
             }
         }
     }
@@ -44,6 +43,7 @@ public class RemoteGarbageCollector {
     }
 
     public static synchronized void registerPort(int port) {
+        if (registerPortCounter >= 10) registerPortCounter = 0;
         registedPorts[registerPortCounter++] = port;
     }
 }

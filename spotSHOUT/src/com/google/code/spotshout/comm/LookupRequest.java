@@ -16,6 +16,8 @@
  */
 package com.google.code.spotshout.comm;
 
+import com.sun.spot.peripheral.radio.RadioFactory;
+import com.sun.spot.util.IEEEAddress;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
@@ -51,7 +53,8 @@ public class LookupRequest extends RMIRequest {
     public LookupRequest(String remoteInterfaceName) {
         super(ProtocolOpcode.LOOKUP_REQUEST);
         this.remoteInterfaceName = remoteInterfaceName;
-        this.setRemoteAddress(System.getProperty("IEEE_ADDRESS"));
+        long ourAddr = RadioFactory.getRadioPolicyManager().getIEEEAddress();
+        remoteAddress = IEEEAddress.toDottedHex(ourAddr);
     }
 
     /**
@@ -64,6 +67,7 @@ public class LookupRequest extends RMIRequest {
     protected void readData(DataInput input) throws IOException {
         // We have already readed operation for the manual reflection
         remoteInterfaceName = input.readUTF();
+        remoteAddress = input.readUTF();
     }
 
     /**
@@ -74,7 +78,9 @@ public class LookupRequest extends RMIRequest {
      * @see com.google.code.spotshout.comm.RMIOperation#writeData(java.io.DataOutput)
      */
     protected void writeData(DataOutput output) throws IOException {
+        output.write(getOperation());
         output.writeUTF(remoteInterfaceName);
+        output.writeUTF(remoteAddress);
     }
 
     // Getter

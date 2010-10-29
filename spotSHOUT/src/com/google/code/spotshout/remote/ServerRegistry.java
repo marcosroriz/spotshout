@@ -78,7 +78,6 @@ public class ServerRegistry extends Server implements Registry {
     }
 
     private RMIReply list(ListRequest request) {
-        System.out.println("TREATING LIST REQUEST");
         String[] names = new String[registryTable.size()];
         Enumeration e = registryTable.keys();
 
@@ -89,14 +88,13 @@ public class ServerRegistry extends Server implements Registry {
         
         ListReply reply = new ListReply(names);
         reply.setOperationStatus(ProtocolOpcode.OPERATION_OK);
-        System.out.println("FINISHED TREATING LIST REQUEST");
         return reply;
     }
 
     private RMIReply lookup(LookupRequest request) {
         String interfaceName = request.getRemoteInterfaceName();
 
-        if (!registryTable.contains(interfaceName)) {
+        if (!registryTable.containsKey(interfaceName)) {
             return new LookupReply(ProtocolOpcode.OPERATION_NOK, ProtocolOpcode.EXCEPTION_NOT_BOUND);
         } else {
             Vector v = (Vector) registryTable.get(interfaceName);
@@ -139,8 +137,6 @@ public class ServerRegistry extends Server implements Registry {
             }
 
             // Initiating Skel and it's Thread
-            System.out.println(remoteFullName + "_Skel");
-            Class.forName("com.google.code.spotshout.remote.TargetMethod");
             Class skelClass = Class.forName(remoteFullName + "_Skel");
             Skel skel = (Skel) skelClass.newInstance();
             skel.setRemote(obj);
