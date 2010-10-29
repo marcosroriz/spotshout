@@ -17,31 +17,17 @@
 
 package com.google.code.spotshout.remote;
 
-import com.google.code.spotshout.comm.Server;
+import com.google.code.spotshout.comm.RMIReply;
+import com.google.code.spotshout.comm.RMIRequest;
 import spot.rmi.Remote;
 
 /**
- * This class represent the structure of a abstract Skeleton. Each Skeleton has
- * to inherit this class.
+ * This interface represent the structure of a abstract Skeleton. Each Skeleton has
+ * to implement this class.
  */
-public abstract class Skel extends Server {
+public interface Skel {
 
-    /**
-     * Remote object that the skell will dispatch the request.
-     */
-    protected Remote remote;
+    public RMIReply service(RMIRequest request);
 
-    /**
-     * Empty constructor for reflection.
-     */
-    public Skel() {
-    }
-
-    public Remote getRemote() {
-        return remote;
-    }
-
-    public void setRemote(Remote remote) {
-        this.remote = remote;
-    }
+    public void setRemote(Remote remote);
 }

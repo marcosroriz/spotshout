@@ -19,7 +19,6 @@ package spot.rmi.registry;
 
 import com.google.code.spotshout.RMIProperties;
 import com.google.code.spotshout.comm.ProtocolOpcode;
-import com.google.code.spotshout.remote.DiscoverRegistry;
 import com.google.code.spotshout.remote.ServerRegistry;
 import com.google.code.spotshout.remote.SpotRegistry;
 import com.sun.spot.io.j2me.radiogram.Radiogram;
@@ -40,19 +39,10 @@ public class LocateRegistry {
     protected  LocateRegistry() {}
 
     public static Registry createRegistry() {
-        (new Thread(new DiscoverRegistry())).start();
-
-        reg = new ServerRegistry();
-        (new Thread((ServerRegistry)reg)).start();
-        return reg;
-    }
-
-    public static Registry createRegistry(int port) {
-        System.out.println("WTF");
-        (new Thread(new DiscoverRegistry())).start();
-
-        reg = new ServerRegistry();
-        (new Thread((ServerRegistry)reg)).start();
+        if (System.getProperty("IEEE_ADDRESS") == null) {
+            reg = new ServerRegistry();
+            (new Thread((ServerRegistry) reg)).start();
+        }
         return reg;
     }
 

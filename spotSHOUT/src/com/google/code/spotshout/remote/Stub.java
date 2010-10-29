@@ -29,9 +29,9 @@ public abstract class Stub {
     private String targetAddr;
 
     /**
-     * Target Port.
+     * Interface Name.
      */
-    private int targetPort;
+    private String interfaceName;
 
     /**
      * Empty constructor for reflection.
@@ -40,19 +40,19 @@ public abstract class Stub {
     }
 
     // Getters and Setters
+    public String getInterfaceName() {
+        return interfaceName;
+    }
+
     public String getTargetAddr() {
         return targetAddr;
     }
 
-    public int getTargetPort() {
-        return targetPort;
+    public void setInterfaceName(String interfaceName) {
+        this.interfaceName = interfaceName;
     }
 
     public void setTargetAddr(String targetAddr) {
         this.targetAddr = targetAddr;
-    }
-
-    public void setTargetPort(int targetPort) {
-        this.targetPort = targetPort;
     }
 }

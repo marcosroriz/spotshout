@@ -19,22 +19,27 @@ public class RMIProperties {
     /**
      * Host Discovery
      */
-    public static final byte UNRELIABLE_DISCOVER_CLIENT_PORT = (byte) 241;
+    public static final int UNRELIABLE_DISCOVER_CLIENT_PORT = 241;
 
     /**
      * The port where the server will reply the discover address of a RMI server.
      */
-    public static final byte UNRELIABLE_INVOKE_SERVER_PORT = (byte) 242;
+    public static final int UNRELIABLE_INVOKE_SERVER_PORT = 242;
 
     /**
      * The port where a client can discover a RMI server.
      */
-    public static final byte UNRELIABLE_DISCOVER_HOST_PORT = (byte) 243;
+    public static final int UNRELIABLE_DISCOVER_HOST_PORT = 243;
+
+    /**
+     * RMI Spot port
+     */
+    public static final int RMI_SPOT_PORT = 244;
 
     /**
      * RMI Server port
      */
-    public static final byte RMI_SERVER_PORT = (byte) 245;
+    public static final int RMI_SERVER_PORT = 245;
 
     /**
      *

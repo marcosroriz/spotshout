@@ -32,7 +32,6 @@ import java.io.IOException;
  * Bind Request Protocol
  * ----------------------------------------------------------------------------
  * Byte:        Opcode
- * INT:         Skeleton Port
  * UTF:         Remote Interface Desired Name
  * UTF:         Remote Interface Full Qualified Name
  */
@@ -48,11 +47,6 @@ public class BindRequest extends RMIRequest {
      * Ex: foo.bar.IWeather
      */
     private String remoteFullName;
-
-    /**
-     * Skeleton port.
-     */
-    private int skelPort;
 
     /**
      * Empty constructor for dependency injection and "manual" reflection.
@@ -73,11 +67,7 @@ public class BindRequest extends RMIRequest {
         super(ProtocolOpcode.BIND_REQUEST);
         this.remoteInterfaceName = remoteInterfaceName;
         this.remoteFullName = remoteFullName;
-        this.skelPort = RemoteGarbageCollector.getFreePort();
-        long ourAddr = RadioFactory.getRadioPolicyManager().getIEEEAddress();
-        remoteAddress = IEEEAddress.toDottedHex(ourAddr);
-        System.out.println("OUR ADDRESS IS : " + remoteAddress);
-        RemoteGarbageCollector.registerPort(skelPort);
+        remoteAddress = IEEEAddress.toDottedHex(RadioFactory.getRadioPolicyManager().getIEEEAddress());
     }
 
     /**
@@ -89,7 +79,6 @@ public class BindRequest extends RMIRequest {
      */
     protected void readData(DataInput input) throws IOException {
         // We have already readed operation for the manual reflection
-        skelPort = input.readInt();
         remoteInterfaceName = input.readUTF();
         remoteFullName = input.readUTF();
         remoteAddress = input.readUTF();
@@ -104,18 +93,9 @@ public class BindRequest extends RMIRequest {
      */
     protected void writeData(DataOutput output) throws IOException {
         output.write(getOperation());
-        output.writeInt(getSkelPort());
         output.writeUTF(remoteInterfaceName);
         output.writeUTF(remoteFullName);
         output.writeUTF(remoteAddress);
-    }
-
-    /**
-     * Get the port which the skeleton will listen.
-     * @return the port of the skeleton.
-     */
-    public int getSkelPort() {
-        return skelPort;
     }
 
     /**

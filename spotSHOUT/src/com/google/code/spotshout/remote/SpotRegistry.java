@@ -17,17 +17,20 @@
 
 package com.google.code.spotshout.remote;
 
+import com.google.code.spotshout.RMIProperties;
 import com.google.code.spotshout.comm.BindReply;
 import com.google.code.spotshout.comm.BindRequest;
+import com.google.code.spotshout.comm.InvokeRequest;
 import com.google.code.spotshout.comm.ListReply;
 import com.google.code.spotshout.comm.ListRequest;
 import com.google.code.spotshout.comm.LookupReply;
 import com.google.code.spotshout.comm.LookupRequest;
 import com.google.code.spotshout.comm.ProtocolOpcode;
+import com.google.code.spotshout.comm.RMIReply;
+import com.google.code.spotshout.comm.RMIRequest;
 import com.google.code.spotshout.comm.RMIUnicastConnection;
-import com.sun.spot.peripheral.radio.RadioFactory;
-import com.sun.spot.util.IEEEAddress;
-import java.io.IOException;
+import com.google.code.spotshout.comm.Server;
+import java.util.Hashtable;
 import spot.rmi.AlreadyBoundException;
 import spot.rmi.NotBoundException;
 import spot.rmi.Remote;
@@ -37,30 +40,40 @@ import spot.rmi.registry.Registry;
 /**
  * Implements the RMI Registry for the Spot side.
  */
-public class SpotRegistry implements Registry {
-
+public class SpotRegistry extends Server implements Registry {
     /**
-     * Our address.
+     * Invoke table
+     *
+     * Structure:
+     * | Interface Name | Skel |
      */
-    private String ourAddress;
-
+    private Hashtable invokeTable;
+    
     /**
-     * Registry (Server) address.
+     * RMI Registry (Server) address.
      */
     private String srvAddress;
 
     /**
-     * Registry (Server) Port.
+     * RMI Registry (Server) Port.
      */
     private int srvPort;
 
-    public SpotRegistry(String srvAddress, int srvPort) {
-        long ourAddr = RadioFactory.getRadioPolicyManager().getIEEEAddress();
-        ourAddress = IEEEAddress.toDottedHex(ourAddr);
-        this.srvAddress = srvAddress;
-        this.srvPort = srvPort;
+    public SpotRegistry(String serverAddress, int serverPort) {
+        super(RMIProperties.RMI_SPOT_PORT);
+        srvAddress = serverAddress;
+        srvPort = serverPort;
+        invokeTable = new Hashtable();
     }
 
+    public RMIReply service(RMIRequest request) {
+        switch (request.getOperation()) {
+            case ProtocolOpcode.INVOKE_REQUEST:
+                return invoke((InvokeRequest) request);
+        }
+        return null;
+    }
+    
     /**
      * (non-javadoc)
      * @see java.rmi.registry.Registry#bind(java.lang.String, java.rmi.Remote)
@@ -81,45 +94,36 @@ public class SpotRegistry implements Registry {
 
             if (reply.exceptionHappened()) throw new AlreadyBoundException(SpotRegistry.class, "AlreadyBound on Bind");
 
-            // Initiating Skel and it's Thread
+            // Initiating Skel and saving it
             Class skelClass = Class.forName(remoteFullName + "_Skel");
             Skel skel = (Skel) skelClass.newInstance();
             skel.setRemote(obj);
-            skel.setPort(request.getSkelPort());
-            (new Thread(skel)).start();
-        } catch (InstantiationException ex) {
-            ex.printStackTrace();
-            throw new RemoteException(SpotRegistry.class, "Skeleton not found");
-        } catch (IllegalAccessException ex) {
-            ex.printStackTrace();
-        } catch (ClassNotFoundException ex) {
-            ex.printStackTrace();
-            throw new RemoteException(SpotRegistry.class, "Skeleton not found");
-        } catch (IOException ex) {
-            ex.printStackTrace();
+
+            invokeTable.put(request.getRemoteInterfaceName(), skel);
+        } catch (Exception ex) {
             throw new RemoteException(SpotRegistry.class, "Error on bind()");
         }
     }
 
+    
+    private RMIReply invoke(InvokeRequest request) {
+        Skel skel = (Skel) invokeTable.get(request.getRemoteName());
+        return skel.service(request);
+    }
     /**
      * (non-javadoc)
      * @see java.rmi.registry.Registry#list() 
      */
     public String[] list() throws RemoteException {
-        System.out.println("INITIATED LIST REQUEST");
         try {
             RMIUnicastConnection conn = RMIUnicastConnection.
                     makeClientConnection(ProtocolOpcode.REGISTRY_REQUEST, srvAddress, srvPort);
             ListRequest request = new ListRequest();
             conn.writeRequest(request);
-                    System.out.println("ENDED LIST REQUEST");
-        System.out.println("WAITING LIST REPLY");
-        ListReply reply = (ListReply) conn.readReply();
-        System.out.println("ENDED LIST REPLY");
+            ListReply reply = (ListReply) conn.readReply();
 
             return reply.getNames();
-        } catch (IOException ex) {
-            ex.printStackTrace();
+        } catch (Exception ex) {
             throw new RemoteException(SpotRegistry.class, "Error on list()");
         }
     }
@@ -142,24 +146,9 @@ public class SpotRegistry implements Registry {
             LookupReply reply = (LookupReply) conn.readReply();
 
             // Creating Stub
-            System.out.println("Stub name : " + reply.getRemoteFullName() + "_Stub");
-            Class stubClass = Class.forName(reply.getRemoteFullName() + "_Stub");
-            Stub stub = (Stub) stubClass.newInstance();
-            stub.setTargetAddr(reply.getRemoteAddr());
-            stub.setTargetPort(reply.getRemotePort());
-
+            Stub stub = reply.createStub();
             return (Remote) stub;
-        } catch (InstantiationException ex) {
-            ex.printStackTrace();
-            throw new RemoteException(SpotRegistry.class, "Error on Stub initialization");
-        } catch (IllegalAccessException ex) {
-            ex.printStackTrace();
-            throw new RemoteException(SpotRegistry.class, "Stub not found");
-        } catch (ClassNotFoundException ex) {
-            ex.printStackTrace();
-            throw new RemoteException(SpotRegistry.class, "Stub not found");
-        } catch (IOException ex) {
-            ex.printStackTrace();
+        } catch (Exception ex) {
             throw new RemoteException(SpotRegistry.class, "Error on lookup()");
         }
     }
@@ -179,4 +168,5 @@ public class SpotRegistry implements Registry {
     public void unbind(String name) throws NotBoundException,
             NullPointerException, RemoteException {
     }
+
 }

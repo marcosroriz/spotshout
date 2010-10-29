@@ -40,6 +40,11 @@ import ksn.io.ObjectOutputStream;
 public class InvokeRequest extends RMIRequest {
 
     /**
+     * The remote interface name.
+     */
+    private String remoteName;
+
+    /**
      * Target Method that we are invoking.
      */
     private TargetMethod method;
@@ -50,17 +55,10 @@ public class InvokeRequest extends RMIRequest {
     public InvokeRequest() {
         super(ProtocolOpcode.INVOKE_REQUEST);
     }
-
-    /**
-     * The Invoke request of the RMI protocol. This constructor should be used
-     * by the SPOT.
-     * 
-     * @param remoteInterfaceName - the remote name (in the NameServer)
-     * @param remoteFullName - the remote interface full qualified name
-     *                         (including package).
-     */
-    public InvokeRequest(TargetMethod m) {
+    
+    public InvokeRequest(String remName, TargetMethod m) {
         super(ProtocolOpcode.INVOKE_REQUEST);
+        remoteName = remName;
         method = m;
     }
 
@@ -73,6 +71,7 @@ public class InvokeRequest extends RMIRequest {
      */
     protected void readData(DataInput input) throws IOException {
         try {
+            remoteName = input.readUTF();
             // We have already readed operation for the manual reflection
             int length = input.readInt();
 
@@ -100,12 +99,18 @@ public class InvokeRequest extends RMIRequest {
         oos.writeObject(method);
 
         output.write(getOperation());
+        output.writeUTF(remoteName);
         output.write(bout.size());
         output.write(bout.toByteArray());
+        System.out.println("Size of this request (in bytes) : " + bout.size());
     }
 
     // Getter
     public TargetMethod getMethod() {
         return method;
+    }
+
+    public String getRemoteName() {
+        return remoteName;
     }
 }

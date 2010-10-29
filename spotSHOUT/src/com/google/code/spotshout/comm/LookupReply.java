@@ -31,9 +31,9 @@ import java.io.IOException;
  * ---------------------------------------------------------------
  * Byte:        Status
  * (Opt) Byte:  Exception
- * String:      Remote Reference Address
- * Int:         Remote Reference Port
+ * String:      Remote Interface Name
  * String:      Remote Full Qualified Name
+ * String:      Remote Reference Address
  */
 public class LookupReply extends RMIReply {
 
@@ -43,9 +43,9 @@ public class LookupReply extends RMIReply {
     private String remoteAddr;
 
     /**
-     * Remote (Skeleton) port.
+     * The interface name.
      */
-    private int remotePort;
+    private String remoteName;
 
     /**
      * Remote Interface Full Qualified Name (including package).
@@ -73,17 +73,15 @@ public class LookupReply extends RMIReply {
     /**
      * Construct a LookupReply with all the meta-data available so we can
      * manually instantiate a Stub in the Spot.
-     * @param statusCode - operation status (OK)
-     * @param remAddr - remote address
-     * @param remPort - remote port
+     * @param remName - the interface remote name
      * @param remFullName - remote interface full name (including package)
+     * @param remAddr - remote address
      */
-    public LookupReply(byte statusCode, String remAddr, int remPort,
-            String remFullName) {
-        operationStatus = statusCode;
-        remoteAddr = remAddr;
-        remotePort = remPort;
+    public LookupReply(String remName, String remFullName, String remAddr) {
+        super(ProtocolOpcode.LOOKUP_REPLY);
+        remoteName = remName;
         remoteFullName = remFullName;
+        remoteAddr = remAddr;
     }
 
     /**
@@ -100,9 +98,9 @@ public class LookupReply extends RMIReply {
         if (operationStatus != ProtocolOpcode.OPERATION_OK) {
             exception = input.readByte();
         } else {
-            remoteAddr = input.readUTF();
-            remotePort = input.readInt();
+            remoteName = input.readUTF();
             remoteFullName = input.readUTF();
+            remoteAddr = input.readUTF();
         }
     }
 
@@ -119,9 +117,9 @@ public class LookupReply extends RMIReply {
         if (operationStatus != ProtocolOpcode.OPERATION_OK) {
             output.write(getException());
         } else {
-            output.writeUTF(remoteAddr);
-            output.writeInt(remotePort);
+            output.writeUTF(remoteName);
             output.writeUTF(remoteFullName);
+            output.writeUTF(remoteAddr);
         }
     }
 
@@ -137,20 +135,7 @@ public class LookupReply extends RMIReply {
         Class stubClass = Class.forName(remoteFullName + "_Stub");
         Stub stub = (Stub) stubClass.newInstance();
         stub.setTargetAddr(remoteAddr);
-        stub.setTargetPort(remotePort);
+        stub.setInterfaceName(remoteName);
         return stub;
-    }
-
-    // Getters
-    public String getRemoteAddr() {
-        return remoteAddr;
-    }
-
-    public String getRemoteFullName() {
-        return remoteFullName;
-    }
-
-    public int getRemotePort() {
-        return remotePort;
     }
 }
