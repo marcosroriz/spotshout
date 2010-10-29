@@ -11,6 +11,12 @@ package com.google.code.spotshout;
  */
 public class RMIProperties {
 
+    public static final boolean DEBUG = true;
+
+    public static final void log(String msg) {
+        if (DEBUG) System.out.println(msg);
+    }
+
     /**
      * Number of tries (to connect).
      */
@@ -19,17 +25,17 @@ public class RMIProperties {
     /**
      * Host Discovery
      */
-    public static final int UNRELIABLE_DISCOVER_CLIENT_PORT = 241;
-
-    /**
-     * The port where the server will reply the discover address of a RMI server.
-     */
-    public static final int UNRELIABLE_INVOKE_SERVER_PORT = 242;
+    public static final int UNRELIABLE_DISCOVER_CLIENT_PORT = 240;
 
     /**
      * The port where a client can discover a RMI server.
      */
     public static final int UNRELIABLE_DISCOVER_HOST_PORT = 243;
+
+    /**
+     * The port where the server will reply the discover address of a RMI server.
+     */
+    public static final int UNRELIABLE_INVOKE_SERVER_PORT = 242;
 
     /**
      * RMI Spot port
@@ -42,9 +48,14 @@ public class RMIProperties {
     public static final int RMI_SERVER_PORT = 245;
 
     /**
-     *
+     * Reliable timeout (radiostream).
      */
-    public static final int RELIABLE_TIMEOUT = 20000;
+    public static final int RELIABLE_TIMEOUT = 10000;
+
+    /**
+     * Little sleep time.
+     */
+    public static final int LITTLE_SLEEP_TIME = 300;
 
     /**
      * Timeout in milliseconds before throwing a TimeoutException

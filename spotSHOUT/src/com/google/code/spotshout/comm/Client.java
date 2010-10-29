@@ -84,6 +84,7 @@ public class Client {
                 dg.reset();
                 unrCon.close();
 
+                System.out.println("DID I GET THE CONNECTION?");
                 // Opening and Returning Reliable Connection
                 RemoteGarbageCollector.registerPort(reliablePort);
                 uri = RMIProperties.RELIABLE_PROTOCOL + "://" + targetAddr + ":" + reliablePort;
@@ -93,7 +94,6 @@ public class Client {
             } catch (IOException ex) {
                 numberTry++;
                 unrCon.close();
-                dg.reset();
                 if (numberTry == RMIProperties.NUMBER_OF_TRIES) throw new IOException();
             }
         }

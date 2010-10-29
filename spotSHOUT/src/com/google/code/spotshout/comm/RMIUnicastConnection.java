@@ -60,10 +60,15 @@ public class RMIUnicastConnection {
     private RMIReply reply;
 
     private RMIUnicastConnection(Connection conn) throws IOException {
-        connection = (RadiostreamConnection) conn;
-        dis = connection.openDataInputStream();
-        dos = connection.openDataOutputStream();
-        connection.setTimeout(RMIProperties.RELIABLE_TIMEOUT);
+        try {
+            connection = (RadiostreamConnection) conn;
+            dis = connection.openDataInputStream();
+            dos = connection.openDataOutputStream();
+            connection.setTimeout(RMIProperties.RELIABLE_TIMEOUT);
+            Thread.sleep(300);
+        } catch (InterruptedException ex) {
+            ex.printStackTrace();
+        }
     }
 
     /**
@@ -107,6 +112,8 @@ public class RMIUnicastConnection {
      * @throws IOException - on a given remote error (timeout) or data corruption.
      */
     public RMIRequest readRequest() throws IOException {
+        RMIProperties.log("Reading Request Started");
+
         byte operation = readOpcode(dis);
         switch (operation) {
             case ProtocolOpcode.BIND_REQUEST:
@@ -134,6 +141,8 @@ public class RMIUnicastConnection {
 
         request.setOperation(operation);
         request.readData(dis);
+
+        RMIProperties.log("Reading Request Finished");
         return request;
     }
 
@@ -143,6 +152,7 @@ public class RMIUnicastConnection {
      * @throws IOException  - on a given remote error (timeout) or data corruption.
      */
     public RMIReply readReply() throws IOException {
+        RMIProperties.log("Reading Reply Started");
         byte operation = request.getOperation();
 
         switch (operation) {
@@ -170,6 +180,7 @@ public class RMIUnicastConnection {
         }
 
         reply.readData(dis);
+        RMIProperties.log("Reading Reply Finished");
         return reply;
     }
 
@@ -179,9 +190,11 @@ public class RMIUnicastConnection {
      * @throws IOException - on a given remote error (timeout) or data corruption.
      */
     public void writeRequest(RMIRequest request) throws IOException {
+        RMIProperties.log("Writting Request Started");
         this.request = request;
         request.writeData(dos);
         dos.flush();
+        RMIProperties.log("Writting Request Finished");
     }
 
     /**
@@ -190,9 +203,11 @@ public class RMIUnicastConnection {
      * @throws IOException - on a given remote error (timeout) or data corruption.
      */
     public void writeReply(RMIReply reply) throws IOException {
+        RMIProperties.log("Writting Reply Started");
         this.reply = reply;
         reply.writeData(dos);
         dos.flush();
+        RMIProperties.log("Writting Reply Finished");
     }
 
     /**
@@ -204,6 +219,9 @@ public class RMIUnicastConnection {
      *                       data comes corrupted.
      */
     private byte readOpcode(DataInput input) throws IOException {
-        return input.readByte();
+        RMIProperties.log("Reading Opcode Started");
+        byte opcode = input.readByte();
+        RMIProperties.log("Reading Opcode Finished");
+        return opcode;
     }
 }

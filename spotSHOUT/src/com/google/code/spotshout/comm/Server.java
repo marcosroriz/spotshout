@@ -62,6 +62,7 @@ public abstract class Server implements Runnable {
     public Server(int listeningPort) {
         ourPort = listeningPort;
         ourAddr = IEEEAddress.toDottedHex(RadioFactory.getRadioPolicyManager().getIEEEAddress());
+        RMIProperties.log("Started this RMI Server -- I'm: " + ourAddr + ":" + ourPort);
     }
 
     /*
@@ -78,13 +79,18 @@ public abstract class Server implements Runnable {
      * @throws IOException - if there is a error on opening this connection
      */
     private void sendAddrReply(String clientAddr) throws IOException {
-        String tempuri = "radiogram://" + clientAddr + ":" + RMIProperties.UNRELIABLE_DISCOVER_CLIENT_PORT;
-        RadiogramConnection tmp = (RadiogramConnection) Connector.open(tempuri);
-        Datagram tmpDg = tmp.newDatagram(20);
-
-        tmpDg.writeByte(ProtocolOpcode.HOST_ADDR_REPLY);
-        tmp.send(tmpDg);
-        tmp.close();
+        try {
+            String tempuri = "radiogram://" + clientAddr + ":" + RMIProperties.UNRELIABLE_DISCOVER_CLIENT_PORT;
+            RadiogramConnection tmp = (RadiogramConnection) Connector.open(tempuri);
+            Datagram tmpDg = tmp.newDatagram(20);
+            
+            Thread.sleep(RMIProperties.LITTLE_SLEEP_TIME);
+            tmpDg.writeByte(ProtocolOpcode.HOST_ADDR_REPLY);
+            tmp.send(tmpDg);
+            tmp.close();
+        } catch (InterruptedException ex) {
+            ex.printStackTrace();
+        }
     }
     
     /**
@@ -109,6 +115,8 @@ public abstract class Server implements Runnable {
                     } else {
                         dgReply.reset();
                         dgReply.setAddress(dg.getAddress());
+
+                        Thread.sleep(RMIProperties.LITTLE_SLEEP_TIME);
                         int connectionPort = RemoteGarbageCollector.getFreePort();
                         dgReply.writeInt(connectionPort);
                         rCon.send(dgReply);
@@ -120,6 +128,7 @@ public abstract class Server implements Runnable {
                 } catch (Exception ex) {
                     // TimeoutException
                     dg.reset();
+                    dgReply.reset();
                     rCon.close();
 
                     rCon = (RadiogramConnection) Connector.open(uri);
@@ -140,21 +149,30 @@ public abstract class Server implements Runnable {
      */
     public class Tunnel implements Runnable {
 
+        private String tunnelAddress;
+        private int tunnelPort;
         private RMIUnicastConnection reliableCon;
 
         public Tunnel(String addr, int port) throws IOException {
+            tunnelAddress = addr;
+            tunnelPort = port;
             reliableCon = RMIUnicastConnection.makeServerConnection(addr, port);
         }
 
         public void run() {
             try {
+                RMIProperties.log("Initiated Tunnel with: " + tunnelAddress + ":" + tunnelPort);
+                RMIProperties.log("This is " + ourAddr + ":" + ourPort);
+
                 RMIRequest req = reliableCon.readRequest();
+                Thread.sleep(RMIProperties.LITTLE_SLEEP_TIME);
                 RMIReply reply = service(req);
                 if (reply != null)
                     reliableCon.writeReply(reply);
 
                 reliableCon.close();
-            } catch (IOException ex) {
+                RMIProperties.log("Finished Tunnel with: " + tunnelAddress + ":" + tunnelPort);
+            } catch (Exception ex) {
                 // TimeoutException
             }
         }

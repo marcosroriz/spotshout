@@ -80,6 +80,7 @@ public class SpotRegistry extends Server implements Registry {
      */
     public void bind(String name, String remoteFullName, Remote obj)
             throws AlreadyBoundException, NullPointerException, RemoteException {
+        RMIProperties.log("Bind Request Started -- Remote Name: " + name);
 
         // Exceptions
         if (name == null) throw new NullPointerException("Bind name is null.");
@@ -100,6 +101,7 @@ public class SpotRegistry extends Server implements Registry {
             skel.setRemote(obj);
 
             invokeTable.put(request.getRemoteInterfaceName(), skel);
+            RMIProperties.log("Bind Request Finished -- Remote Name: " + name);
         } catch (Exception ex) {
             throw new RemoteException(SpotRegistry.class, "Error on bind()");
         }
@@ -107,8 +109,13 @@ public class SpotRegistry extends Server implements Registry {
 
     
     private RMIReply invoke(InvokeRequest request) {
+        RMIProperties.log("Invoke Request Started -- Remote Name: " + request.getRemoteName());
+
         Skel skel = (Skel) invokeTable.get(request.getRemoteName());
-        return skel.service(request);
+        RMIReply reply = skel.service(request);
+
+        RMIProperties.log("Invoke Request Finished -- Remote Name: " + request.getRemoteName());
+        return reply;
     }
     /**
      * (non-javadoc)
@@ -116,12 +123,15 @@ public class SpotRegistry extends Server implements Registry {
      */
     public String[] list() throws RemoteException {
         try {
+            RMIProperties.log("List Request Started");
+
             RMIUnicastConnection conn = RMIUnicastConnection.
                     makeClientConnection(ProtocolOpcode.REGISTRY_REQUEST, srvAddress, srvPort);
             ListRequest request = new ListRequest();
             conn.writeRequest(request);
             ListReply reply = (ListReply) conn.readReply();
 
+            RMIProperties.log("List Request Finished");
             return reply.getNames();
         } catch (Exception ex) {
             throw new RemoteException(SpotRegistry.class, "Error on list()");
@@ -134,6 +144,7 @@ public class SpotRegistry extends Server implements Registry {
      */
     public Remote lookup(String name) throws NotBoundException,
             NullPointerException, RemoteException {
+        RMIProperties.log("Lookup Request Started -- Remote Name: " + name);
 
         // Exceptions
         if (name == null) throw new NullPointerException("Lookup name is null.");
@@ -147,6 +158,8 @@ public class SpotRegistry extends Server implements Registry {
 
             // Creating Stub
             Stub stub = reply.createStub();
+
+            RMIProperties.log("Lookup Request Finished -- Remote Name:" + name);
             return (Remote) stub;
         } catch (Exception ex) {
             throw new RemoteException(SpotRegistry.class, "Error on lookup()");

@@ -17,7 +17,6 @@
 
 package com.google.code.spotshout.comm;
 
-import com.google.code.spotshout.remote.RemoteGarbageCollector;
 import com.sun.spot.peripheral.radio.RadioFactory;
 import com.sun.spot.util.IEEEAddress;
 import java.io.DataInput;

@@ -51,7 +51,9 @@ public class LocateRegistry {
         String addr = discoverSrv();
         System.out.println("END DISCOVERY");
         System.out.println("Endereco dessa porra e" + addr);
+        
         reg = new SpotRegistry(addr, RMIProperties.RMI_SERVER_PORT);
+        (new Thread((SpotRegistry) reg)).start();
         return reg;
     }
 
@@ -78,8 +80,10 @@ public class LocateRegistry {
         
         while (numberTry < RMIProperties.NUMBER_OF_TRIES) {
             try {
-                String uri = RMIProperties.UNRELIABLE_PROTOCOL + "://broadcast:" + RMIProperties.UNRELIABLE_DISCOVER_HOST_PORT;
-                rCon = (RadiogramConnection) Connector.open(uri);
+                String uri = RMIProperties.UNRELIABLE_PROTOCOL + "://broadcast:" + RMIProperties.RMI_SERVER_PORT;
+                rCon = (RadiogramConnection) Connector.open(uri, Connector.READ_WRITE, true);
+                
+                rCon.setTimeout(RMIProperties.TIMEOUT);
                 dg = rCon.newDatagram(rCon.getMaximumLength());
                 dg.reset();
 
@@ -108,8 +112,8 @@ public class LocateRegistry {
                 break;
             } catch (IOException ex) {
                 numberTry++;
-                rCon.close();
                 dg.reset();
+                rCon.close();
                 if (numberTry == RMIProperties.NUMBER_OF_TRIES) throw new IOException();
             }
         }

@@ -17,6 +17,7 @@
 
 package com.google.code.spotshout.remote;
 
+import com.google.code.spotshout.RMIProperties;
 import java.io.IOException;
 import java.io.Serializable;
 import ksn.io.KSNSerializableInterface;
@@ -59,15 +60,20 @@ public final class TargetMethod implements KSNSerializableInterface {
     }
 
     public void writeObjectOnSensor(ObjectOutputStream stream) throws IOException {
+        RMIProperties.log("TargetMethod Writting Started");
         stream.writeInt(methodNumber);
         stream.writeInt(numberArgs);
 
         for (int i = 0; i < numberArgs; i++) {
             stream.writeObject(args[i]);
         }
+        
+        RMIProperties.log("TargetMethod Writting Finished");
     }
 
     public void readObjectOnSensor(ObjectInputStream stream) throws IOException, ClassNotFoundException, IllegalAccessException, InstantiationException {
+        RMIProperties.log("TargetMethod Reading Started");
+
         methodNumber = stream.readInt();
         numberArgs = stream.readInt();
 
@@ -76,6 +82,7 @@ public final class TargetMethod implements KSNSerializableInterface {
         for (int i = 0; i < numberArgs; i++) {
             args[i] = (Serializable) stream.readObject();
         }
+        RMIProperties.log("TargetMethod Reading Finished");
     }
 
     public Object[] getArgs() {
