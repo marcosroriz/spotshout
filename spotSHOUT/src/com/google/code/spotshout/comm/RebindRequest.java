@@ -79,7 +79,6 @@ public class RebindRequest extends RMIRequest {
      * @see com.google.code.spotshout.comm.RMIOperation#writeData(java.io.DataOutput)
      */
     protected void writeData(DataOutput output) throws IOException {
-        output.write(getOperation());
         output.writeInt(getSkelPort());
         output.writeUTF(remoteInterfaceName);
         output.writeUTF(remoteFullName);

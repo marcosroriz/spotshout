@@ -47,7 +47,6 @@ public class ListRequest extends RMIRequest {
      * @see com.google.code.spotshout.comm.RMIOperation#readData(java.io.DataInput)
      */
     protected void readData(DataInput input) throws IOException {
-        // We have already readed operation for the manual reflection
     }
 
     /**
@@ -58,6 +57,5 @@ public class ListRequest extends RMIRequest {
      * @see com.google.code.spotshout.comm.RMIOperation#writeData(java.io.DataOutput)
      */
     protected void writeData(DataOutput output) throws IOException {
-        output.write(getOperation());
     }
 }
