@@ -29,7 +29,11 @@ import com.google.code.spotshout.comm.ProtocolOpcode;
 import com.google.code.spotshout.comm.RMIReply;
 import com.google.code.spotshout.comm.RMIRequest;
 import com.google.code.spotshout.comm.RMIUnicastConnection;
+import com.google.code.spotshout.comm.RebindReply;
+import com.google.code.spotshout.comm.RebindRequest;
 import com.google.code.spotshout.comm.Server;
+import com.google.code.spotshout.comm.UnbindReply;
+import com.google.code.spotshout.comm.UnbindRequest;
 import java.util.Hashtable;
 import spot.rmi.AlreadyBoundException;
 import spot.rmi.NotBoundException;
@@ -66,6 +70,11 @@ public class SpotRegistry extends Server implements Registry {
         invokeTable = new Hashtable();
     }
 
+    /**
+     * (non-javadoc)
+     * @see com.google.code.spotshout.comm.Server#service(com.google.code.spotshout.comm.RMIRequest) 
+     * 
+     */
     public RMIReply service(RMIRequest request) {
         switch (request.getOperation()) {
             case ProtocolOpcode.INVOKE_REQUEST:
@@ -103,10 +112,9 @@ public class SpotRegistry extends Server implements Registry {
             invokeTable.put(request.getRemoteInterfaceName(), skel);
             RMIProperties.log("Bind Request Finished -- Remote Name: " + name);
         } catch (Exception ex) {
-            throw new RemoteException(SpotRegistry.class, "Error on bind()");
+            throw new RemoteException(SpotRegistry.class, "Error on bind(" +  name + ")");
         }
     }
-
     
     private RMIReply invoke(InvokeRequest request) {
         RMIProperties.log("Invoke Request Started -- Remote Name: " + request.getRemoteName());
@@ -117,6 +125,7 @@ public class SpotRegistry extends Server implements Registry {
         RMIProperties.log("Invoke Request Finished -- Remote Name: " + request.getRemoteName());
         return reply;
     }
+    
     /**
      * (non-javadoc)
      * @see java.rmi.registry.Registry#list() 
@@ -162,7 +171,7 @@ public class SpotRegistry extends Server implements Registry {
             RMIProperties.log("Lookup Request Finished -- Remote Name:" + name);
             return (Remote) stub;
         } catch (Exception ex) {
-            throw new RemoteException(SpotRegistry.class, "Error on lookup()");
+            throw new RemoteException(SpotRegistry.class, "Error on lookup(" + name + ")");
         }
     }
 
@@ -172,6 +181,29 @@ public class SpotRegistry extends Server implements Registry {
      */
     public void rebind(String name, String remoteFullName, Remote obj)
             throws NullPointerException, RemoteException {
+        RMIProperties.log("Rebind Request Started -- Remote Name: " + name);
+
+        // Exceptions
+        if (name == null) throw new NullPointerException("Rebind name is null.");
+        if (obj == null) throw new NullPointerException("Remote object is null.");
+
+        try {
+            RMIUnicastConnection conn = RMIUnicastConnection.
+                    makeClientConnection(ProtocolOpcode.REGISTRY_REQUEST, srvAddress, srvPort);
+            RebindRequest request = new RebindRequest(name, remoteFullName);
+            conn.writeRequest(request);
+            RebindReply reply = (RebindReply) conn.readReply();
+
+            // Initiating Skel and saving it
+            Class skelClass = Class.forName(remoteFullName + "_Skel");
+            Skel skel = (Skel) skelClass.newInstance();
+            skel.setRemote(obj);
+
+            invokeTable.put(request.getRemoteInterfaceName(), skel);
+            RMIProperties.log("Rebind Request Finished -- Remote Name: " + name);
+        } catch (Exception ex) {
+            throw new RemoteException(SpotRegistry.class, "Error on rebind(" + name + ")");
+        }
     }
 
     /**
@@ -180,6 +212,26 @@ public class SpotRegistry extends Server implements Registry {
      */
     public void unbind(String name) throws NotBoundException,
             NullPointerException, RemoteException {
+        RMIProperties.log("Unbind Request Started -- Remote Name: " + name);
+
+        // Exceptions
+        if (name == null) throw new NullPointerException("Unbind name is null.");
+        if (!invokeTable.contains(name)) throw new NotBoundException("Unbind name is not bounded.");
+
+        try {
+            RMIUnicastConnection conn = RMIUnicastConnection.
+                    makeClientConnection(ProtocolOpcode.REGISTRY_REQUEST, srvAddress, srvPort);
+            UnbindRequest request = new UnbindRequest(name);
+            conn.writeRequest(request);
+            UnbindReply reply = (UnbindReply) conn.readReply();
+
+            if (reply.exceptionHappened()) throw new NotBoundException(SpotRegistry.class, "Ubind name is not bounded.");
+
+            invokeTable.remove(request.getRemoteInterfaceName());
+            RMIProperties.log("Unbind Request Finished -- Remote Name: " + name);
+        } catch (Exception ex) {
+            throw new RemoteException(SpotRegistry.class, "Error on unbind(" + name + ")");
+        }
     }
 
 }

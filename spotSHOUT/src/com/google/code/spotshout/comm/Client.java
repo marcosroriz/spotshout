@@ -91,7 +91,6 @@ public class Client {
                 unrCon.close();
                 
                 // Opening and Returning Reliable Connection
-                RemoteGarbageCollector.registerPort(reliablePort);
                 uri = RMIProperties.RELIABLE_PROTOCOL + "://" + targetAddr + ":" + reliablePort;
                 connect = Connector.open(uri);
                 break;

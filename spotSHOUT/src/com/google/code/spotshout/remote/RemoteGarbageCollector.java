@@ -26,6 +26,7 @@ public class RemoteGarbageCollector {
             Random rand = new Random();
             currentPort = 35 + rand.nextInt(200);
             if ((currentPort < 230) && (isFree(currentPort))) {
+                registerPort(currentPort);
                 return currentPort;
             }
         }
@@ -42,7 +43,7 @@ public class RemoteGarbageCollector {
         return true;
     }
 
-    public static synchronized void registerPort(int port) {
+    private static synchronized void registerPort(int port) {
         if (registerPortCounter >= 10) registerPortCounter = 0;
         registedPorts[registerPortCounter++] = port;
     }

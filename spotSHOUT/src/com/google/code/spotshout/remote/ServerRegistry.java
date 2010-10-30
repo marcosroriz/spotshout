@@ -70,6 +70,10 @@ public class ServerRegistry extends Server implements Registry {
         invokeTable = new Hashtable();
     }
 
+    /**
+     * (non-javadoc)
+     * @see com.google.code.spotshout.comm.Server#service(com.google.code.spotshout.comm.RMIRequest) 
+     */
     public RMIReply service(RMIRequest request) {
         switch (request.getOperation()) {
             case ProtocolOpcode.BIND_REQUEST:
