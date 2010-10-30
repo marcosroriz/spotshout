@@ -33,9 +33,9 @@ public class RMIProperties {
     public static final int UNRELIABLE_DISCOVER_HOST_PORT = 243;
 
     /**
-     * The port where the server will reply the discover address of a RMI server.
+     * The port where the server will reply the invoke port of the connection.
      */
-    public static final int UNRELIABLE_INVOKE_SERVER_PORT = 242;
+    public static final int UNRELIABLE_INVOKE_CLIENT_PORT = 242;
 
     /**
      * RMI Spot port

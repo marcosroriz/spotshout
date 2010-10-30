@@ -77,19 +77,23 @@ public class Client {
                 unrCon.send(dg);
 
                 // Receiving Reply
-                unrCon.receive(dg);
-                int reliablePort = dg.readInt();
+                int reliablePort = 0;
+                
+                if (operation == ProtocolOpcode.INVOKE_REQUEST) {
+                    reliablePort = invokeConnection(targetAddr);
+                } else {
+                    unrCon.receive(dg);
+                    reliablePort = dg.readInt();
 
-                // Closing the Connection
-                dg.reset();
-                unrCon.close();
-
-                System.out.println("DID I GET THE CONNECTION?");
+                    // Closing the Connection
+                    dg.reset();
+                    unrCon.close();
+                }
+                
                 // Opening and Returning Reliable Connection
                 RemoteGarbageCollector.registerPort(reliablePort);
                 uri = RMIProperties.RELIABLE_PROTOCOL + "://" + targetAddr + ":" + reliablePort;
                 connect = Connector.open(uri);
-                System.out.println("Making RELIABLE CLIENT CONNECTION WITH SERVER ON:" + uri);
                 break;
             } catch (IOException ex) {
                 numberTry++;
@@ -99,5 +103,19 @@ public class Client {
         }
         System.out.println("NUMBER OF RETRY ON CLIENT CONNECTION: " + numberTry);
         return connect;
+    }
+
+    private static int invokeConnection(String hostAddr) throws IOException {
+        // Waiting for answer
+        String uri = RMIProperties.UNRELIABLE_PROTOCOL + "://" + hostAddr + ":" + RMIProperties.UNRELIABLE_INVOKE_CLIENT_PORT;
+        RadiogramConnection invokeCon = (RadiogramConnection) Connector.open(uri);
+        Datagram datagram = (Radiogram) invokeCon.newDatagram(invokeCon.getMaximumLength());
+        invokeCon.setTimeout(RMIProperties.TIMEOUT);
+
+        invokeCon.receive(datagram);
+        int port = datagram.readInt();
+
+        invokeCon.close();
+        return port;
     }
 }

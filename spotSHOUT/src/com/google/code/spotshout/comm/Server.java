@@ -116,7 +116,6 @@ public abstract class Server implements Runnable {
                         dgReply.reset();
                         dgReply.setAddress(dg.getAddress());
 
-                        Thread.sleep(RMIProperties.LITTLE_SLEEP_TIME);
                         int connectionPort = RemoteGarbageCollector.getFreePort();
                         dgReply.writeInt(connectionPort);
                         rCon.send(dgReply);
