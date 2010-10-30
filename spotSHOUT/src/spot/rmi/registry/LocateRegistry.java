@@ -39,27 +39,17 @@ public class LocateRegistry {
     protected  LocateRegistry() {}
 
     public static Registry createRegistry() {
-        if (System.getProperty("IEEE_ADDRESS") == null) {
-            reg = new ServerRegistry();
-            (new Thread((ServerRegistry) reg)).start();
-        }
+        reg = new ServerRegistry();
+        (new Thread((ServerRegistry) reg)).start();
         return reg;
     }
 
     public static Registry getRegistry() throws IOException {
-        System.out.println("INIT DISCOVERY");
         String addr = discoverSrv();
-        System.out.println("END DISCOVERY");
-        System.out.println("Endereco dessa porra e" + addr);
         
         reg = new SpotRegistry(addr, RMIProperties.RMI_SERVER_PORT);
         (new Thread((SpotRegistry) reg)).start();
         return reg;
-    }
-
-    public static Registry getRegistry(int port) throws RemoteException {
-        if (reg == null) throw new RemoteException("No registry running here");
-        else return reg;
     }
 
     public static Registry getRegistry(String host) {
@@ -115,7 +105,6 @@ public class LocateRegistry {
                 if (numberTry == RMIProperties.NUMBER_OF_TRIES) throw new IOException();
             }
         }
-        System.out.println("NUMBER RETRY ON DISCOVERY : " + numberTry);
         return serverAddr;
     }
 }
