@@ -84,11 +84,11 @@ public class Client {
                 } else {
                     unrCon.receive(dg);
                     reliablePort = dg.readInt();
-
-                    // Closing the Connection
-                    dg.reset();
-                    unrCon.close();
                 }
+
+                // Closing the Connection
+                dg.reset();
+                unrCon.close();
                 
                 // Opening and Returning Reliable Connection
                 RemoteGarbageCollector.registerPort(reliablePort);

@@ -39,8 +39,8 @@ public final class TargetMethod implements KSNSerializableInterface {
     /**
      * Number of arguments
      */
-    int numberArgs;
-    
+    private int numberArgs;
+
     /**
      * Method arguments (values). If argument are primitive they
      * will be Wrapped.

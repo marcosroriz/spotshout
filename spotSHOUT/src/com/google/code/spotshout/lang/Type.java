@@ -21,6 +21,6 @@ public final class Type {
     public static char DOUBLE_TYPE      = 'D';
     public static char OBJECT_TYPE      = 'L';
     public static char ARRAY_TYPE       = '[';
-
-
+    public static char VOID_TYPE        = 'V';
+    
 }

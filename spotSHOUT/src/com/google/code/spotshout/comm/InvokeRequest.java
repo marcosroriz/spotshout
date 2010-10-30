@@ -72,13 +72,19 @@ public class InvokeRequest extends RMIRequest {
     protected void readData(DataInput input) throws IOException {
         try {
             remoteName = input.readUTF();
+            System.out.println("I'm readin the remoteName: " + remoteName);
+
             // We have already readed operation for the manual reflection
             int length = input.readInt();
-
+            System.out.println("I'm reading the byte length:" + length);
             byte[] data = new byte[length];
-            input.readFully(data);
+            System.out.println("WED JUST CREATEDE A BYTE VECTOR OF " + length);
+            input.readFully(data, 0, length);
 
+            System.out.println("STarted byte array input stream");
             ByteArrayInputStream bin = new ByteArrayInputStream(data);
+
+            System.out.println("STarted object array input stream");
             ObjectInputStream oin = new ObjectInputStream(bin);
             method = (TargetMethod) oin.readObject();
         } catch (Exception ex) {
@@ -98,11 +104,15 @@ public class InvokeRequest extends RMIRequest {
         ObjectOutputStream oos = new ObjectOutputStream(bout);
         oos.writeObject(method);
 
+        System.out.println("I'm writting the operation");
         output.write(getOperation());
+        System.out.println("I'm writting the remoteName");
         output.writeUTF(remoteName);
-        output.write(bout.size());
-        output.write(bout.toByteArray());
-        System.out.println("Size of this request (in bytes) : " + bout.size());
+        System.out.println("I'm writting the bytearray size: " + bout.size());
+        output.writeInt(bout.size());
+        byte[] buff = bout.toByteArray();
+        output.write(buff);
+        System.out.println("I'm writting the byte buff: " + buff.length);
     }
 
     // Getter
