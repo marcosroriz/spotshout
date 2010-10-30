@@ -1,0 +1,3 @@
+Project-Name: SpotShout
+Project-Version: 0.0.1
+Project-License: GPLv2
