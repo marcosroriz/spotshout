@@ -78,7 +78,7 @@ public abstract class Server implements Runnable {
      * @param clientAddr - the client addr
      * @throws IOException - if there is a error on opening this connection
      */
-    private void sendAddrReply(String clientAddr) throws IOException {
+    private void discoverRequest(String clientAddr) throws IOException {
         try {
             String tempuri = "radiogram://" + clientAddr + ":" + RMIProperties.UNRELIABLE_DISCOVER_CLIENT_PORT;
             RadiogramConnection tmp = (RadiogramConnection) Connector.open(tempuri);
@@ -86,6 +86,21 @@ public abstract class Server implements Runnable {
             
             Thread.sleep(RMIProperties.LITTLE_SLEEP_TIME);
             tmpDg.writeByte(ProtocolOpcode.HOST_ADDR_REPLY);
+            tmp.send(tmpDg);
+            tmp.close();
+        } catch (InterruptedException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    private void invokeRequest(String clientAddr, int connectionPort) throws IOException {
+        try {
+            String tempuri = "radiogram://" + clientAddr + ":" + RMIProperties.UNRELIABLE_INVOKE_CLIENT_PORT;
+            RadiogramConnection tmp = (RadiogramConnection) Connector.open(tempuri);
+            Datagram tmpDg = tmp.newDatagram(20);
+
+            Thread.sleep(RMIProperties.LITTLE_SLEEP_TIME);
+            tmpDg.writeInt(connectionPort);
             tmp.send(tmpDg);
             tmp.close();
         } catch (InterruptedException ex) {
@@ -111,15 +126,21 @@ public abstract class Server implements Runnable {
                     byte operation = dg.readByte();
 
                     if (operation == ProtocolOpcode.HOST_ADDR_REQUEST) {
-                        sendAddrReply(dg.getAddress());
+                        discoverRequest(dg.getAddress());
                     } else {
-                        dgReply.reset();
-                        dgReply.setAddress(dg.getAddress());
-
                         int connectionPort = RemoteGarbageCollector.getFreePort();
-                        dgReply.writeInt(connectionPort);
-                        rCon.send(dgReply);
 
+                        if (operation == ProtocolOpcode.INVOKE_REQUEST) {
+                            invokeRequest(dg.getAddress(), connectionPort);
+                        } else {
+                            // Registry Request
+                            dgReply.reset();
+                            dgReply.setAddress(dg.getAddress());
+
+                            dgReply.writeInt(connectionPort);
+                            rCon.send(dgReply);
+                        }
+                        
                         // Initiate reliable connection on this point
                         Tunnel tunnel = new Tunnel(dg.getAddress(), connectionPort);
                         (new Thread(tunnel)).start();
@@ -161,8 +182,6 @@ public abstract class Server implements Runnable {
         public void run() {
             try {
                 RMIProperties.log("Initiated Tunnel with: " + tunnelAddress + ":" + tunnelPort);
-                RMIProperties.log("This is " + ourAddr + ":" + ourPort);
-
                 RMIRequest req = reliableCon.readRequest();
                 Thread.sleep(RMIProperties.LITTLE_SLEEP_TIME);
                 RMIReply reply = service(req);

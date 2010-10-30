@@ -87,7 +87,6 @@ public class LocateRegistry {
                 dg = rCon.newDatagram(rCon.getMaximumLength());
                 dg.reset();
 
-                System.out.println("making another broadcast request to " + uri);
                 dg.write(ProtocolOpcode.HOST_ADDR_REQUEST);
                 rCon.send(dg);
 
@@ -101,7 +100,6 @@ public class LocateRegistry {
                 dg = (Radiogram) rCon.newDatagram(rCon.getMaximumLength());
                 rCon.setTimeout(RMIProperties.TIMEOUT);
 
-                System.out.println("waitting for host server addr reply at " + uri);
                 // Reading protocol answer
                 rCon.receive(dg);
                 serverAddr = dg.getAddress();
