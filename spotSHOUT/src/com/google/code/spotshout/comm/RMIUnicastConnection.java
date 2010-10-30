@@ -65,10 +65,8 @@ public class RMIUnicastConnection {
             dis = connection.openDataInputStream();
             dos = connection.openDataOutputStream();
             connection.setTimeout(RMIProperties.RELIABLE_TIMEOUT);
-            Thread.sleep(300);
-        } catch (InterruptedException ex) {
-            ex.printStackTrace();
-        }
+            Thread.sleep(RMIProperties.LITTLE_SLEEP_TIME);
+        } catch (InterruptedException ex) {}
     }
 
     /**

@@ -17,6 +17,8 @@
 
 package com.google.code.spotshout.comm;
 
+import com.sun.spot.peripheral.radio.RadioFactory;
+import com.sun.spot.util.IEEEAddress;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
@@ -47,14 +49,24 @@ public class RebindRequest extends RMIRequest {
     private String remoteFullName;
 
     /**
-     * Skeleton port.
-     */
-    private int skelPort;
-
-    /**
      * Empty constructor for dependency injection and "manual" reflection.
      */
     public RebindRequest() {
+    }
+
+    /**
+     * The bind request of the RMI protocol. This constructor should be used by
+     * the SPOT.
+     *
+     * @param remoteInterfaceName - the remote name (in the NameServer)
+     * @param remoteFullName - the remote interface full qualified name
+     *                         (including package).
+     */
+    public RebindRequest(String remoteInterfaceName, String remoteFullName) {
+        super(ProtocolOpcode.REBIND_REQUEST);
+        this.remoteInterfaceName = remoteInterfaceName;
+        this.remoteFullName = remoteFullName;
+        remoteAddress = IEEEAddress.toDottedHex(RadioFactory.getRadioPolicyManager().getIEEEAddress());
     }
 
     /**
@@ -66,9 +78,9 @@ public class RebindRequest extends RMIRequest {
      */
     protected void readData(DataInput input) throws IOException {
         // We have already readed operation for the manual reflection
-        skelPort = input.readInt();
         remoteInterfaceName = input.readUTF();
         remoteFullName = input.readUTF();
+        remoteAddress = input.readUTF();
     }
 
     /**
@@ -80,17 +92,9 @@ public class RebindRequest extends RMIRequest {
      */
     protected void writeData(DataOutput output) throws IOException {
         output.write(getOperation());
-        output.writeInt(getSkelPort());
         output.writeUTF(remoteInterfaceName);
         output.writeUTF(remoteFullName);
-    }
-
-    /**
-     * Get the port which the skeleton will listen.
-     * @return the port of the skeleton.
-     */
-    public int getSkelPort() {
-        return skelPort;
+        output.writeUTF(remoteAddress);
     }
 
     /**

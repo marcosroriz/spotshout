@@ -76,17 +76,14 @@ public class InvokeReply extends RMIReply {
     protected void readData(DataInput input) throws IOException {
         try {
             operationStatus = input.readByte();
-            System.out.println("Reading the operation status: " + operationStatus);
 
             if (operationStatus != ProtocolOpcode.OPERATION_OK) {
                 exception = input.readByte();
             } else {
                 // We have already readed operation for the manual reflection
                 int length = input.readInt();
-                System.out.println("Reading the byte array size: " + length);
                 
                 byte[] data = new byte[length];
-                System.out.println("Started reading the byte array");
                 input.readFully(data);
 
                 ByteArrayInputStream bin = new ByteArrayInputStream(data);
@@ -110,15 +107,12 @@ public class InvokeReply extends RMIReply {
         ObjectOutputStream oos = new ObjectOutputStream(bout);
         oos.writeObject(returnValue);
 
-        System.out.println("I'm writting the operation status which is: " + getOperationStatus());
         output.write(getOperationStatus());
         
         if (operationStatus != ProtocolOpcode.OPERATION_OK) {
             output.write(getException());
         } else {
-            System.out.println("I'm writting the byte array return size: " + bout.size());
             output.writeInt(bout.size());
-            System.out.println("Writting the byte array");
             output.write(bout.toByteArray());
         }
     }

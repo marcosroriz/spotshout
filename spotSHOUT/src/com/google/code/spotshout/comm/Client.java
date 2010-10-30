@@ -101,21 +101,27 @@ public class Client {
                 if (numberTry == RMIProperties.NUMBER_OF_TRIES) throw new IOException();
             }
         }
-        System.out.println("NUMBER OF RETRY ON CLIENT CONNECTION: " + numberTry);
         return connect;
     }
 
     private static int invokeConnection(String hostAddr) throws IOException {
-        // Waiting for answer
-        String uri = RMIProperties.UNRELIABLE_PROTOCOL + "://" + hostAddr + ":" + RMIProperties.UNRELIABLE_INVOKE_CLIENT_PORT;
-        RadiogramConnection invokeCon = (RadiogramConnection) Connector.open(uri);
-        Datagram datagram = (Radiogram) invokeCon.newDatagram(invokeCon.getMaximumLength());
-        invokeCon.setTimeout(RMIProperties.TIMEOUT);
+        int port = 0;
+        RadiogramConnection invokeCon = null;
+        Datagram datagram = null;
+        try {
+            // Waiting for answer
+            String uri = RMIProperties.UNRELIABLE_PROTOCOL + "://" + hostAddr + ":" + RMIProperties.UNRELIABLE_INVOKE_CLIENT_PORT;
+            invokeCon = (RadiogramConnection) Connector.open(uri);
+            datagram = (Radiogram) invokeCon.newDatagram(invokeCon.getMaximumLength());
 
-        invokeCon.receive(datagram);
-        int port = datagram.readInt();
+            invokeCon.setTimeout(RMIProperties.TIMEOUT);
+            invokeCon.receive(datagram);
+            port = datagram.readInt();
 
-        invokeCon.close();
+            invokeCon.close();
+        } catch (IOException ex) {
+            invokeCon.close();
+        }
         return port;
     }
 }

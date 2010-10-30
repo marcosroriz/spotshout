@@ -78,36 +78,28 @@ public abstract class Server implements Runnable {
      * @param clientAddr - the client addr
      * @throws IOException - if there is a error on opening this connection
      */
-    private void discoverRequest(String clientAddr) throws IOException {
-        try {
-            String tempuri = "radiogram://" + clientAddr + ":" + RMIProperties.UNRELIABLE_DISCOVER_CLIENT_PORT;
-            RadiogramConnection tmp = (RadiogramConnection) Connector.open(tempuri);
-            Datagram tmpDg = tmp.newDatagram(20);
-            
-            Thread.sleep(RMIProperties.LITTLE_SLEEP_TIME);
-            tmpDg.writeByte(ProtocolOpcode.HOST_ADDR_REPLY);
-            tmp.send(tmpDg);
-            tmp.close();
-        } catch (InterruptedException ex) {
-            ex.printStackTrace();
-        }
+    private void discoverRequest(String clientAddr) throws IOException, InterruptedException {
+        String tempuri = "radiogram://" + clientAddr + ":" + RMIProperties.UNRELIABLE_DISCOVER_CLIENT_PORT;
+        RadiogramConnection tmp = (RadiogramConnection) Connector.open(tempuri);
+        Datagram tmpDg = tmp.newDatagram(20);
+
+        Thread.sleep(RMIProperties.LITTLE_SLEEP_TIME);
+        tmpDg.writeByte(ProtocolOpcode.HOST_ADDR_REPLY);
+        tmp.send(tmpDg);
+        tmp.close();
     }
 
-    private void invokeRequest(String clientAddr, int connectionPort) throws IOException {
-        try {
-            String tempuri = "radiogram://" + clientAddr + ":" + RMIProperties.UNRELIABLE_INVOKE_CLIENT_PORT;
-            RadiogramConnection tmp = (RadiogramConnection) Connector.open(tempuri);
-            Datagram tmpDg = tmp.newDatagram(20);
+    private void invokeRequest(String clientAddr, int connectionPort) throws IOException, InterruptedException {
+        String tempuri = "radiogram://" + clientAddr + ":" + RMIProperties.UNRELIABLE_INVOKE_CLIENT_PORT;
+        RadiogramConnection tmp = (RadiogramConnection) Connector.open(tempuri);
+        Datagram tmpDg = tmp.newDatagram(20);
 
-            Thread.sleep(RMIProperties.LITTLE_SLEEP_TIME);
-            tmpDg.writeInt(connectionPort);
-            tmp.send(tmpDg);
-            tmp.close();
-        } catch (InterruptedException ex) {
-            ex.printStackTrace();
-        }
+        Thread.sleep(RMIProperties.LITTLE_SLEEP_TIME);
+        tmpDg.writeInt(connectionPort);
+        tmp.send(tmpDg);
+        tmp.close();
     }
-    
+
     /**
      * Listen forever for unreliable connections and process the requests.
      */
