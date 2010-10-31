@@ -30,6 +30,12 @@ import spot.rmi.RemoteException;
 public interface Registry {
 
     /**
+     * Adds a registry listener.
+     * @param listener
+     */
+    public void addRegistryListener(RegistryListener listener);
+
+    /**
      * Binds a remote reference to a given name.
      * @param name - name choosed to represent the remote reference.
      * @param remoteFullName - the remote interface full name (including package)

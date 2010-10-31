@@ -26,6 +26,7 @@ import com.google.code.spotshout.comm.ListRequest;
 import com.google.code.spotshout.comm.LookupReply;
 import com.google.code.spotshout.comm.LookupRequest;
 import com.google.code.spotshout.comm.ProtocolOpcode;
+import com.google.code.spotshout.comm.RMIOperation;
 import com.google.code.spotshout.comm.RMIReply;
 import com.google.code.spotshout.comm.RMIRequest;
 import com.google.code.spotshout.comm.RebindReply;
@@ -41,6 +42,7 @@ import spot.rmi.registry.Registry;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
+import spot.rmi.registry.RegistryListener;
 
 /**
  * This class represents the Server Registry.
@@ -64,10 +66,29 @@ public class ServerRegistry extends Server implements Registry {
      */
     private Hashtable invokeTable;
 
+    /**
+     * @TODO DOC
+     */
+    private Vector listenersList;
+
     public ServerRegistry() {
         super(RMIProperties.RMI_SERVER_PORT);
         registryTable = new Hashtable();
         invokeTable = new Hashtable();
+        listenersList = new Vector();
+    }
+
+    public void addRegistryListener(RegistryListener listener) {
+        listenersList.addElement(listener);
+    }
+
+    private void dispatchEvents(RMIOperation operation) {
+        Enumeration e = listenersList.elements();
+        RegistryListener reg = null;
+        while (e.hasMoreElements()) {
+            reg = (RegistryListener) e.nextElement();
+            reg.actionPerfomed(operation);
+        }
     }
 
     /**
@@ -75,6 +96,7 @@ public class ServerRegistry extends Server implements Registry {
      * @see com.google.code.spotshout.comm.Server#service(com.google.code.spotshout.comm.RMIRequest) 
      */
     public RMIReply service(RMIRequest request) {
+        dispatchEvents(request);
         switch (request.getOperation()) {
             case ProtocolOpcode.BIND_REQUEST:
                 return bind((BindRequest) request);

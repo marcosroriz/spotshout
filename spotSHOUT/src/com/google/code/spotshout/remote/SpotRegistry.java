@@ -26,6 +26,7 @@ import com.google.code.spotshout.comm.ListRequest;
 import com.google.code.spotshout.comm.LookupReply;
 import com.google.code.spotshout.comm.LookupRequest;
 import com.google.code.spotshout.comm.ProtocolOpcode;
+import com.google.code.spotshout.comm.RMIOperation;
 import com.google.code.spotshout.comm.RMIReply;
 import com.google.code.spotshout.comm.RMIRequest;
 import com.google.code.spotshout.comm.RMIUnicastConnection;
@@ -40,6 +41,7 @@ import spot.rmi.NotBoundException;
 import spot.rmi.Remote;
 import spot.rmi.RemoteException;
 import spot.rmi.registry.Registry;
+import spot.rmi.registry.RegistryListener;
 
 /**
  * Implements the RMI Registry for the Spot side.
@@ -216,8 +218,8 @@ public class SpotRegistry extends Server implements Registry {
 
         // Exceptions
         if (name == null) throw new NullPointerException("Unbind name is null.");
-        if (!invokeTable.contains(name)) throw new NotBoundException("Unbind name is not bounded.");
-
+        //if (!invokeTable.contains(name)) throw new NotBoundException("Unbind name is not bounded.");
+        //TODO FIX THIS
         try {
             RMIUnicastConnection conn = RMIUnicastConnection.
                     makeClientConnection(ProtocolOpcode.REGISTRY_REQUEST, srvAddress, srvPort);
@@ -232,6 +234,10 @@ public class SpotRegistry extends Server implements Registry {
         } catch (Exception ex) {
             throw new RemoteException(SpotRegistry.class, "Error on unbind(" + name + ")");
         }
+    }
+
+    public void addRegistryListener(RegistryListener listener) {
+        // @TODO
     }
 
 }
