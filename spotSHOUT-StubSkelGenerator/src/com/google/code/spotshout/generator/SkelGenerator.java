@@ -18,13 +18,14 @@ public class SkelGenerator {
     private String wrapperPkg = "Serial";
     private String tab = "\t";
 
-    public String makeClass(String jarName, String pkgName, String iName) throws Exception {
-        File jar = new File(jarName);
-        URLClassLoader urlLoader = new URLClassLoader(new URL[]{jar.toURI().toURL()});
+    public String makeClass(File jarFile, String pkgName, String iName) throws Exception {
+        File spotJar = new File("lib/spotSHOUT-0.0.1.jar");
+        URLClassLoader urlLoader = new URLClassLoader(
+                new URL[]{jarFile.toURI().toURL(), spotJar.toURI().toURL()});
 
         Class remoteInterface = urlLoader.loadClass(pkgName + "." + iName);
 
-        StringBuffer classText = new StringBuffer();
+        StringBuilder classText = new StringBuilder();
         classText.append(header(remoteInterface));
         classText.append(body(remoteInterface));
         
@@ -32,7 +33,7 @@ public class SkelGenerator {
     }
 
     private String header(Class remoteInterface) {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
 
         if (remoteInterface.getPackage().getName() != "")
             sb.append("package " + remoteInterface.getPackage().getName() + ";\n\n");
@@ -52,21 +53,38 @@ public class SkelGenerator {
     private String body(Class remoteInterface) {
         StringBuffer sb = new StringBuffer();
 
-        sb.append("public class " + remoteInterface.getSimpleName() + "_Skel extends Skel {\n\n");
+        sb.append("public class " + remoteInterface.getSimpleName() + "_Skel implements Skel {\n\n");
+        sb.append("\n" + tab + "private " + remoteInterface.getSimpleName() + " remote;\n\n");
         sb.append(emptyConstructor(remoteInterface));
         sb.append(serviceMethod(remoteInterface));
+        sb.append(setremote(remoteInterface));
         sb.append("\n}");
         return sb.toString();
     }
 
     private String emptyConstructor(Class remoteInteface) {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         sb.append(tab + "public " + remoteInteface.getSimpleName() + "_Skel() {}\n\n");
+        return sb.toString();
+    }
+    
+    private String setremote(Class remoteInterface) {
+        StringBuilder sb = new StringBuilder();
+
+        // Method Signature
+        sb.append(tab + "public void setRemote(Remote remote) {\n");
+
+        // Basic data
+        sb.append(tab + tab + "this.remote = (");
+        sb.append(remoteInterface.getSimpleName() + ") remote;\n");
+
+        sb.append(tab + "}\n");
+
         return sb.toString();
     }
 
     private String serviceMethod(Class remoteInterface) {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
 
         // Method Signature
         sb.append(tab + "public RMIReply service(RMIRequest request) {\n");

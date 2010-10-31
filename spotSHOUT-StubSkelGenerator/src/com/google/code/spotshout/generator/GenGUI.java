@@ -11,6 +11,17 @@
 
 package com.google.code.spotshout.generator;
 
+import java.awt.Dimension;
+import java.awt.Toolkit;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JFileChooser;
+import javax.swing.UIManager;
+
 /**
  *
  * @author Marcos Roriz
@@ -18,7 +29,9 @@ package com.google.code.spotshout.generator;
 public class GenGUI extends javax.swing.JFrame {
 
     /** Creates new form GenGUI */
-    public GenGUI() {
+    public GenGUI() throws Exception {
+        String laf = UIManager.getSystemLookAndFeelClassName();
+        UIManager.setLookAndFeel(laf);
         initComponents();
     }
 
@@ -40,13 +53,15 @@ public class GenGUI extends javax.swing.JFrame {
         remIfLabel = new javax.swing.JLabel();
         remIfField = new javax.swing.JTextField();
         jarLabel = new javax.swing.JLabel();
-        remPkgField1 = new javax.swing.JTextField();
+        jarFileField = new javax.swing.JTextField();
         generate = new javax.swing.JButton();
+        bindNameLabel = new javax.swing.JLabel();
+        bindNameField = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("SpotSHOUT");
 
-        title.setFont(new java.awt.Font("Tahoma", 0, 18));
+        title.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         title.setLabelFor(this);
         title.setText("Stub and Skeleton Generator");
 
@@ -65,36 +80,50 @@ public class GenGUI extends javax.swing.JFrame {
 
         jarLabel.setText("Jar File:");
 
+        jarFileField.setEditable(false);
+        jarFileField.setText("No file selected yet!");
+        jarFileField.setEnabled(false);
+
         generate.setText("Generate");
+        generate.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                generateActionPerformed(evt);
+            }
+        });
+
+        bindNameLabel.setText("Bind/Lookup Name:");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(94, 94, 94)
-                .addComponent(title, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(79, 79, 79))
             .addGroup(layout.createSequentialGroup()
+                .addGap(177, 177, 177)
+                .addComponent(title)
+                .addContainerGap(123, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(generate, javax.swing.GroupLayout.DEFAULT_SIZE, 358, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(credits, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(remIfLabel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jarLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 92, Short.MAX_VALUE)
-                            .addComponent(remPkgLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 92, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                                .addComponent(remPkgField1, javax.swing.GroupLayout.DEFAULT_SIZE, 207, Short.MAX_VALUE)
-                                .addGap(10, 10, 10)
-                                .addComponent(openJar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                            .addComponent(remIfField, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 284, Short.MAX_VALUE)
-                            .addComponent(remPkgField, javax.swing.GroupLayout.DEFAULT_SIZE, 284, Short.MAX_VALUE)))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(generate, javax.swing.GroupLayout.DEFAULT_SIZE, 219, Short.MAX_VALUE)
-                        .addGap(18, 18, 18)
-                        .addComponent(credits, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                .addComponent(jarLabel, javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(remPkgLabel, javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(remIfLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(bindNameLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jarFileField, javax.swing.GroupLayout.DEFAULT_SIZE, 292, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(openJar, javax.swing.GroupLayout.DEFAULT_SIZE, 107, Short.MAX_VALUE))
+                            .addComponent(remPkgField, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 405, Short.MAX_VALUE)
+                            .addComponent(remIfField, javax.swing.GroupLayout.DEFAULT_SIZE, 405, Short.MAX_VALUE)
+                            .addComponent(bindNameField, javax.swing.GroupLayout.DEFAULT_SIZE, 405, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -102,23 +131,27 @@ public class GenGUI extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(title)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(17, 17, 17)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jarLabel)
                     .addComponent(openJar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jarLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 32, Short.MAX_VALUE)
-                    .addComponent(remPkgField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jarFileField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(remPkgField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(remPkgLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 27, Short.MAX_VALUE))
+                    .addComponent(remPkgLabel)
+                    .addComponent(remPkgField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(remIfField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(remIfLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 24, Short.MAX_VALUE))
+                    .addComponent(remIfLabel)
+                    .addComponent(remIfField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(credits, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(generate, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(bindNameLabel)
+                    .addComponent(bindNameField))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(credits, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(generate, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
 
@@ -127,33 +160,76 @@ public class GenGUI extends javax.swing.JFrame {
 
     private void openJarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openJarActionPerformed
         try {
-            fileChooser.showOpenDialog(getRootPane());
+            fileChooser.setAcceptAllFileFilterUsed(false);
+            fileChooser.addChoosableFileFilter(new JarFilter());
+            int returnVal = fileChooser.showOpenDialog(getRootPane());
+
+            if (returnVal == JFileChooser.APPROVE_OPTION) {
+                jarFile = fileChooser.getSelectedFile();
+                System.out.println(jarFile.toURI().toURL());
+                jarFileField.setText(jarFile.getAbsolutePath());
+            }
+        } catch (MalformedURLException ex) {
+            Logger.getLogger(GenGUI.class.getName()).log(Level.SEVERE, null, ex);
         } catch (java.awt.HeadlessException e1) {
             e1.printStackTrace();
         }
     }//GEN-LAST:event_openJarActionPerformed
 
+    private void generateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_generateActionPerformed
+        try {
+            // TODO add your handling code here:
+            String interfaceName = remIfField.getText();
+            String remotePackage = remPkgField.getText();
+            String bindName = bindNameField.getText();
+            Generator gen = new Generator(jarFile, interfaceName, remotePackage, bindName);
+            gen.generateSkel();
+            gen.generateStub();
+        } catch (Exception ex) {
+            Logger.getLogger(GenGUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_generateActionPerformed
+
     /**
     * @param args the command line arguments
     */
-    public static void main(String args[]) {
+    public static void main(String args[]) throws Exception {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new GenGUI().setVisible(true);
+                try {
+                    Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+
+                    GenGUI gui = new GenGUI();
+                    int w = gui.getSize().width;
+                    int h = gui.getSize().height;
+                    int x = (dim.width - w) / 2;
+                    int y = (dim.height - h) / 2;
+
+                    // Move the window
+                    gui.setLocation(x, y);
+                    gui.setResizable(false);
+                    gui.setVisible(true);
+                } catch (Exception ex) {
+                    Logger.getLogger(GenGUI.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         });
     }
 
+    private File jarFile;
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTextField bindNameField;
+    private javax.swing.JLabel bindNameLabel;
     private javax.swing.JButton credits;
     private javax.swing.JFileChooser fileChooser;
     private javax.swing.JButton generate;
+    private javax.swing.JTextField jarFileField;
     private javax.swing.JLabel jarLabel;
     private javax.swing.JButton openJar;
     private javax.swing.JTextField remIfField;
     private javax.swing.JLabel remIfLabel;
     private javax.swing.JTextField remPkgField;
-    private javax.swing.JTextField remPkgField1;
     private javax.swing.JLabel remPkgLabel;
     private javax.swing.JLabel title;
     // End of variables declaration//GEN-END:variables

@@ -20,21 +20,22 @@ public class StubGenerator {
     private String wrapperPkg = "Serial";
     private String tab = "\t";
 
-    public String makeClass(String jarName, String pkgName, String iName) throws Exception {
-        File jar = new File(jarName);
-        URLClassLoader urlLoader = new URLClassLoader(new URL[]{jar.toURI().toURL()});
+    public String makeClass(File jarFile, String pkgName, String iName, String bindName) throws Exception {
+        File spotJar = new File("lib/spotSHOUT-0.0.1.jar");
+        URLClassLoader urlLoader = new URLClassLoader(
+                new URL[]{jarFile.toURI().toURL(), spotJar.toURI().toURL()});
 
         Class remoteInterface = urlLoader.loadClass(pkgName + "." + iName);
 
-        StringBuffer classText = new StringBuffer();
+        StringBuilder classText = new StringBuilder();
         classText.append(header(remoteInterface));
-        classText.append(body(remoteInterface));
+        classText.append(body(remoteInterface, bindName));
 
         return classText.toString();
     }
 
     private String header(Class remoteInterface) {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
 
         if (remoteInterface.getPackage().getName() != "")
             sb.append("package " + remoteInterface.getPackage().getName() + ";\n\n");
@@ -51,8 +52,8 @@ public class StubGenerator {
         return sb.toString();
     }
 
-    private String body(Class remoteInterface) {
-        StringBuffer sb = new StringBuffer();
+    private String body(Class remoteInterface, String bindName) {
+        StringBuilder sb = new StringBuilder();
 
         sb.append("public class " + remoteInterface.getSimpleName() + "_Stub ");
         sb.append("extends Stub " + "implements " + remoteInterface.getSimpleName() + " {\n\n");
@@ -60,14 +61,14 @@ public class StubGenerator {
 
         Method[] methods = sort(remoteInterface.getDeclaredMethods());
         for (int i = 0; i < methods.length; i++)
-            sb.append(makeMethod(methods[i], i));
+            sb.append(makeMethod(methods[i], i, bindName));
 
         sb.append("\n}");
         return sb.toString();
     }
 
     private String emptyConstructor(Class remoteInteface) {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         sb.append(tab + "public " + remoteInteface.getSimpleName() + "_Stub() {}\n\n");
         return sb.toString();
     }
@@ -81,8 +82,8 @@ public class StubGenerator {
      * @param m - the method to create the stub
      * @throws NotFoundException - if the method cannot be loaded/founded
      */
-    private String makeMethod(Method m, int methodNumber) {
-        StringBuffer methodText = new StringBuffer();
+    private String makeMethod(Method m, int methodNumber, String bindName) {
+        StringBuilder methodText = new StringBuilder();
         try {
             // Access Modifier
             methodText.append(tab + "public ");
@@ -128,12 +129,13 @@ public class StubGenerator {
             methodText.append(methodNumber + ", args);\n");
 
            // Creating InvokeRequest
-            methodText.append(tab + tab + tab + "InvokeRequest invReq = new InvokeRequest(m);\n");
+            methodText.append(tab + tab + tab + "InvokeRequest invReq = new InvokeRequest(");
+            methodText.append("\"" + bindName + "\", m);\n");
 
             // Creating Connection
             methodText.append(tab + tab + tab + "RMIUnicastConnection conn ");
             methodText.append("= RMIUnicastConnection.makeClientConnection(");
-            methodText.append("ProtocolOpcode.INVOKE_REQUEST, getTargetAddr(), getTargetPort());\n");
+            methodText.append("ProtocolOpcode.INVOKE_REQUEST, getTargetAddr(), RMIProperties.RMI_SPOT_PORT);\n");
 
             // Writting Request
             methodText.append(tab + tab + tab + "conn.writeRequest(invReq);\n\n");
@@ -144,12 +146,12 @@ public class StubGenerator {
                 methodText.append(tab + tab + tab + "InvokeReply invReply ");
                 methodText.append("= (InvokeReply) conn.readReply();\n");
 
+                // Close connection
+                methodText.append(tab + tab + tab + "conn.close();\n");
+
                 // Checking for exception
                 methodText.append(tab + tab + tab + "if (invReply.exceptionHappened())");
                 methodText.append(" throw new RemoteException();\n\n");
-
-                // Close connection
-                methodText.append(tab + tab + tab + "conn.close();\n");
 
                 // Return value (Unwrapping)
                 methodText.append("\n" + tab + tab + tab + "return ((");
