@@ -20,6 +20,7 @@ import java.net.MalformedURLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
 /**
@@ -183,8 +184,15 @@ public class GenGUI extends javax.swing.JFrame {
             String remotePackage = remPkgField.getText();
             String bindName = bindNameField.getText();
             Generator gen = new Generator(jarFile, interfaceName, remotePackage, bindName);
-            gen.generateSkel();
-            gen.generateStub();
+            File skel = gen.generateSkel();
+            File stub = gen.generateStub();
+
+/*            gen.compile(skel);
+            gen.compile(stub);
+
+            gen.createJar(interfaceName);
+*/
+            JOptionPane.showMessageDialog(this, "Skel and Stub have been generated and compiled", "spotSHOUT", JOptionPane.INFORMATION_MESSAGE);
         } catch (Exception ex) {
             Logger.getLogger(GenGUI.class.getName()).log(Level.SEVERE, null, ex);
         }

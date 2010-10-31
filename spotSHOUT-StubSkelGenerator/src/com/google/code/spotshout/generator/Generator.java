@@ -73,7 +73,7 @@ public class Generator {
     }
 
     public boolean compile(File file) {
-        return compileClass(file, spotBootClassPath(spotHome, pathSeparator), pathSeparator);
+        return compileClass(file, spotClassPath(jarFile, spotHome, pathSeparator), spotBootClassPath(spotHome, pathSeparator));
     }
 
     public static void main(String[] args) throws Exception {
@@ -106,14 +106,23 @@ public class Generator {
         return file;
     }
 
-    public String spotBootClassPath(String spotHome, String separator) {
+    public String spotClassPath(File jar, String spotHome, String separator) {
         StringBuilder sb = new StringBuilder();
-        sb.append(spotHome + "/multihop_common.jar" + separator);
+        sb.append("." + separator);
+        sb.append(spotHome + "lib/multihop_common.jar" + separator);
         sb.append(spotHome + "/lib/transducer_device.jar" + separator);
+        sb.append(spotHome + "/lib/ipv6lib_common.jar" + separator);
         sb.append(spotHome + "/lib/spotlib_device.jar" + separator);
         sb.append(spotHome + "/lib/spotlib_common.jar" + separator);
+        sb.append(jar.getAbsolutePath() + separator);
         sb.append("lib/spotSHOUT-0.0.1.jar");
 
+        return sb.toString();
+    }
+
+    public String spotBootClassPath(String spotHome, String separator) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(spotHome + "/lib/squawk_device.jar");
         return sb.toString();
     }
 
@@ -136,6 +145,7 @@ public class Generator {
         for (String s : command) {
             System.out.print(s + " ");
         }
+        
         System.out.println(classFile.getPath());
         Process proc = null;
         try {
@@ -159,7 +169,7 @@ public class Generator {
         return false;
     }
 
-    public void createJar(String jarName, String pkgName, String iName) {
+    public void createJar(String iName) {
         File wd = new File(".");
 
         String[] command = new String[8];

@@ -27,42 +27,45 @@
   <Layout>
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Group type="102" alignment="0" attributes="0">
-              <EmptySpace min="-2" pref="177" max="-2" attributes="0"/>
-              <Component id="title" min="-2" max="-2" attributes="0"/>
-              <EmptySpace pref="123" max="32767" attributes="0"/>
-          </Group>
-          <Group type="102" alignment="1" attributes="0">
-              <EmptySpace max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="1" attributes="0">
-                  <Group type="102" alignment="1" attributes="0">
-                      <Component id="generate" pref="358" max="32767" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Component id="credits" min="-2" pref="143" max="-2" attributes="0"/>
+          <Group type="102" attributes="0">
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="102" alignment="0" attributes="0">
+                      <EmptySpace min="-2" pref="177" max="-2" attributes="0"/>
+                      <Component id="title" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <Group type="102" alignment="1" attributes="0">
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="103" alignment="0" groupAlignment="1" max="-2" attributes="0">
-                              <Component id="jarLabel" alignment="0" min="-2" max="-2" attributes="0"/>
-                              <Component id="remPkgLabel" alignment="0" min="-2" max="-2" attributes="0"/>
-                              <Component id="remIfLabel" alignment="0" max="32767" attributes="1"/>
-                          </Group>
-                          <Component id="bindNameLabel" alignment="0" max="32767" attributes="0"/>
-                      </Group>
-                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="102" attributes="0">
-                              <Component id="jarFileField" pref="292" max="32767" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="1" attributes="0">
+                          <Group type="102" alignment="1" attributes="0">
+                              <Component id="generate" pref="358" max="32767" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="openJar" pref="107" max="32767" attributes="2"/>
+                              <Component id="credits" min="-2" pref="143" max="-2" attributes="0"/>
                           </Group>
-                          <Component id="remPkgField" alignment="1" pref="405" max="32767" attributes="2"/>
-                          <Component id="remIfField" alignment="0" pref="405" max="32767" attributes="2"/>
-                          <Component id="bindNameField" alignment="0" pref="405" max="32767" attributes="2"/>
+                          <Group type="102" alignment="1" attributes="0">
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Group type="103" alignment="0" groupAlignment="1" max="-2" attributes="0">
+                                      <Component id="jarLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                                      <Component id="remPkgLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                                      <Component id="remIfLabel" alignment="0" max="32767" attributes="1"/>
+                                  </Group>
+                                  <Component id="bindNameLabel" alignment="0" max="32767" attributes="0"/>
+                              </Group>
+                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Group type="102" attributes="0">
+                                      <Component id="jarFileField" pref="292" max="32767" attributes="0"/>
+                                      <EmptySpace max="-2" attributes="0"/>
+                                      <Component id="openJar" pref="107" max="32767" attributes="2"/>
+                                  </Group>
+                                  <Component id="remPkgField" alignment="1" pref="405" max="32767" attributes="2"/>
+                                  <Component id="remIfField" alignment="0" pref="405" max="32767" attributes="2"/>
+                                  <Component id="bindNameField" alignment="0" pref="405" max="32767" attributes="2"/>
+                              </Group>
+                          </Group>
                       </Group>
                   </Group>
               </Group>
-              <EmptySpace min="-2" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
