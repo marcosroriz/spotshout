@@ -8,8 +8,6 @@ import java.io.File;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
-import javassist.NotFoundException;
-
 
 /**
  * StubGenerator will create a specific stub for the SpotSHOUT RMI library with

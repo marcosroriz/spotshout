@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
@@ -46,6 +47,13 @@ public class GenGUI extends javax.swing.JFrame {
     private void initComponents() {
 
         fileChooser = new javax.swing.JFileChooser();
+        aboutWindow = new javax.swing.JFrame();
+        close = new javax.swing.JButton();
+        logo = new javax.swing.JLabel();
+        spotLabel = new javax.swing.JLabel();
+        shoutLabel = new javax.swing.JLabel();
+        text = new javax.swing.JScrollPane();
+        jTextArea1 = new javax.swing.JTextArea();
         title = new javax.swing.JLabel();
         openJar = new javax.swing.JButton();
         credits = new javax.swing.JButton();
@@ -59,10 +67,74 @@ public class GenGUI extends javax.swing.JFrame {
         bindNameLabel = new javax.swing.JLabel();
         bindNameField = new javax.swing.JTextField();
 
+        close.setText("Fechar");
+        close.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                closeActionPerformed(evt);
+            }
+        });
+
+        logo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/Logo.png"))); // NOI18N
+
+        spotLabel.setFont(new java.awt.Font("Ubuntu", 0, 24)); // NOI18N
+        spotLabel.setText("spot");
+
+        shoutLabel.setFont(new java.awt.Font("Ubuntu", 1, 24)); // NOI18N
+        shoutLabel.setForeground(new java.awt.Color(24, 158, 4));
+        shoutLabel.setText("SHOUT");
+
+        jTextArea1.setColumns(20);
+        jTextArea1.setEditable(false);
+        jTextArea1.setRows(5);
+        jTextArea1.setText("spotSHOUT - RMI Middleware for the Sun SPOT Platform\nhttp://code.google.com/p/spotshout\n\nCopyright (c) - Marcos Paulino Roriz Junior\nLicensed under Apache Version 2");
+        text.setViewportView(jTextArea1);
+
+        javax.swing.GroupLayout aboutWindowLayout = new javax.swing.GroupLayout(aboutWindow.getContentPane());
+        aboutWindow.getContentPane().setLayout(aboutWindowLayout);
+        aboutWindowLayout.setHorizontalGroup(
+            aboutWindowLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(aboutWindowLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(aboutWindowLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(text, javax.swing.GroupLayout.PREFERRED_SIZE, 341, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, aboutWindowLayout.createSequentialGroup()
+                        .addGroup(aboutWindowLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(aboutWindowLayout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(logo))
+                            .addGroup(aboutWindowLayout.createSequentialGroup()
+                                .addGap(92, 92, 92)
+                                .addComponent(spotLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 55, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(shoutLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 88, Short.MAX_VALUE)
+                                .addGap(14, 14, 14)))
+                        .addGap(92, 92, 92))
+                    .addGroup(aboutWindowLayout.createSequentialGroup()
+                        .addGap(73, 73, 73)
+                        .addComponent(close, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 97, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap())
+        );
+        aboutWindowLayout.setVerticalGroup(
+            aboutWindowLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(aboutWindowLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(logo)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(aboutWindowLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(shoutLabel)
+                    .addComponent(spotLabel))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(text, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(close)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("SpotSHOUT");
 
-        title.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        title.setFont(new java.awt.Font("Tahoma", 0, 18));
         title.setLabelFor(this);
         title.setText("Stub and Skeleton Generator");
 
@@ -74,6 +146,11 @@ public class GenGUI extends javax.swing.JFrame {
         });
 
         credits.setText("Credits");
+        credits.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                creditsActionPerformed(evt);
+            }
+        });
 
         remPkgLabel.setText("Remote Package: ");
 
@@ -99,32 +176,33 @@ public class GenGUI extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(177, 177, 177)
-                .addComponent(title)
-                .addContainerGap(123, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(generate, javax.swing.GroupLayout.DEFAULT_SIZE, 358, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(credits, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                .addComponent(jarLabel, javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(remPkgLabel, javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(remIfLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                            .addComponent(bindNameLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGap(177, 177, 177)
+                        .addComponent(title))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(jarFileField, javax.swing.GroupLayout.DEFAULT_SIZE, 292, Short.MAX_VALUE)
+                                .addComponent(generate, javax.swing.GroupLayout.DEFAULT_SIZE, 377, Short.MAX_VALUE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(openJar, javax.swing.GroupLayout.DEFAULT_SIZE, 107, Short.MAX_VALUE))
-                            .addComponent(remPkgField, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 405, Short.MAX_VALUE)
-                            .addComponent(remIfField, javax.swing.GroupLayout.DEFAULT_SIZE, 405, Short.MAX_VALUE)
-                            .addComponent(bindNameField, javax.swing.GroupLayout.DEFAULT_SIZE, 405, Short.MAX_VALUE))))
+                                .addComponent(credits, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                        .addComponent(jarLabel, javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(remPkgLabel, javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(remIfLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                    .addComponent(bindNameLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(jarFileField, javax.swing.GroupLayout.DEFAULT_SIZE, 292, Short.MAX_VALUE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(openJar, javax.swing.GroupLayout.DEFAULT_SIZE, 107, Short.MAX_VALUE))
+                                    .addComponent(remPkgField, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 405, Short.MAX_VALUE)
+                                    .addComponent(remIfField, javax.swing.GroupLayout.DEFAULT_SIZE, 405, Short.MAX_VALUE)
+                                    .addComponent(bindNameField, javax.swing.GroupLayout.DEFAULT_SIZE, 405, Short.MAX_VALUE))))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -198,6 +276,15 @@ public class GenGUI extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_generateActionPerformed
 
+    private void closeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_closeActionPerformed
+        aboutWindow.dispose();
+    }//GEN-LAST:event_closeActionPerformed
+
+    private void creditsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_creditsActionPerformed
+        aboutWindow.setSize(400, 400);
+        aboutWindow.setVisible(true);
+    }//GEN-LAST:event_creditsActionPerformed
+
     /**
     * @param args the command line arguments
     */
@@ -227,18 +314,25 @@ public class GenGUI extends javax.swing.JFrame {
     private File jarFile;
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JFrame aboutWindow;
     private javax.swing.JTextField bindNameField;
     private javax.swing.JLabel bindNameLabel;
+    private javax.swing.JButton close;
     private javax.swing.JButton credits;
     private javax.swing.JFileChooser fileChooser;
     private javax.swing.JButton generate;
+    private javax.swing.JTextArea jTextArea1;
     private javax.swing.JTextField jarFileField;
     private javax.swing.JLabel jarLabel;
+    private javax.swing.JLabel logo;
     private javax.swing.JButton openJar;
     private javax.swing.JTextField remIfField;
     private javax.swing.JLabel remIfLabel;
     private javax.swing.JTextField remPkgField;
     private javax.swing.JLabel remPkgLabel;
+    private javax.swing.JLabel shoutLabel;
+    private javax.swing.JLabel spotLabel;
+    private javax.swing.JScrollPane text;
     private javax.swing.JLabel title;
     // End of variables declaration//GEN-END:variables
 

@@ -32,6 +32,7 @@ public class Generator {
     private String bindName;
 
     public Generator(File jar, String interfaceName, String pkg, String registryName) throws FileNotFoundException, IOException {
+        System.out.println("DEBUG " + jar.getAbsolutePath());
         jarFile = jar;
         iName = interfaceName;
         bindName = registryName;
