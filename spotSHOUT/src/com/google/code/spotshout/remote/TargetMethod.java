@@ -55,8 +55,13 @@ public final class TargetMethod implements KSNSerializableInterface {
 
     public TargetMethod(int mNumber, Serializable[] argList) {
         methodNumber = mNumber;
-        args = argList;
-        numberArgs = args.length;
+        if (argList != null) {
+            args = argList;
+            numberArgs = args.length;
+        } else {
+            argList = null;
+            numberArgs = 0;
+        }
     }
 
     public void writeObjectOnSensor(ObjectOutputStream stream) throws IOException {
