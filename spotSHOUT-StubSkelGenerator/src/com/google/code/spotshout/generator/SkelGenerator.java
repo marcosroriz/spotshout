@@ -204,6 +204,8 @@ public class SkelGenerator {
             objType = "Long";
         } else if (keyword.equals("short")) {
             objType = "Short";
+        } else if ((keyword.equals("java.lang.String")) || (keyword.equals("String"))) {
+            objType = "String";
         }
 
         return wrapperPkg + objType;

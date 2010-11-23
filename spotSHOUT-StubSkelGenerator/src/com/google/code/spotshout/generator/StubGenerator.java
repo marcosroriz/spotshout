@@ -155,6 +155,8 @@ public class StubGenerator {
                 methodText.append("\n" + tab + tab + tab + "return ((");
                 if (m.getReturnType().isPrimitive())
                     methodText.append(wrapper(m.getReturnType().getName()));
+                else if (m.getReturnType().getName().equals("java.lang.String"))
+                    methodText.append("SerialString");
                 else
                     methodText.append(m.getReturnType().getName());
                 methodText.append(")invReply.getReturnValue()).getValue();\n");
@@ -223,6 +225,8 @@ public class StubGenerator {
             objType = "Long";
         } else if (keyword.equals("short")) {
             objType = "Short";
+        } else if ((keyword.equals("java.lang.String")) || (keyword.equals("String"))) {
+            objType = "String";
         }
 
         return wrapperPkg + objType;
