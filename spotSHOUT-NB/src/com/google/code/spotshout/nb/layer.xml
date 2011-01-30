@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE filesystem PUBLIC "-//NetBeans//DTD Filesystem 1.2//EN" "http://www.netbeans.org/dtds/filesystem-1_2.dtd">
+<filesystem>
+    <folder name="Actions">
+        <folder name="File">
+            <file name="com-google-code-spotshout-nb-StubSkelGenerator.instance">
+                <attr name="delegate" methodvalue="org.openide.awt.Actions.inject"/>
+                <attr name="displayName" bundlevalue="com.google.code.spotshout.nb.Bundle#CTL_StubSkelGenerator"/>
+                <attr name="iconBase" stringvalue="com/google/code/spotshout/nb/mudkip.png"/>
+                <attr name="injectable" stringvalue="com.google.code.spotshout.nb.StubSkelGenerator"/>
+                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.context"/>
+                <attr name="noIconInMenu" boolvalue="false"/>
+                <attr name="selectionType" stringvalue="EXACTLY_ONE"/>
+                <attr name="type" stringvalue="org.openide.loaders.DataObject"/>
+            </file>
+        </folder>
+    </folder>
+    <folder name="Loaders">
+        <folder name="text">
+            <folder name="x-java">
+                <folder name="Actions">
+                    <file name="com-google-code-spotshout-nb-StubSkelGenerator-separatorBefore.instance">
+                        <attr name="instanceClass" stringvalue="javax.swing.JSeparator"/>
+                        <attr name="position" intvalue="2825"/>
+                    </file>
+                    <file name="com-google-code-spotshout-nb-StubSkelGenerator.shadow">
+                        <attr name="originalFile" stringvalue="Actions/File/com-google-code-spotshout-nb-StubSkelGenerator.instance"/>
+                        <attr name="position" intvalue="2850"/>
+                    </file>
+                </folder>
+            </folder>
+        </folder>
+    </folder>
+</filesystem>
