@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+OpenIDE-Module: com.google.code.spotshout.nb
+OpenIDE-Module-Layer: com/google/code/spotshout/nb/layer.xml
+OpenIDE-Module-Localizing-Bundle: com/google/code/spotshout/nb/Bundle.properties
+OpenIDE-Module-Specification-Version: 1.0
+
