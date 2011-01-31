@@ -19,7 +19,7 @@ package spot.rmi.registry;
 
 import com.google.code.spotshout.RMIProperties;
 import com.google.code.spotshout.comm.ProtocolOpcode;
-import com.google.code.spotshout.remote.ServerRegistry;
+import com.google.code.spotshout.remote.HostRegistry;
 import com.google.code.spotshout.remote.SpotRegistry;
 import com.sun.spot.io.j2me.radiogram.Radiogram;
 import com.sun.spot.io.j2me.radiogram.RadiogramConnection;
@@ -39,8 +39,8 @@ public class LocateRegistry {
     protected  LocateRegistry() {}
 
     public static Registry createRegistry() {
-        reg = new ServerRegistry();
-        (new Thread((ServerRegistry) reg)).start();
+        reg = new HostRegistry();
+        (new Thread((HostRegistry) reg)).start();
         return reg;
     }
 
