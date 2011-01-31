@@ -34,6 +34,11 @@ public abstract class Stub {
     private String interfaceName;
 
     /**
+     * The lookup name of this stub;
+     */
+    private String lookupName;
+
+    /**
      * Empty constructor for reflection.
      */
     public Stub() {
@@ -44,12 +49,20 @@ public abstract class Stub {
         return interfaceName;
     }
 
+    public String getLookupName() {
+        return lookupName;
+    }
+
     public String getTargetAddr() {
         return targetAddr;
     }
 
     public void setInterfaceName(String interfaceName) {
         this.interfaceName = interfaceName;
+    }
+
+    public void setLookupName(String lookupName) {
+        this.lookupName = lookupName;
     }
 
     public void setTargetAddr(String targetAddr) {

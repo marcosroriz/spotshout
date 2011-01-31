@@ -48,7 +48,7 @@ import spot.rmi.registry.RegistryListener;
  * This class represents the Server Registry.
  * @TODO More doc
  */
-public class ServerRegistry extends Server implements Registry {
+public class HostRegistry extends Server implements Registry {
 
     /**
      * Registry table
@@ -71,7 +71,7 @@ public class ServerRegistry extends Server implements Registry {
      */
     private Vector listenersList;
 
-    public ServerRegistry() {
+    public HostRegistry() {
         super(RMIProperties.RMI_SERVER_PORT);
         registryTable = new Hashtable();
         invokeTable = new Hashtable();
@@ -150,7 +150,7 @@ public class ServerRegistry extends Server implements Registry {
             BindReply reply = (BindReply) bind(request);
 
             if (reply.exceptionHappened()) {
-                throw new AlreadyBoundException(ServerRegistry.class, "AlreadyBound on Bind");
+                throw new AlreadyBoundException(HostRegistry.class, "AlreadyBound on Bind");
             }
 
             // Initiating Skel and saving it
@@ -161,7 +161,7 @@ public class ServerRegistry extends Server implements Registry {
             invokeTable.put(request.getRemoteInterfaceName(), skel);
             RMIProperties.log("Bind Request Finished -- Remote Name: " + name);
         } catch (Exception ex) {
-            throw new RemoteException(ServerRegistry.class, "Skeleton not found");
+            throw new RemoteException(HostRegistry.class, "Skeleton not found");
         }
     }
 
@@ -234,11 +234,12 @@ public class ServerRegistry extends Server implements Registry {
 
             // Creating Stub
             Stub stub = (Stub) reply.createStub();
+            stub.setLookupName(name);
 
             RMIProperties.log("Lookup Request Finished -- Remote Name:" + name);
             return (Remote) stub;
         } catch (Exception ex) {
-            throw new RemoteException(ServerRegistry.class, "Stub not found");
+            throw new RemoteException(HostRegistry.class, "Stub not found");
         }
     }
 
@@ -277,7 +278,7 @@ public class ServerRegistry extends Server implements Registry {
             invokeTable.put(request.getRemoteInterfaceName(), skel);
             RMIProperties.log("Rebind Request Finished -- Remote Name: " + name);
         } catch (Exception ex) {
-            throw new RemoteException(ServerRegistry.class, "Skeleton not found");
+            throw new RemoteException(HostRegistry.class, "Skeleton not found");
         }
     }
 
@@ -312,13 +313,13 @@ public class ServerRegistry extends Server implements Registry {
             UnbindReply reply = (UnbindReply) unbind(request);
 
             if (reply.exceptionHappened()) {
-                throw new NotBoundException(ServerRegistry.class, "Unbind name is not bounded.");
+                throw new NotBoundException(HostRegistry.class, "Unbind name is not bounded.");
             }
 
             invokeTable.remove(name);
             RMIProperties.log("Unbind Request Finished -- Remote Name: " + name);
         } catch (Exception ex) {
-            throw new RemoteException(ServerRegistry.class, "Error on Unbind");
+            throw new RemoteException(HostRegistry.class, "Error on Unbind");
         }
     }
 

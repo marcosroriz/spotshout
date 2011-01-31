@@ -169,7 +169,8 @@ public class SpotRegistry extends Server implements Registry {
 
             // Creating Stub
             Stub stub = reply.createStub();
-
+            stub.setLookupName(name);
+            
             RMIProperties.log("Lookup Request Finished -- Remote Name:" + name);
             return (Remote) stub;
         } catch (Exception ex) {
