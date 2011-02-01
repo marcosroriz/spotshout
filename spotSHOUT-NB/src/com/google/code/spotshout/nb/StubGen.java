@@ -114,18 +114,18 @@ public class StubGen {
             stubMethod.addEndIf();
 
             // Return value and Unwrap it
-            StringBuffer sb = new StringBuffer("return ((");
+            StringBuffer sb = new StringBuffer("");
 
             if (remoteMethod.getType().isPrimitive()) {
-                sb.append(wrapper(remoteMethod.getType()));
+                sb.append("return ((" + wrapper(remoteMethod.getType()));
                 sb.append(")invReply.getReturnValue()).getValue();");
             } else if (remoteMethod.getType().getClassName().equals("java.lang.String")
                     || remoteMethod.getType().getClassName().equals("String")) {
-                sb.append("SerialString");
+                sb.append("return ((SerialString");
                 sb.append(")invReply.getReturnValue()).getValue();");
             } else {
-                sb.append(remoteMethod.getType());
-                sb.append(")invReply.getReturnValue());");
+                sb.append("return (" + remoteMethod.getType() + ")");
+                sb.append("((SerialObject)invReply.getReturnValue()).getValue();");
             }
 
             stubMethod.addLine(sb.toString());

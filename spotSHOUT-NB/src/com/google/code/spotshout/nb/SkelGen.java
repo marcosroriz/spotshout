@@ -81,6 +81,7 @@ public class SkelGen {
         serviceMethod.addTry();
         serviceMethod.addLine("TargetMethod method = ((InvokeRequest) request).getMethod();");
         serviceMethod.addLine("KSNSerializableInterface returnValue = null;");
+        serviceMethod.addLine("InvokeReply invokeReply = null;");
         serviceMethod.addLine(iName + " remoteObj = (" + iName + ") remote;");
         serviceMethod.addLine();
         
@@ -140,8 +141,9 @@ public class SkelGen {
 
             serviceMethod.addLine("}");
         }
-        // If method has no return (we return null and the protocol won't reply it
-        serviceMethod.addLine("return null;");
+        // Return InvokeReply (null if method is void as we defined in the head of the method)
+        serviceMethod.addLine("if (returnValue != null) invokeReply = new InvokeReply(returnValue);");
+        serviceMethod.addLine("return invokeReply;");
 
         // Treating Exceptions
         serviceMethod.addCatch(JavaQNameImpl.getInstance("java.lang", "Exception"), "ex");
