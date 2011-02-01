@@ -19,13 +19,17 @@
         <folder name="text">
             <folder name="x-java">
                 <folder name="Actions">
+                    <file name="com-google-code-spotshout-nb-StubSkelGenerator-separatorAfter.instance">
+                        <attr name="instanceClass" stringvalue="javax.swing.JSeparator"/>
+                        <attr name="position" intvalue="2835"/>
+                    </file>
                     <file name="com-google-code-spotshout-nb-StubSkelGenerator-separatorBefore.instance">
                         <attr name="instanceClass" stringvalue="javax.swing.JSeparator"/>
                         <attr name="position" intvalue="2825"/>
                     </file>
                     <file name="com-google-code-spotshout-nb-StubSkelGenerator.shadow">
                         <attr name="originalFile" stringvalue="Actions/File/com-google-code-spotshout-nb-StubSkelGenerator.instance"/>
-                        <attr name="position" intvalue="2850"/>
+                        <attr name="position" intvalue="2830"/>
                     </file>
                 </folder>
             </folder>
