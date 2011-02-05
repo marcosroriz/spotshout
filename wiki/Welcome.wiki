@@ -1,8 +1,7 @@
 #labels Featured
-#TOC
+== spot<font color="#9ACD32">SHOUT</font> Wiki ==
 
-= spot<font color="#9ACD32">SHOUT</font> Wiki =
-
+  * [Home | Home]
   * [Articles HOWTO articles]
     * [ArticlesXSS Web security]
     * [ArticlesDom DOM manipulation]
