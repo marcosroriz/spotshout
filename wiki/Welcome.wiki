@@ -1,0 +1,16 @@
+#labels Featured
+#Welcome Page
+
+= Welcome to the spot<font color="#9ACD32">SHOUT</font> project website =
+
+*spot<font color="#9ACD32">SHOUT</font>* implements my undergrad thesis, _Distributed Object Middleware for Wireless Sensor Network_, for the SunSPOT platform. This work proposes a RMI-like Middleware for WSN. The middleware will enable abstraction of the communications details between sensors, allowing the development of applications with a higher-level of abstraction, thus, making it easier and funnier to develop applications outside the scope of just collecting data.
+
+This wiki has been divide in two main sections: Architecture and Tutorials. Architecture provides the way that components of the middleware are organized and allow us
+
+
+= Details =
+
+Add your content here.  Format your content with:
+  * Text in *bold* or _italic_
+  * Headings, paragraphs, and lists
+  * Automatic links to other wiki pages
