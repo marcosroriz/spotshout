@@ -1,4 +1,3 @@
-#labels Featured
 == spot<font color="#9ACD32">SHOUT</font> Wiki ==
 
   * [Home | Home]
