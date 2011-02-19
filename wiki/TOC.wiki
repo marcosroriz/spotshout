@@ -1,9 +1,25 @@
-  * [Home Home]
-  * [Articles HOWTO articles]
-    * [ArticlesXSS Web security]
-    * [ArticlesDom DOM manipulation]
-    * [ArticlesStyle CSS and style]
-    * [ArticlesTips Tips and tricks]
-  * [DOMReference DOM reference]
-  * [HTMLElements HTML reference]
-  * [CSSReference CSS reference]
+  * [Home Home/Início]
+  * English
+    * [Install-EN Installation]
+    * [FAQ-EN Frequent Asked Questions]
+    * Tutorials
+      * [5Min-EN 5 Minutes]
+      * [Guide-EN Guide]
+    * Architecture
+      * [GeneralView-EN General View]
+      * [StubsSkel-EN Stubs/Skeletons]
+      * [RemoteReference-EN Remote Reference]
+      * [NameServer-EN Naming Server]
+      * [Communication-EN Communication]
+  * Português
+    * [Install-PT Instalação]
+    * [FAQ-PT Perguntas Frequentes]
+    * Tutoriais
+      * [5Min-PT 5 Minutos ]
+      * [Guide-PT Guia]
+    * Arquitetura
+      * [GeneralView-PT Visão Geral]
+      * [StubsSkel-PT Stubs/Skeletons]
+      * [RemoteReference-PT Referência Remota]
+      * [NameServer-PT Servidor de Nomes]
+      * [Communication-PT Comunicação]
