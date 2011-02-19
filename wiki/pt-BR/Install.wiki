@@ -18,12 +18,10 @@ Para instalar como biblioteca de aplicação faça os seguintes passos:
 utility.jars=C:/path/to/spotSHOUT-0.0.1.jar
 }}}
   # Inicie o `NetBeans` e adicione no classpath do seu projeto. Faça:
-  Click Direito no Projeto *->* Propriedades *->* Classpath de código-fonte Java *->* Adicionar JAR/pasta *->* Selecione o JAR e SRC do spotSHOUT.
-    http://spotshout.googlecode.com/svn/wiki/pt-BR/images/addJARPT.png
+  Click Direito no Projeto *&#8594;* Propriedades *&#8594;* Classpath de código-fonte Java *&#8594;* Adicionar JAR/pasta *&#8594;* Selecione o JAR e SRC do spotSHOUT. http://spotshout.googlecode.com/svn/wiki/pt-BR/images/addJARPT.png
   # Instale o plug-in para geração de stubs/skeletons no `NetBeans`. Faça:
-  Menu Ferramentas *->* Plug-ins *->* Baixados *->* Clique em "Adicionar Plug-ins" *->* Escolha o Plugin (NBM) baixado.
-  Em seguida clique em Instalar e será apresentada a licença de uso (Apache v2), leia-a. Ao aceitar a licença será instalado o plug-in.
-http://spotshout.googlecode.com/svn/wiki/pt-BR/images/pluginPT.png
+  Menu Ferramentas *&#8594;* Plug-ins *&#8594;* Baixados *&#8594;* Clique em "Adicionar Plug-ins" *&#8594;* Escolha o Plugin (NBM) baixado.
+  Em seguida clique em Instalar e será apresentada a licença de uso (Apache v2), leia-a. Ao aceitar a licença será instalado o plug-in. http://spotshout.googlecode.com/svn/wiki/pt-BR/images/pluginPT.png
 Leia agora os passos adicionais para configurar o ambiente de simulação e em seguida o tutorial de cinco minutos ou o guia do middleware.
 
 == Instalando como Biblioteca de Aplicação ==
@@ -49,7 +47,10 @@ Para que possamos utilizar estações bases em um ambiente de simulação (num c
 basestation.shared=true
 basestation.not.required=true
 }}}
-
+Caso não queira modificar seu arquivo, basta que na hora de executar uma aplicação hospedeira (i.e., que roda no "pc") passe as propriedades como argumentos. Exemplo:
+{{{
+ant host-run -Dbasestation.shared=true -Dbasestation.not.required=true
+}}}
 
 == Referências ==
 O guia de operação do [http://sunspotworld.com/docs/Yellow/SunSPOT-Programmers-Manual.pdf SunSPOT] e a documentação de outros middlewares, como o [http://code.google.com/p/looci/wiki/Welcome?tm=6 LooCI], foram utilizados para construir o guia de instalação.
