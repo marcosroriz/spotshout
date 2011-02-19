@@ -10,18 +10,7 @@ O modo de biblioteca de aplicação requer que cada projeto do Sun SPOT referenc
 
 O modo de biblioteca de sistema anexa o JAR com as classes do sistema padrão do Sun SPOT. Permitindo assim ser referenciado indiretamente do projeto, ou seja, os projetos não precisam de importação/apontar para o arquivo JAR, uma vez que já está na biblioteca padrão. Este método é mais fácil de usar e manter, mas infelizmente requer que a biblioteca padrão de classes seja reconstruída e atualizada para cada sensor Sun SPOT e este método não funciona com o Simulador Solarium.
 
-Após a instalação leia o tutorial de cinco minutos e em seguida o guia do middleware.
-
-== Configurando o Ambiente ==
-Para que possamos utilizar estações bases em um ambiente de simulação (num computador hospedeiro) tenha certeza que elas estão marcadas como compartilhadas e não necessárias. Basta modificar o arquivo `.sunspot.properties` e incluir as seguintes linhas:
-{{{
-basestation.shared=true
-basestation.not.required=true
-}}}
-Caso não queira modificar seu arquivo, basta que na hora de executar uma aplicação hospedeira (i.e., que roda no "pc") passe as propriedades como argumentos. Exemplo:
-{{{
-ant host-run -Dbasestation.shared=true -Dbasestation.not.required=true
-}}}
+Após a instalação *configure o ambiente de simulação* e em seguida leia o tutorial de cinco minutos ou o guia do middleware.
 
 == Instalando como Biblioteca de Aplicação ==
 Para instalar como biblioteca de aplicação faça os seguintes passos:
@@ -30,15 +19,12 @@ Para instalar como biblioteca de aplicação faça os seguintes passos:
 {{{
 utility.jars=C:/path/to/spotSHOUT-0.0.1.jar
 }}}
-  # Inicie o `NetBeans` e adicione no classpath do seu projeto. Faça:
-  Click Direito no Projeto * > * Propriedades * > * Classpath de código-fonte Java * > * Adicionar JAR/pasta * > * Selecione o JAR e SRC do spotSHOUT. http://spotshout.googlecode.com/svn/wiki/pt-BR/images/addJARPT.png 
-  # Instale o plug-in para geração de stubs/skeletons no `NetBeans`. Faça:
-  Menu Ferramentas * > * Plug-ins * > * Baixados * > * Clique em "Adicionar Plug-ins" * > * Escolha o Plugin (NBM) baixado.
-  Em seguida clique em Instalar e será apresentada a licença de uso (Apache v2), leia-a. Ao aceitar a licença será instalado o plug-in. http://spotshout.googlecode.com/svn/wiki/pt-BR/images/pluginPT.png
+  # Inicie o `NetBeans` e adicione no classpath do seu projeto. Faça: Click Direito no Projeto * > * Propriedades * > * Classpath de código-fonte Java * > * Adicionar JAR/pasta * > * Selecione o JAR e SRC do spotSHOUT. http://spotshout.googlecode.com/svn/wiki/pt-BR/images/addJARPT.png # Instale o plug-in para geração de stubs/skeletons no `NetBeans`. Faça:  Menu Ferramentas * > * Plug-ins * > * Baixados * > * Clique em "Adicionar Plug-ins" * > * Escolha o Plugin (NBM) baixado.
+  Em seguida clique em Instalar e será apresentada a licença de uso (Apache v2), leia-a. Ao aceitar a licença será instalado o plug-in.http://spotshout.googlecode.com/svn/wiki/pt-BR/images/pluginPT.png
 
 == Instalando como Biblioteca de Aplicação ==
   # Baixe o JAR, SRC e Plugin do spotSHOUT na [http://code.google.com/p/spotshout/downloads/list seção de downloads].
-  # Mova o JAR do spotSHOUT para o diretório `/lib` da instalação do SDK do Sun SPOT. http://spotshout.googlecode.com/svn/wiki/pt-BR/images/libDir.png
+  # Mova o JAR do spotSHOUT para o diretório `/lib` da instalação do SDK do Sun SPOT.
   # Na sua pasta inicial modifique o arquivo `.sunspot.properties` e adapte o arquivo para conter as seguintes linhas (verifique o nome do JAR – aqui estamos usando spotSHOUT-0.0.1.jar).
 {{{
 spot.library.name=spotSHOUT
@@ -51,6 +37,17 @@ $ ant library
   # Faça a implantação (deploy) da nova biblioteca nos Sun SPOTs usando:
 {{{
 $ ant flashlibrary
+}}}
+
+== Configurando o Ambiente ==
+Para que possamos utilizar estações bases em um ambiente de simulação (num computador hospedeiro) tenha certeza que elas estão marcadas como compartilhadas e não necessárias. Basta modificar o arquivo `.sunspot.properties` e incluir as seguintes linhas:
+{{{
+basestation.shared=true
+basestation.not.required=true
+}}}
+Caso não queira modificar seu arquivo, basta que na hora de executar uma aplicação hospedeira (i.e., que roda no "pc") passe as propriedades como argumentos. Exemplo:
+{{{
+ant host-run -Dbasestation.shared=true -Dbasestation.not.required=true
 }}}
 
 == Referências ==
