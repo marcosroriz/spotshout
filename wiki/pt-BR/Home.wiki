@@ -1,4 +1,1 @@
-#summary One-sentence summary of this page.
-
-Essa página está escrita em português
-Eu tou testando acentôs louc~ ção
+ETeste de acentuação! Tes é é é çã ó í
