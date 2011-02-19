@@ -1,6 +1,5 @@
-ETeste de acentuação! Tes é é é çã ó íd
-fa
-sd
-fa
-dsf
-s
+#summary Bem-vindo ao Wiki do spotSHOUT!
+
+Bem-vindo ao Wiki do middleware spotSHOUT. Neste wiki você não só encontrará tutoriais, mas também a documentação do middleware abrangendo desde a instalação até os conceitos por trás das cenas do spotSHOUT.
+
+Escolha o idioma na caixa da direita azul claro. Nós localizamos as páginas wiki para o português, você está convidado a contribuir com o wiki e localizar em seu idioma nativo. Tenha um bom hack!

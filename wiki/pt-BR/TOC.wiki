@@ -1,10 +1,14 @@
-  * [Home Home/Início]
+  * [Home Início]
   * [Install Instalação]
   * [FAQ Perguntas Frequentes]
-  * Tutorials
-    * [5Min 5 Minutos]
-    * [Guide Guia]
-  * Architecture
+  * Usando o spotSHOUT
+    * [5Min Tutorial de 5 Minutos]
+    * [Guide Guia Geral]
+  * Desenvolvendo o spotSHOUT
+    * [Building Construindo o spotSHOUT]
+    * [ContributingBUG Contribuindo uma correção/bug]
+    * [L10N Localizando o Wiki]
+  * Arquitetura do spotSHOUT
     * [GeneralView Visão Geral]
     * [StubsSkel Stubs/Skeletons]
     * [RemoteReference Referência Remota]
