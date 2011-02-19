@@ -35,19 +35,17 @@ public class Generator {
 
     public boolean isParseable() {
         try {
-            if (javaSource != null) {
-                this.parseable = javaSource.isExtending(Class.forName("spot.rmi.Remote"));
-            } else {
+            if (javaSource == null) {
                 jparser.parse(srcFile);
                 for (Iterator iter = jsf.getJavaSources(); iter.hasNext();) {
                     this.javaSource = (JavaSource) iter.next();
-                    this.parseable = javaSource.isExtending(Class.forName("spot.rmi.Remote"));
                 }
             }
+            this.parseable = javaSource.isExtending(Class.forName("spot.rmi.Remote"));
+            return parseable;
         } catch (Exception ex) {
-            this.parseable = false;
+            return false;
         }
-        return parseable;
     }
 
     public void generate() {

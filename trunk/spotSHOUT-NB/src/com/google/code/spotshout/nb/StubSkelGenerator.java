@@ -7,15 +7,11 @@ package com.google.code.spotshout.nb;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.io.File;
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 import org.openide.DialogDisplayer;
 import org.openide.NotifyDescriptor;
 import org.openide.filesystems.FileObject;
 import org.openide.loaders.DataObject;
-import org.openide.util.Exceptions;
 
 public final class StubSkelGenerator implements ActionListener {
 
