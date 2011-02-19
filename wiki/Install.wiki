@@ -5,9 +5,11 @@
 The installation is straightforward. You basically download the spotSHOUT JAR and point into your Sun SPOT Project and install the spotSHOUT NetBeans Plugins. Here are the steps:
 
   # Download the spotSHOUT JAR, SRC and NetBeans Plugin in the [http://code.google.com/p/spotshout/downloads/list download section].
-  # To make the spotSHOUT Middleware avaliable to your project edit the build.properties file of it (It's on the root of the Project).  
-  {{{ utility.jars=C:/path/to/spotSHOUT-0.0.1.jar }}}
-  # Now fire up 
+  # To make the spotSHOUT middleware avaliable to your project edit the build.properties file of it (It's on the root of the Project).  
+{{{ 
+utility.jars=C:/path/to/spotSHOUT-0.0.1.jar
+}}}
+  # Now start NetBeans and 
 
 = Details =
 
