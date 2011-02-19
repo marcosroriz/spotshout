@@ -19,21 +19,24 @@ Para instalar como biblioteca de aplicação faça os seguintes passos:
 {{{
 utility.jars=C:/path/to/spotSHOUT-0.0.1.jar
 }}}
-  # Inicie o `NetBeans` e adicione no classpath do seu projeto. Faça: <br /> Click Direito no Projeto * > * Propriedades * > * Classpath de código-fonte Java * > * Adicionar JAR/pasta * > * Selecione o JAR e SRC do spotSHOUT. http://spotshout.googlecode.com/svn/wiki/pt-BR/images/addJARPT.png
-  # Instale o plug-in para geração de stubs/skeletons no `NetBeans`. Faça:  Menu Ferramentas * > * Plug-ins * > * Baixados * > * Clique em "Adicionar Plug-ins" * > * Escolha o Plugin (NBM) baixado. Em seguida clique em Instalar e será apresentada a licença de uso (Apache v2), leia-a. Ao aceitar a licença será instalado o plug-in.http://spotshout.googlecode.com/svn/wiki/pt-BR/images/pluginPT.png
+  # Inicie o `NetBeans` e adicione no classpath do seu projeto. 
+  Faça: Click Direito no Projeto * > * Propriedades * > * Classpath de código-fonte Java * > * Adicionar JAR/pasta * > * Selecione o JAR e SRC do spotSHOUT. http://spotshout.googlecode.com/svn/wiki/pt-BR/images/addJARPT.png
+  # Instale o plug-in para geração de stubs/skeletons no `NetBeans`. Faça:  Menu Ferramentas * > * Plug-ins * > * Baixados * > * Clique em "Adicionar Plug-ins" * > * Escolha o Plugin (NBM) baixado. Em seguida clique em Instalar e será apresentada a licença de uso (Apache v2), leia-a. Ao aceitar a licença será instalado o plug-in. http://spotshout.googlecode.com/svn/wiki/pt-BR/images/pluginPT.png
 
-== Instalando como Biblioteca de Aplicação ==
+== Instalando como Biblioteca de Sistema ==
   # Baixe o JAR, SRC e Plugin do spotSHOUT na [http://code.google.com/p/spotshout/downloads/list seção de downloads].
-  # Mova o JAR do spotSHOUT para o diretório `/lib` da instalação do SDK do Sun SPOT.
+  # Mova o JAR do spotSHOUT para o diretório `/lib` da instalação do SDK do Sun SPOT. http://spotshout.googlecode.com/svn/wiki/pt-BR/images/libDir.png
   # Na sua pasta inicial modifique o arquivo `.sunspot.properties` e adapte o arquivo para conter as seguintes linhas (verifique o nome do JAR – aqui estamos usando spotSHOUT-0.0.1.jar).
 {{{
 spot.library.name=spotSHOUT
 spot.library.addin.jars=${sunspot.lib}/spotSHOUT-0.0.1.jar${path.separator}${sunspot.lib}/multihop_common.jar${path.separator}${sunspot.lib}/transducer_device.jar
 }}}
+http://spotshout.googlecode.com/svn/wiki/pt-BR/images/systeminstall.png
   # Reconstrua a biblioteca de classes padrão do Sun SPOT utilizando o seguinte comando ant (em qualquer diretório de SunSPOT que contenha um arquivo `build.xml` - exemplo: pasta de instalação do SDK)
 {{{
 $ ant library
 }}}
+http://spotshout.googlecode.com/svn/wiki/pt-BR/images/antlibrary.png
   # Faça a implantação (deploy) da nova biblioteca nos Sun SPOTs usando:
 {{{
 $ ant flashlibrary
@@ -45,10 +48,13 @@ Para que possamos utilizar estações bases em um ambiente de simulação (num c
 basestation.shared=true
 basestation.not.required=true
 }}}
+A imagem abaixo mostra as linhas no arquivo de properties em uma instalação como biblioteca de aplicação: 
+http://spotshout.googlecode.com/svn/wiki/pt-BR/images/pluginPT.png
+
 Caso não queira modificar seu arquivo, basta que na hora de executar uma aplicação hospedeira (i.e., que roda no "pc") passe as propriedades como argumentos. Exemplo:
 {{{
 ant host-run -Dbasestation.shared=true -Dbasestation.not.required=true
 }}}
 
 == Referências ==
-O guia de operação do [http://sunspotworld.com/docs/Yellow/SunSPOT-Programmers-Manual.pdf SunSPOT] e a documentação de outros middlewares, como o [http://code.google.com/p/looci/wiki/Welcome?tm=6 LooCI], foram utilizados para construir o guia de instalação.
+O guia de operação do [http://sunspotworld.com/docs/Yellow/SunSPOT-Programmers-Manual.pdf SunSPOT] e a documentação de outros middlewares, como o [http://code.google.com/p/looci/wiki/Welcome?tm=6 LooCI] e [http://www.ipd.uka.de/KSN/Serialization/ KSN], foram utilizados para construir o guia de instalação.
