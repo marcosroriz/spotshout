@@ -1,13 +1,5 @@
-#summary One-sentence summary of this page.
+#summary Welcome to spotSHOUT Wiki!
 
-= Introduction =
+Welcome to the spotSHOUT middleware Wiki. In this wiki you'll not only find tutorials but also a documentation of the middleware covering from installation to the concepts behind the scenes of spotSHOUT. 
 
-Add your content here.
-
-
-= Details =
-
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
+Please choose your language in the right lightblue box. Right now we localized the wiki pages to portuguese, you're welcome to contribute to the wiki and localize in your native idiom. Have a nice hack!
