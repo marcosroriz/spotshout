@@ -34,7 +34,7 @@ spot.library.addin.jars=${sunspot.lib}/spotSHOUT-1.0.jar${path.separator}${sunsp
 {{{
 $ ant library
 }}} 
-http://spotshout.googlecode.com/svn/wiki/pt-BR/images/antlibrary.png # Faça a implantação (deploy) da nova biblioteca nos Sun SPOTs usando:
+  # Faça a implantação (deploy) da nova biblioteca nos Sun SPOTs usando:
 {{{
 $ ant flashlibrary
 }}}
@@ -45,8 +45,6 @@ Para que possamos utilizar estações bases em um ambiente de simulação (num c
 basestation.shared=true
 basestation.not.required=true
 }}}
-A imagem abaixo mostra as linhas no arquivo de properties em uma instalação como biblioteca de aplicação: 
-
 Caso não queira modificar seu arquivo, basta que na hora de executar uma aplicação hospedeira (i.e., que roda no "pc") passe as propriedades como argumentos. Exemplo:
 {{{
 ant host-run -Dbasestation.shared=true -Dbasestation.not.required=true
