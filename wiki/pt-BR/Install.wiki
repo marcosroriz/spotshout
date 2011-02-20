@@ -39,7 +39,7 @@ $ ant library
 $ ant flashlibrary
 }}}
 
-== Configurando o Ambiente ==
+= Configurando o Ambiente =
 Para que possamos utilizar estações bases em um ambiente de simulação (num computador hospedeiro) tenha certeza que elas estão marcadas como compartilhadas e não necessárias. Basta modificar o arquivo `.sunspot.properties` e incluir as seguintes linhas:
 {{{
 basestation.shared=true
@@ -50,5 +50,5 @@ Caso não queira modificar seu arquivo, basta que na hora de executar uma aplica
 ant host-run -Dbasestation.shared=true -Dbasestation.not.required=true
 }}}
 
-== Referências ==
+= Referências =
 O guia de operação do [http://sunspotworld.com/docs/Yellow/SunSPOT-Programmers-Manual.pdf SunSPOT] e a documentação de outros middlewares, como o [http://code.google.com/p/looci/wiki/Welcome?tm=6 LooCI] e [http://www.ipd.uka.de/KSN/Serialization/ KSN], foram utilizados para construir o guia de instalação.
