@@ -29,8 +29,8 @@ utility.jars=C:/path/to/spotSHOUT-1.0.jar
 {{{
 spot.library.name=spotSHOUT
 spot.library.addin.jars=${sunspot.lib}/spotSHOUT-1.0.jar${path.separator}${sunspot.lib}/multihop_common.jar${path.separator}${sunspot.lib}/transducer_device.jar
-}}}<br>http://spotshout.googlecode.com/svn/wiki/pt-BR/images/systeminstall.png
-  # Reconstrua a biblioteca de classes padrão do Sun SPOT utilizando o seguinte comando ant (em qualquer diretório do SunSPOT que contenha um arquivo `build.xml` - exemplo: pasta de instalação do Sun SPOT SDK):   http://spotshout.googlecode.com/svn/wiki/pt-BR/images/antlibrary.png
+}}}
+  <br>http://spotshout.googlecode.com/svn/wiki/pt-BR/images/systeminstall.png # Reconstrua a biblioteca de classes padrão do Sun SPOT utilizando o seguinte comando ant (em qualquer diretório do SunSPOT que contenha um arquivo `build.xml` - exemplo: pasta de instalação do Sun SPOT SDK):   http://spotshout.googlecode.com/svn/wiki/pt-BR/images/antlibrary.png
 {{{
 $ ant library
 }}}
