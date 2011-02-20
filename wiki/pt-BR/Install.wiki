@@ -45,7 +45,7 @@ Para que possamos utilizar estações bases em um ambiente de simulação (num c
 basestation.shared=true
 basestation.not.required=true
 }}}
-Caso não queira modificar seu arquivo, basta que na hora de executar uma aplicação hospedeira (i.e., que roda no "pc") passe as propriedades como argumentos. Exemplo:
+Caso não queira modificar seu arquivo, basta que na hora de executar uma aplicação hospedeira passe as propriedades como argumentos. Exemplo:
 {{{
 ant host-run -Dbasestation.shared=true -Dbasestation.not.required=true
 }}}
