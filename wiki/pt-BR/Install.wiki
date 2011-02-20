@@ -25,15 +25,17 @@ utility.jars=C:/path/to/spotSHOUT-1.0.jar
 == Instalando como Biblioteca de Sistema ==
   # Baixe o JAR, SRC e Plugin do spotSHOUT na [http://code.google.com/p/spotshout/downloads/list seção de downloads].
   # Mova o JAR do spotSHOUT para o diretório `/lib` da instalação do SDK do Sun SPOT. http://spotshout.googlecode.com/svn/wiki/pt-BR/images/libDir.png
-  # Na sua pasta inicial modifique o arquivo `.sunspot.properties` e adapte o arquivo para conter as seguintes linhas (verifique o nome do JAR – aqui estamos usando spotSHOUT-1.0.jar). http://spotshout.googlecode.com/svn/wiki/pt-BR/images/systeminstall.png
+  # Na sua pasta inicial modifique o arquivo `.sunspot.properties` e adapte o arquivo para conter as seguintes linhas (verifique o nome do JAR – aqui estamos usando spotSHOUT-1.0.jar).
 {{{
 spot.library.name=spotSHOUT
 spot.library.addin.jars=${sunspot.lib}/spotSHOUT-1.0.jar${path.separator}${sunspot.lib}/multihop_common.jar${path.separator}${sunspot.lib}/transducer_device.jar
 }}}
-  # Reconstrua a biblioteca de classes padrão do Sun SPOT utilizando o seguinte comando ant (em qualquer diretório de SunSPOT que contenha um arquivo `build.xml` - exemplo: pasta de instalação do Sun SPOT SDK).   http://spotshout.googlecode.com/svn/wiki/pt-BR/images/antlibrary.png
+  http://spotshout.googlecode.com/svn/wiki/pt-BR/images/systeminstall.png
+  # Reconstrua a biblioteca de classes padrão do Sun SPOT utilizando o seguinte comando ant (em qualquer diretório de SunSPOT que contenha um arquivo `build.xml` - exemplo: pasta de instalação do Sun SPOT SDK).
 {{{
 $ ant library
 }}}
+  http://spotshout.googlecode.com/svn/wiki/pt-BR/images/antlibrary.png
   # Faça a implantação (deploy) da nova biblioteca nos Sun SPOTs usando:
 {{{
 $ ant flashlibrary
