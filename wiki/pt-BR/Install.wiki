@@ -19,18 +19,18 @@ Para instalar como biblioteca de aplicação faça os seguintes passos:
 {{{
 utility.jars=C:/path/to/spotSHOUT-1.0.jar
 }}}
-  # No `NetBeans` adicione o spotSHOUT ao classpath do seu projeto. Faça: Click Direito no Projeto * > * Propriedades * > * Classpath de código-fonte Java * > * Adicionar JAR/pasta * > * Selecione o JAR e SRC do spotSHOUT. http://spotshout.googlecode.com/svn/wiki/pt-BR/images/addJARPT.png
-  # Instale o plug-in para geração de stubs/skeletons no `NetBeans`. Faça:  Menu Ferramentas * > * Plug-ins * > * Baixados * > * Clique em "Adicionar Plug-ins" * > * Escolha o Plugin (NBM) baixado. Em seguida clique em Instalar e será apresentada a licença de uso (Apache v2), leia-a. Ao aceitar a licença será instalado o plug-in. http://spotshout.googlecode.com/svn/wiki/pt-BR/images/pluginPT.png
+  # No `NetBeans` adicione o spotSHOUT ao classpath do seu projeto. Faça: Click Direito no Projeto * > * Propriedades * > * Classpath de código-fonte Java * > * Adicionar JAR/pasta * > * Selecione o JAR e SRC do spotSHOUT. http://spotshout.googlecode.com/svn/wiki/pt-BR/imagens/addJARPT.png
+  # Instale o plug-in para geração de stubs/skeletons no `NetBeans`. Faça:  Menu Ferramentas * > * Plug-ins * > * Baixados * > * Clique em "Adicionar Plug-ins" * > * Escolha o Plugin (NBM) baixado. Em seguida clique em Instalar e será apresentada a licença de uso (Apache v2), leia-a. Ao aceitar a licença será instalado o plug-in. http://spotshout.googlecode.com/svn/wiki/pt-BR/imagens/pluginPT.png
 
 == Instalando como Biblioteca de Sistema ==
   # Baixe o JAR, SRC e Plugin do spotSHOUT na [http://code.google.com/p/spotshout/downloads/list seção de downloads].
-  # Mova o JAR do spotSHOUT para o diretório `/lib` da instalação do SDK do Sun SPOT. http://spotshout.googlecode.com/svn/wiki/pt-BR/images/libDir.png
-  # Na sua pasta inicial modifique o arquivo `.sunspot.properties` e adapte o arquivo para conter as seguintes linhas (verifique o nome do JAR -- aqui estamos usando `spotSHOUT-1.0.jar`). http://spotshout.googlecode.com/svn/wiki/pt-BR/images/systeminstall.png
+  # Mova o JAR do spotSHOUT para o diretório `/lib` da instalação do SDK do Sun SPOT. http://spotshout.googlecode.com/svn/wiki/pt-BR/imagens/libDir.png
+  # Na sua pasta inicial modifique o arquivo `.sunspot.properties` e adapte o arquivo para conter as seguintes linhas (verifique o nome do JAR -- aqui estamos usando `spotSHOUT-1.0.jar`). http://spotshout.googlecode.com/svn/wiki/pt-BR/imagens/systeminstall.png
 {{{
 spot.library.name=spotSHOUT
 spot.library.addin.jars=${sunspot.lib}/spotSHOUT-1.0.jar${path.separator}${sunspot.lib}/multihop_common.jar${path.separator}${sunspot.lib}/transducer_device.jar
 }}}
-  # Reconstrua a biblioteca de classes padrão do Sun SPOT utilizando o seguinte comando ant (em qualquer diretório do SunSPOT que contenha um arquivo `build.xml` - exemplo: pasta de instalação do Sun SPOT SDK): http://spotshout.googlecode.com/svn/wiki/pt-BR/images/antlibrary.png
+  # Reconstrua a biblioteca de classes padrão do Sun SPOT utilizando o seguinte comando ant (em qualquer diretório do SunSPOT que contenha um arquivo `build.xml` - exemplo: pasta de instalação do Sun SPOT SDK): http://spotshout.googlecode.com/svn/wiki/pt-BR/imagens/antlibrary.png
 {{{
 $ ant library
 }}}
