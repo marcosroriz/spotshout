@@ -8,7 +8,7 @@ Agora que você instalou o middleware vamos experimentar o middleware através d
  * Sensor/Hospedeiro Cliente obtém a referência remota;
  * Inicia-se a comunicação.
 
-Para exercitar e introduzir estes conceitos vamos fazer uma aplicação simples, uma calculadora remota. Primeiramente iremos iniciar o servidor de nomes, que é aonde os sensores poderão obter referências remotas. Os sensores da aplicação irão acordar uma interface em comum, a interface remota. O sensor servidor irá implementar a funcionalidade definida na interface remota e registrar essa referência no servidor de nomes com o nome “Cal”. Em seguida o cliente irá obter a referência remota através da operação de procura pelo nome “Cal” no servidor de nomes. A partir da obtenção da referência remota o sensor cliente poderá realizar chamadas remotas de maneira totalmente transparente. A visão geral da nossa aplicação pode ser visualizado na imagem abaixo:
+Para exercitar e introduzir estes conceitos vamos fazer uma aplicação simples, uma calculadora remota. Primeiramente iremos iniciar o servidor de nomes, que é aonde os sensores poderão obter referências remotas. Os sensores da aplicação irão acordar uma interface em comum, a interface remota. O sensor servidor irá implementar a funcionalidade definida na interface remota e registrar essa referência no servidor de nomes com o nome `Cal`. Em seguida o cliente irá obter a referência remota através da operação de procura pelo nome `Cal` no servidor de nomes. A partir da obtenção da referência remota o sensor cliente poderá realizar chamadas remotas de maneira totalmente transparente. A visão geral da nossa aplicação pode ser visualizado na imagem abaixo:
 
 http://spotshout.googlecode.com/svn/wiki/pt-BR/imagens/tutorial/diagramaExemplo.png
 
