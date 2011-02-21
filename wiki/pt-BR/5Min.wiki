@@ -1,0 +1,231 @@
+#summary Experimentando o spotSHOUT.
+
+<wiki:toc max_depth="2" />
+
+= Tutorial de 5 Minutos =
+
+Agora que você instalou o middleware vamos experimentar o middleware através de um exemplo simples e rápido. Vamos fazer uma calculadora remota, aonde sensores irão utilizar uma interface remota para se comunicar. Um sensor irá programar a calculadora e o outro irá utilizar a interface para realizar chamadas.
+
+A interface remota terá as operações de uma calculadora comum como: soma, subtração, multiplicação e divisão; além disso terá uma operação que retorna uma String contendo a última operação realizada. Com base nessas informações simples a imagem abaixo mostra o diagrama da interface remota `Calculadora`.
+
+http://spotshout.googlecode.com/svn/wiki/pt-BR/imagens/tutorial/diagramaCalculadora.png
+ 
+== Servidor de Nomes ==
+Os sensores utilizam nomes para encontrar referências remotas na rede. Podemos perceber que o  servidor de nomes ocupa um papel importantíssimo, pois, é ele que os sensores utilizam para encontrar nomes. O servidor de nome *deve rodar separadamente em um sensor ou hospedeiro*, não sendo possível que um sensor seja tanto o servidor de nomes como um cliente do servidor de nomes.
+
+=== Criando o Projeto ===
+Neste tutorial iremos utilizar um sensor como servidor de nomes. Inicie o `NetBeans` e crie um novo projeto de aplicação para sensor SunSPOT com o nome `ServidorDeNomesSensor`. Veja a imagem abaixo para mais detalhes:
+
+http://spotshout.googlecode.com/svn/wiki/pt-BR/imagens/tutorial/servidorDeNomes-wizard.png
+ 
+=== Configurando ===
+Como especificado no guia de instalação iremos adiciona o JAR do spotSHOUT e configurar o projeto para trabalhar com o middleware.
+Adicione ao `classpath` do projeto o JAR e SRC do spotSHOUT no menu de propriedades.
+ 
+Em seguida modifique o arquivo `build.properties` e adicione a propriedade :
+{{{
+utility.jars=C:/path/to/spotSHOUT-1.0.jar
+}}}
+
+Exemplo Gráfico:
+http://spotshout.googlecode.com/svn/wiki/pt-BR/imagens/tutorial/servidorDeNomes-buildProperties.png
+ 
+=== Criando o Servidor de Nomes ===
+Para criar o servidor basta executar o método _createRegistry()_ da classe `LocateRegistry`. Modifique o código da classe principal para conter este método. O corpo da classe principal devera ficar conforme o seguinte código:
+
+{{{
+package org.sunspotworld;
+
+import javax.microedition.midlet.MIDlet;
+import javax.microedition.midlet.MIDletStateChangeException;
+import spot.rmi.registry.LocateRegistry;
+
+public class SunSpotApplication extends MIDlet {
+
+    protected void startApp() throws MIDletStateChangeException {
+        LocateRegistry.createRegistry();
+    }
+
+    protected void pauseApp() {
+    }
+
+    protected void destroyApp(boolean unconditional) throws MIDletStateChangeException {
+    }
+}
+}}}
+
+== Servidor ==
+Seguindo o tutorial, agora iremos criar o sensor servidor. Este irá definir uma interface remota e uma implementação para essa (servidor) e anunciá-la na rede através do servidor de nomes.
+
+=== Criando o Projeto ===
+Com o `NetBeans` aberto, crie um novo projeto de aplicação para sensor SunSPOT com o nome CalculadoraServidor. Veja a imagem abaixo para mais detalhes:
+
+http://spotshout.googlecode.com/svn/wiki/pt-BR/imagens/tutorial/server-wizard.png
+ 
+=== Configurando ===
+Repita o mesmo procedimento de configuração do servidor de nomes, isto é, adicione o JAR/SRC ao `classpath` e modifique o arquivo `build.properties`.
+http://spotshout.googlecode.com/svn/wiki/pt-BR/imagens/tutorial/server-addJAR.png
+http://spotshout.googlecode.com/svn/wiki/pt-BR/imagens/tutorial/server-buildProperties.png
+
+=== Interface Remota ===
+Vamos definir a interface remota `Calculadora` conforme especificamos no diagrama de classes. Crie uma interface no pacote `org.sunspotworld` chamada `Calculadora`. Primeiramente devemos estender a interface `spot.rmi.Remote` e adicionar os métodos definidos. O código completo fica:
+{{{
+package org.sunspotworld;
+
+import spot.rmi.Remote;
+import spot.rmi.RemoteException;
+
+public interface Calculadora extends Remote {
+    public int soma(int x, int y) throws RemoteException;
+    public int subtrai(int x, int y) throws RemoteException;
+    public int multiplica(float x, int y) throws RemoteException;
+    public double divide(double x, double y) throws RemoteException;
+    public String ultimaOperacao() throws RemoteException;
+}
+}}}
+
+=== Gerando os Stubs/Skel ===
+Utilize o plug-in do spotSHOUT para gerar os stubs/skeletons. Selecione a interface remota, clique com o botão direito e selecione a opção _Generate SunSPOT Stub/Skeleton_. Os arquivos gerados podem levar um tempo (cerca de 20s) para aparecer no `NetBeans` devido a lentidão da IDE para verificar novos arquivos no diretório do projeto.
+
+http://spotshout.googlecode.com/svn/wiki/pt-BR/imagens/tutorial/genplugin.png
+
+=== Programando a Interface Remota ===
+Agora iremos implementar a interface remota, o código do servidor. Para isso, crie uma classe chamada `CalculadoraImpl` e implemente a interface Calculadora. O código completo fica:
+{{{
+package org.sunspotworld;
+
+import spot.rmi.RemoteException;
+
+public class CalculadoraImpl implements Calculadora {
+
+    String ultimaOp;
+
+    public int soma(int x, int y) throws RemoteException {
+        ultimaOp = "add";
+        return x + y;
+    }
+
+    public int subtrai(int x, int y) throws RemoteException {
+        ultimaOp = "subtrai";
+        return x - y;
+    }
+
+    public int multiplica(float x, int y) throws RemoteException {
+        ultimaOp = "multiplica";
+        return (int) x * y;
+    }
+
+    public double divide(double x, double y) throws RemoteException {
+        ultimaOp = "divide";
+        return x / y;
+    }
+
+    public String ultimaOperacao() throws RemoteException {
+        return ultimaOp;
+    }
+}
+}}}
+
+=== Registrando o Servidor ===
+Primeiramente devemos instanciar a classe CalculadoraImpl para obter um objeto remoto. Para tornar esse objeto remoto em uma referência remota nós devemos exportá-lo. E se quisermos expor o objeto na rede devemos vincular ele a um servidor de nomes. 
+Localizamos o servidor de nomes através da operação `LocateRegistry.getRegistry()` que realiza um broadcast e retorna o servidor de nomes. Após obter o servidor de nomes podemos executar qualquer operação do Java RMI.
+
+A operação _bind_ já trata de exportar o objeto remoto automaticamente para nós, portanto não é necessário exportar o objeto manualmente. Nós iremos registrar o nosso objeto calculadora com o nome *Cal*.  Um parâmetro adicional nessa chamada é o nome completo (incluindo pacote) da interface remota. Esse parâmetro é necessário devido a falta de reflexão na API padrão do Sun SPOT. O código completo da classe principal do sensor servidor fica:
+
+{{{
+package org.sunspotworld;
+
+import java.io.IOException;
+
+import javax.microedition.midlet.MIDlet;
+import javax.microedition.midlet.MIDletStateChangeException;
+import spot.rmi.registry.LocateRegistry;
+import spot.rmi.registry.Registry;
+
+public class SunSpotApplication extends MIDlet {
+
+    protected void startApp() throws MIDletStateChangeException {
+        try {
+            Calculadora calculadora = new CalculadoraImpl();
+
+            // Obtém o registro através de broadcast
+            Registry registro = LocateRegistry.getRegistry();
+
+            // Registra a interface remota org.sunspotworld.Calculadora com o nome Cal
+            registro.bind("Cal", "org.sunspotworld.Calculadora", calculadora);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    protected void pauseApp() {
+    }
+
+    protected void destroyApp(boolean unconditional) throws MIDletStateChangeException {
+    }
+}
+}}}
+
+== Cliente ==
+Agora iremos definir o sensor cliente. Este irá utilizar a interface remota e o servidor de nomes para localizar e comunicar-se de maneira transparente com a referência remota do sensor servidor.
+
+=== Criando o Projeto ===
+Com o `NetBeans` aberto, crie um novo projeto de aplicação para sensor SunSPOT com o nome CalculadoraCliente. Veja a imagem abaixo:
+http://spotshout.googlecode.com/svn/wiki/pt-BR/imagens/tutorial/client-wizard.png 
+
+=== Configurando ===
+Repita o mesmo procedimento de configuração do servidor de nomes, isto é, adicione o JAR/SRC ao `classpath` e modifique o arquivo `build.properties`.
+http://spotshout.googlecode.com/svn/wiki/pt-BR/imagens/tutorial/client-addJAR.png
+http://spotshout.googlecode.com/svn/wiki/pt-BR/imagens/tutorial/client-buildProperties.png
+
+=== Interface Remota ===
+Copie a definição da interface remota, isto é, o arquivo java para o pacote `org.sunspotworld` do projeto cliente.
+
+http://spotshout.googlecode.com/svn/wiki/pt-BR/imagens/tutorial/client-copy.png
+
+=== Gerando os Stubs/Skel ===
+Repita o procedimento utilizado para gerar os stubs/skeletons do servidor, porém, selecione agora a interface remota no projeto cliente.
+http://spotshout.googlecode.com/svn/wiki/pt-BR/imagens/tutorial/genplugin2.png
+
+=== Usando o Objeto ===
+Localizamos o servidor de nomes através da operação `LocateRegistry.getRegistry()` que realiza um broadcast e retorna o servidor de nomes. Após obter o servidor de nomes podemos executar qualquer operação do Java RMI.
+
+Iremos agora utilizar a operação _lookup_ para obter a referência remota “Cal”. Após obter a referência remota, podemos utilizar qualquer método da interface remota. Podemos então executar uma soma e em seguida verificar se foi mesmo a última operação executada. O código da classe principal do cliente fica:
+
+{{{
+package org.sunspotworld;
+
+import java.io.IOException;
+import javax.microedition.midlet.MIDlet;
+import javax.microedition.midlet.MIDletStateChangeException;
+import spot.rmi.registry.LocateRegistry;
+import spot.rmi.registry.Registry;
+
+public class SunSpotApplication extends MIDlet {
+
+    protected void startApp() throws MIDletStateChangeException {
+        try {
+            // Obtendo Registro por broadcast
+            Registry registro = LocateRegistry.getRegistry();
+
+            // Obtendo referência remota de nome "Cal"
+            Calculadora calculadora = (Calculadora) registro.lookup("Cal");
+
+            // Utilizando a referência remota =)
+            int resposta = calculadora.soma(20, 22);
+            System.out.println("A soma de 20 + 22 é: " + resposta);
+
+            String ultimaOperacao = calculadora.ultimaOperacao();
+            System.out.println("A última operação executada foi: " + ultimaOperacao);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    protected void pauseApp() {
+    }
+
+    protected void destroyApp(boolean unconditional) throws MIDletStateChangeException {
+    }
+}
+}}}

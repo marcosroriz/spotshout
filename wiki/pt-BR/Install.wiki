@@ -17,7 +17,7 @@ Para instalar como biblioteca de aplicação faça os seguintes passos:
   # Baixe o JAR, SRC e Plugin do spotSHOUT na [http://code.google.com/p/spotshout/downloads/list seção de downloads].
   # Incie o `NetBeans` e em cada projeto que utiliza o spotSHOUT edite o arquivo ` build.properties` adicionadno a seguinte linha: 
 {{{
-utility.jars=C:/path/to/spotSHOUT-1.0.jar
+utility.jars=C:/caminho/para/spotSHOUT-1.0.jar
 }}}
   # No `NetBeans` adicione o spotSHOUT ao classpath do seu projeto. Faça: Click Direito no Projeto * > * Propriedades * > * Classpath de código-fonte Java * > * Adicionar JAR/pasta * > * Selecione o JAR e SRC do spotSHOUT. http://spotshout.googlecode.com/svn/wiki/pt-BR/imagens/addJARPT.png
   # Instale o plug-in para geração de stubs/skeletons no `NetBeans`. Faça:  Menu Ferramentas * > * Plug-ins * > * Baixados * > * Clique em "Adicionar Plug-ins" * > * Escolha o Plugin (NBM) baixado. Em seguida clique em Instalar e será apresentada a licença de uso (Apache v2), leia-a. Ao aceitar a licença será instalado o plug-in. http://spotshout.googlecode.com/svn/wiki/pt-BR/imagens/pluginPT.png
