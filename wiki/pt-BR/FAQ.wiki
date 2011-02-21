@@ -1,0 +1,13 @@
+#summary Perguntas Frequentes.
+
+<wiki:toc max_depth="3" />
+
+= Perguntas Frequentes =
+Nesta seção serão listadas as respostas das principais perguntas encontradas por desenvolvedores.
+
+== Plugin do NetBeans ==
+=== Não consigo gerar os stubs/skeletons ===
+Verifique se o código da sua interface está compilando, i.e., não contém erro gramatical.
+
+=== Não consigo gerar os stubs/skeletons e o meu código está correto ===
+Verifique se o código da interface remota não contém `import` de todas as classes de um pacote, i.e., não contem uma declaração do tipo `import pkg.*`. O asterisco implica em importar todas as classes deste pacote, porém gera um erro na análise do código da interface (`parsing`). Para corrigir isso importe cada classe de uma vez, o atalho do `NetBeans` para tal comando é `Ctrl` + `Shift` + `I`.
