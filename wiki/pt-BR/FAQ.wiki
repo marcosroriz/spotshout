@@ -5,7 +5,7 @@
 = Perguntas Frequentes =
 Nesta seção serão listadas as respostas das principais perguntas encontradas por desenvolvedores.
 
-== Plugin do NetBeans ==
+== Plugin do `NetBeans` ==
 === Não consigo gerar os stubs/skeletons ===
 Verifique se o código da sua interface está compilando, i.e., não contém erro gramatical.
 
