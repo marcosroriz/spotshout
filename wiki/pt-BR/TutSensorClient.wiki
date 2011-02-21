@@ -6,15 +6,15 @@
 Agora iremos criar o sensor cliente. Este irá utilizar a interface remota e o servidor de nomes para localizar e comunicar-se de maneira transparente com a referência remota no sensor servidor.
 
 == Criando o Projeto ==
-Com o `NetBeans` aberto, crie um novo projeto de aplicação para sensor SunSPOT com o nome `CalculadoraCliente`. O pacote padrão do tutorial é o `org.sunspotworld`.
+Com o `NetBeans` aberto, crie um novo projeto de aplicação para sensor SunSPOT com o nome `SensorCalculatorClient`. O pacote padrão do tutorial é o `org.sunspotworld`.
 
 == Configurando ==
 Repita o mesmo procedimento de configuração do servidor de nomes, isto é, adicione o JAR/SRC ao `classpath` e modifique o arquivo `build.properties`.
 
 == Interface Remota ==
-Copie a definição da interface remota, isto é, o arquivo java para o pacote `org.sunspotworld` do projeto cliente.
+Copie a definição da interface remota, isto é, o arquivo fonte da interface `Calculator` para o pacote `org.sunspotworld` do projeto cliente.
 
-http://spotshout.googlecode.com/svn/wiki/pt-BR/imagens/tutorial/client-copy.png
+http://spotshout.googlecode.com/svn/wiki/images/tutorial/client-copy.png
 
 == Gerando os Stubs/Skel ==
 Repita o procedimento utilizado para gerar os stubs/skeletons do servidor, porém, selecione agora a interface remota no projeto cliente.
@@ -37,21 +37,21 @@ public class SunSpotApplication extends MIDlet {
 
     protected void startApp() throws MIDletStateChangeException {
         try {
-            // Obtendo Registro por broadcast
-            Registry registro = LocateRegistry.getRegistry();
+            // Get the Name Server by broadcast
+            Registry registry = LocateRegistry.getRegistry();
 
             // Obtendo referência remota de nome "Cal"
-            Calculadora calculadora = (Calculadora) registro.lookup("Cal");
+            Calculator cal = (Calculator) registry.lookup("Cal");
 
-            // Utilizando a referência remota =)
-            int resposta = calculadora.soma(20, 22);
-            System.out.println("A soma de 20 + 22 e: " + resposta);
-			
-            resposta = calculadora.multiplica(30, 2);
-            System.out.println("A multplicacao de 30 * 2 e: " + resposta);
+            // Using the remote reference
+            int addOp = cal.add(20, 22);
+            System.out.println("The sum of 20 and 22 is: " + addOp);
 
-            String ultimaOperacao = calculadora.ultimaOperacao();
-            System.out.println("A ultima operacao executada foi: " + ultimaOperacao);
+            double multiplyOp = cal.multiply(30, 2);
+            System.out.println("The multiplication of 30 and 2 is: " + multiplyOp);
+
+            String lastOp = cal.lastOperation();
+            System.out.println("The last operation was: " + lastOp);
         } catch (IOException ex) {
             ex.printStackTrace();
         }

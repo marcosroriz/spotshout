@@ -3,75 +3,75 @@
 <wiki:toc max_depth="2" />
 
 = Servidor =
-Agora iremos criar o sensor servidor, isto é, o sensor que contém a implementação da `Calculadora`. Ele irá definir a interface remota da Calculadora, uma implementação para essa (servidor) e anunciá-la na rede através do servidor de nomes.
+Agora iremos criar o sensor servidor, isto é, o sensor que contém a implementação da `Calculator`. Ele irá definir a interface remota da calculadora, uma implementação para essa (servidor) e anunciá-la na rede através do servidor de nomes.
 
 == Criando o Projeto ==
-Com o `NetBeans` aberto, crie um novo projeto de aplicação para sensor SunSPOT com o nome `CalculadoraServidor`. O pacote padrão do tutorial é o `org.sunspotworld`.
+Com o `NetBeans` aberto, crie um novo projeto de aplicação para sensor SunSPOT com o nome `SensorCalculatorServer`. O pacote padrão do tutorial é o `org.sunspotworld`.
  
 == Configurando ==
 Repita o mesmo procedimento de configuração do servidor de nomes, isto é, adicione o JAR/SRC ao `classpath` e modifique o arquivo `build.properties`.
 
 == Interface Remota ==
-Vamos definir a interface remota `Calculadora` conforme especificamos no diagrama de classes. Crie uma interface no pacote `org.sunspotworld` chamada `Calculadora`. Primeiramente devemos estender a interface `spot.rmi.Remote` e adicionar os métodos definidos. O código completo fica:
+Vamos definir a interface remota `Calculator` conforme especificamos no diagrama de classes. Crie uma interface no pacote `org.sunspotworld` chamada `Calculator`. Primeiramente devemos estender a interface `spot.rmi.Remote` e adicionar os métodos definidos. O código completo fica:
 {{{
 package org.sunspotworld;
 
 import spot.rmi.Remote;
 import spot.rmi.RemoteException;
 
-public interface Calculadora extends Remote {
-    public int soma(int x, int y) throws RemoteException;
-    public int subtrai(int x, int y) throws RemoteException;
-    public int multiplica(float x, int y) throws RemoteException;
+public interface Calculator extends Remote {
+    public int add(int x, int y) throws RemoteException;
+    public int subtract(int x, int y) throws RemoteException;
+    public double multiply(float x, int y) throws RemoteException;
     public double divide(double x, double y) throws RemoteException;
-    public String ultimaOperacao() throws RemoteException;
+    public String lastOperation() throws RemoteException;
 }
 }}}
 
 == Gerando os Stubs/Skel ==
 Utilize o plug-in do spotSHOUT para gerar os stubs/skeletons. Selecione a interface remota, clique com o botão direito e selecione a opção _Generate SunSPOT Stub/Skeleton_. Os arquivos gerados podem levar um tempo (cerca de 20s) para aparecer no `NetBeans` devido a lentidão da IDE para verificar novos arquivos no diretório do projeto.
 
-http://spotshout.googlecode.com/svn/wiki/pt-BR/imagens/tutorial/genplugin.png
+http://spotshout.googlecode.com/svn/wiki/images/tutorial/genplugin.png
 
 == Programando a Interface Remota ==
-Agora iremos implementar a interface remota, o código do servidor. Para isso, crie uma classe chamada `CalculadoraImpl` e implemente a interface Calculadora. O código completo fica:
+Agora iremos implementar a interface remota, o código do servidor. Para isso, crie uma classe chamada `CalculatorImpl` e implemente as operações da interface `Calculator`. A nossa implementação fica da seguinte maneira:
 {{{
 package org.sunspotworld;
 
 import spot.rmi.RemoteException;
 
-public class CalculadoraImpl implements Calculadora {
+public class CalculatorImpl implements Calculator {
 
-    String ultimaOp;
+    String lastOp;
 
-    public int soma(int x, int y) throws RemoteException {
-        ultimaOp = "add";
+    public int add(int x, int y) throws RemoteException {
+        lastOp = "add";
         return x + y;
     }
 
-    public int subtrai(int x, int y) throws RemoteException {
-        ultimaOp = "subtrai";
+    public int subtract(int x, int y) throws RemoteException {
+        lastOp = "subtract";
         return x - y;
     }
 
-    public int multiplica(float x, int y) throws RemoteException {
-        ultimaOp = "multiplica";
-        return (int) x * y;
+    public double multiply(float x, int y) throws RemoteException {
+        lastOp = "multiply";
+        return (double) x * y;
     }
 
     public double divide(double x, double y) throws RemoteException {
-        ultimaOp = "divide";
+        lastOp = "divide";
         return x / y;
     }
 
-    public String ultimaOperacao() throws RemoteException {
-        return ultimaOp;
+    public String lastOperation() throws RemoteException {
+        return lastOp;
     }
 }
 }}}
 
 == Registrando o Servidor ==
-Primeiramente devemos crar uma instância da classe `CalculadoraImpl` para obter um objeto remoto. Para tornar esse objeto remoto em uma referência remota nós devemos exportá-lo, e se quisermos expor o objeto na rede devemos vincular ele a um servidor de nomes. 
+Primeiramente devemos crar uma instância da classe `CalculatorImpl` para obter um objeto remoto. Para tornar esse objeto remoto em uma referência remota nós devemos exportá-lo, e se quisermos expor o objeto na rede devemos vincular ele a um servidor de nomes. 
 
 Localizamos o servidor de nomes através da operação `LocateRegistry.getRegistry()` que realiza um broadcast e retorna o servidor de nomes. Após obter o servidor de nomes podemos executar qualquer operação do Java RMI.
 
@@ -91,13 +91,13 @@ public class SunSpotApplication extends MIDlet {
 
     protected void startApp() throws MIDletStateChangeException {
         try {
-            Calculadora calculadora = new CalculadoraImpl();
+            Calculator cal = new CalculatorImpl();
 
-            // Obtém o registro através de broadcast
-            Registry registro = LocateRegistry.getRegistry();
+            // Get the Name Server by broadcast
+            Registry registry = LocateRegistry.getRegistry();
 
-            // Registra a interface remota org.sunspotworld.Calculadora com o nome Cal
-            registro.bind("Cal", "org.sunspotworld.Calculadora", calculadora);
+            // Registering the remote interface org.sunspotworld.Calculator as Ca
+            registry.bind("Cal", "org.sunspotworld.Calculator", cal);
         } catch (IOException ex) {
             ex.printStackTrace();
         }

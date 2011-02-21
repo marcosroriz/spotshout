@@ -6,9 +6,9 @@
 Os sensores utilizam nomes para encontrar referências remotas na rede. Podemos perceber que o  servidor de nomes ocupa um papel importantíssimo, pois, é ele que os sensores utilizam para encontrar nomes. O servidor de nome *deve rodar separadamente em um sensor ou hospedeiro*, não sendo possível que um sensor seja tanto o servidor de nomes como um cliente/servidor de referências remotas.
 
 == Criando o Projeto ==
-Neste tutorial iremos utilizar um sensor como servidor de nomes. Inicie o `NetBeans` e crie um novo projeto de aplicação para sensor SunSPOT com o nome `ServidorDeNomesSensor`. O pacote padrão do tutorial será o `org.sunspotworld`. Veja a imagem abaixo para mais detalhes:
+Neste tutorial iremos utilizar um sensor como servidor de nomes. Inicie o `NetBeans` e crie um novo projeto de aplicação para sensor SunSPOT com o nome `SensorNameServer`. O pacote padrão do tutorial será o `org.sunspotworld`. Veja a imagem abaixo para mais detalhes:
 
-http://spotshout.googlecode.com/svn/wiki/pt-BR/imagens/tutorial/servidorDeNomes-wizard.png
+http://spotshout.googlecode.com/svn/wiki/images/tutorial/wizard.png
  
 == Configurando ==
 Como especificado no guia de instalação iremos adiciona o JAR do spotSHOUT e configurar o projeto para trabalhar com o middleware.
@@ -18,7 +18,7 @@ Adicione ao `classpath` do projeto o JAR e SRC do spotSHOUT no menu de proprieda
 utility.jars=C:/caminho/para/spotSHOUT-1.0.jar
 }}}
 
-http://spotshout.googlecode.com/svn/wiki/pt-BR/imagens/tutorial/servidorDeNomes-buildProperties.png
+http://spotshout.googlecode.com/svn/wiki/images/tutorial/buildProperties.png
 
 == Iniciando o Servidor de Nomes ==
 Para criar o servidor basta executar o método _createRegistry()_ da classe `LocateRegistry`. Modifique o código da classe principal para conter este método. O corpo da classe principal devera ficar conforme o seguinte código:
