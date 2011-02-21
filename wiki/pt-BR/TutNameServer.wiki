@@ -20,6 +20,10 @@ utility.jars=C:/caminho/para/spotSHOUT-1.0.jar
 
 http://spotshout.googlecode.com/svn/wiki/images/tutorial/buildProperties.png
 
+== Renomeando a Aplicação ==
+Vamos modificar o nome da nossa aplicação no sensor, isto é, vamos mudar o nome da nossa `midlet`. Renomeie a classe principal da aplicação `org.sunspotworld.*SunSpotApplication*` para `org.sunspotworld.*SensorNameServer*`.  Para realizar isso, selecione a classe SunSpotApplication e pressione `Ctrl + R` e escolha o nome `SensorNameServer`.
+http://spotshout.googlecode.com/svn/wiki/images/tutorial/rename.png
+
 == Iniciando o Servidor de Nomes ==
 Para criar o servidor basta executar o método _createRegistry()_ da classe `LocateRegistry`. Modifique o código da classe principal para conter este método. O corpo da classe principal devera ficar conforme o seguinte código:
 
@@ -30,7 +34,7 @@ import javax.microedition.midlet.MIDlet;
 import javax.microedition.midlet.MIDletStateChangeException;
 import spot.rmi.registry.LocateRegistry;
 
-public class SunSpotApplication extends MIDlet {
+public class SensorNameServer extends MIDlet {
 
     protected void startApp() throws MIDletStateChangeException {
         LocateRegistry.createRegistry();
@@ -43,3 +47,5 @@ public class SunSpotApplication extends MIDlet {
     }
 }
 }}}
+
+== Mo

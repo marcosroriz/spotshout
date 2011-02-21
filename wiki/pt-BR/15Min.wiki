@@ -10,11 +10,11 @@ Agora que você instalou o middleware vamos experimentar o middleware através d
 
 Para exercitar e introduzir estes conceitos vamos fazer uma aplicação simples, uma calculadora remota. Primeiramente iremos iniciar o servidor de nomes, que é aonde os sensores poderão obter referências remotas. Os sensores da aplicação irão acordar uma interface em comum, a interface remota. O sensor servidor irá implementar a funcionalidade definida na interface remota e registrar essa referência no servidor de nomes com o nome `Cal`. Em seguida o cliente irá obter a referência remota através da operação de procura pelo nome `Cal` no servidor de nomes. A partir da obtenção da referência remota o sensor cliente poderá realizar chamadas remotas de maneira totalmente transparente. A visão geral da nossa aplicação pode ser visualizado na imagem abaixo:
 
-http://spotshout.googlecode.com/svn/wiki/images/tutorial/umlDiagram.png
+http://spotshout.googlecode.com/svn/wiki/images/tutorial/generalView.png
 
 A interface remota terá as operações de uma calculadora comum como: soma, subtração, multiplicação e divisão; além disso terá uma operação que retorna uma String contendo a última operação realizada. Com base nessas informações simples a imagem abaixo mostra o diagrama da interface remota `Calculator`.
 
-http://spotshout.googlecode.com/svn/wiki/images/tutorial/generalView.png
+http://spotshout.googlecode.com/svn/wiki/images/tutorial/umlDiagram.png
 
 O tutorial está definido conforme os passos básicos para a utilização do _middleware_:
   # [TutNameServer Definir o Servidor de Nomes]

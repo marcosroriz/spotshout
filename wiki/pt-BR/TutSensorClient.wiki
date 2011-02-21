@@ -19,6 +19,10 @@ http://spotshout.googlecode.com/svn/wiki/images/tutorial/client-copy.png
 == Gerando os Stubs/Skel ==
 Repita o procedimento utilizado para gerar os stubs/skeletons do servidor, porém, selecione agora a interface remota no projeto cliente.
 
+== Renomeando a Aplicação ==
+Vamos modificar o nome da nossa aplicação no sensor, isto é, vamos mudar o nome da nossa `midlet`. Renomeie a classe principal da aplicação `org.sunspotworld.*SunSpotApplication*` para `org.sunspotworld.*SensorCalculatorClient*`.  Para realizar isso, selecione a classe SunSpotApplication e pressione `Ctrl + R` e escolha o nome `SensorCalculatorClient`.
+
+
 == Usando o Objeto ==
 Localizamos o servidor de nomes através da operação `LocateRegistry.getRegistry()` que realiza um broadcast e retorna o servidor de nomes. Após obter o servidor de nomes podemos executar qualquer operação do Java RMI.
 
@@ -33,7 +37,7 @@ import javax.microedition.midlet.MIDletStateChangeException;
 import spot.rmi.registry.LocateRegistry;
 import spot.rmi.registry.Registry;
 
-public class SunSpotApplication extends MIDlet {
+public class SensorCalculatorClient extends MIDlet {
 
     protected void startApp() throws MIDletStateChangeException {
         try {
