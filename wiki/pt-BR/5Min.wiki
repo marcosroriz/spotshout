@@ -10,6 +10,8 @@ A interface remota terá as operações de uma calculadora comum como: soma, sub
 
 http://spotshout.googlecode.com/svn/wiki/pt-BR/imagens/tutorial/diagramaCalculadora.png
  
+----
+
 == Servidor de Nomes ==
 Os sensores utilizam nomes para encontrar referências remotas na rede. Podemos perceber que o  servidor de nomes ocupa um papel importantíssimo, pois, é ele que os sensores utilizam para encontrar nomes. O servidor de nome *deve rodar separadamente em um sensor ou hospedeiro*, não sendo possível que um sensor seja tanto o servidor de nomes como um cliente do servidor de nomes.
 
@@ -53,6 +55,8 @@ public class SunSpotApplication extends MIDlet {
     }
 }
 }}}
+
+----
 
 == Servidor ==
 Seguindo o tutorial, agora iremos criar o sensor servidor. Este irá definir uma interface remota e uma implementação para essa (servidor) e anunciá-la na rede através do servidor de nomes.
@@ -161,6 +165,8 @@ public class SunSpotApplication extends MIDlet {
     }
 }
 }}}
+
+----
 
 == Cliente ==
 Agora iremos definir o sensor cliente. Este irá utilizar a interface remota e o servidor de nomes para localizar e comunicar-se de maneira transparente com a referência remota do sensor servidor.
