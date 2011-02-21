@@ -47,5 +47,3 @@ public class SensorNameServer extends MIDlet {
     }
 }
 }}}
-
-== Mo
