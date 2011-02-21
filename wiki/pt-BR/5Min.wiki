@@ -64,8 +64,6 @@ http://spotshout.googlecode.com/svn/wiki/pt-BR/imagens/tutorial/server-wizard.pn
  
 === Configurando ===
 Repita o mesmo procedimento de configuração do servidor de nomes, isto é, adicione o JAR/SRC ao `classpath` e modifique o arquivo `build.properties`.
-http://spotshout.googlecode.com/svn/wiki/pt-BR/imagens/tutorial/server-addJAR.png
-http://spotshout.googlecode.com/svn/wiki/pt-BR/imagens/tutorial/server-buildProperties.png
 
 === Interface Remota ===
 Vamos definir a interface remota `Calculadora` conforme especificamos no diagrama de classes. Crie uma interface no pacote `org.sunspotworld` chamada `Calculadora`. Primeiramente devemos estender a interface `spot.rmi.Remote` e adicionar os métodos definidos. O código completo fica:
@@ -175,8 +173,6 @@ http://spotshout.googlecode.com/svn/wiki/pt-BR/imagens/tutorial/client-wizard.pn
 
 === Configurando ===
 Repita o mesmo procedimento de configuração do servidor de nomes, isto é, adicione o JAR/SRC ao `classpath` e modifique o arquivo `build.properties`.
-http://spotshout.googlecode.com/svn/wiki/pt-BR/imagens/tutorial/client-addJAR.png
-http://spotshout.googlecode.com/svn/wiki/pt-BR/imagens/tutorial/client-buildProperties.png
 
 === Interface Remota ===
 Copie a definição da interface remota, isto é, o arquivo java para o pacote `org.sunspotworld` do projeto cliente.
