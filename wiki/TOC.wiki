@@ -2,7 +2,7 @@
   * [Install Installation]
   * [FAQ Frequent Asked Questions]
   * Using spotSHOUT
-    * [5Min 5 Minutes Tutorial]
+    * [15Min 5 Minutes Tutorial]
     * [Guide General Guide]
   * Developing spotSHOUT
     * [Building Building spotSHOUT]
