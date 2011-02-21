@@ -6,12 +6,22 @@ Crie três novos sensores no simulador (`Emulator` * > *`New Virtual Spot`).
 
 http://spotshout.googlecode.com/svn/wiki/images/tutorial/solarium.png
 
-No sensor do meio implante a aplicação de servidor de nomes. Clique com o botão direito e selecione a opção `Deploy MIDlet bundle...` e navegue na pasta do projeto `SensorNameServer` e selecione o arquivo `build.xml`. Inicie a aplicação no sensor servidor de nomes, clique com o botão direito no sensor e escolha `Run MIDlet` * > * `SensorNameServer`.
+No sensor do meio implante a aplicação de servidor de nomes. Clique com o botão direito e selecione a opção `Deploy MIDlet bundle...` e navegue na pasta do projeto `SensorNameServer` e selecione o arquivo `build.xml`. 
+
+Inicie a aplicação no sensor servidor de nomes, clique com o botão direito no sensor e escolha `Run MIDlet` * > * `SensorNameServer`.
 
 http://spotshout.googlecode.com/svn/wiki/images/tutorial/solarium-mid.png
 
-No sensor da direita implante a aplicação de servidor da calculadora. Clique com o botão direito no sensor e selecione a opção `Deploy MIDlet bundle...` e navegue na pasta do projeto `SensorCalculatorServer` e selecione o arquivo `build.xml`. Inicie a aplicação no sensor servidor de nomes, clique com o botão direito no sensor e escolha `Run MIDlet` * > * `SensorCalculatorServer`.
+No sensor da direita implante a aplicação de servidor da calculadora. Clique com o botão direito no sensor e selecione a opção `Deploy MIDlet bundle...` e navegue na pasta do projeto `SensorCalculatorServer` e selecione o arquivo `build.xml`. 
 
-No sensor da esquerda implante a aplicação de cliente da calculadora. Clique com o botão direito no sensor e selecione a opção `Deploy MIDlet bundle...` e navegue na pasta do projeto `SensorCalculatorClient` e selecione o arquivo `build.xml`. Abra a janela de saída do sensor da esquerda. Clique com o botão direito no sensor  e selecione `Display application output` * > * `in Internal Frame`. Inicie a aplicação no sensor servidor de nomes, clique com o botão direito no sensor e escolha `Run MIDlet` * > * `SensorCalculatorClient`.
+Inicie a aplicação no sensor servidor de nomes, clique com o botão direito no sensor e escolha `Run MIDlet` * > * `SensorCalculatorServer`.
+
+http://spotshout.googlecode.com/svn/wiki/images/tutorial/solarium-right.png
+
+No sensor da esquerda implante a aplicação de cliente da calculadora. Clique com o botão direito no sensor e selecione a opção `Deploy MIDlet bundle...` e navegue na pasta do projeto `SensorCalculatorClient` e selecione o arquivo `build.xml`. 
+
+Abra a janela de saída do sensor da esquerda. Clique com o botão direito no sensor  e selecione `Display application output` * > * `in Internal Frame`. 
+
+Inicie a aplicação no sensor servidor de nomes, clique com o botão direito no sensor e escolha `Run MIDlet` * > * `SensorCalculatorClient`.
 
 http://spotshout.googlecode.com/svn/wiki/images/tutorial/solarium-execution.png
