@@ -58,9 +58,7 @@ public class SunSpotApplication extends MIDlet {
 Seguindo o tutorial, agora iremos criar o sensor servidor. Este irá definir uma interface remota e uma implementação para essa (servidor) e anunciá-la na rede através do servidor de nomes.
 
 === Criando o Projeto ===
-Com o `NetBeans` aberto, crie um novo projeto de aplicação para sensor SunSPOT com o nome CalculadoraServidor. Veja a imagem abaixo para mais detalhes:
-
-http://spotshout.googlecode.com/svn/wiki/pt-BR/imagens/tutorial/server-wizard.png
+Com o `NetBeans` aberto, crie um novo projeto de aplicação para sensor SunSPOT com o nome CalculadoraServidor.
  
 === Configurando ===
 Repita o mesmo procedimento de configuração do servidor de nomes, isto é, adicione o JAR/SRC ao `classpath` e modifique o arquivo `build.properties`.
@@ -168,8 +166,7 @@ public class SunSpotApplication extends MIDlet {
 Agora iremos definir o sensor cliente. Este irá utilizar a interface remota e o servidor de nomes para localizar e comunicar-se de maneira transparente com a referência remota do sensor servidor.
 
 === Criando o Projeto ===
-Com o `NetBeans` aberto, crie um novo projeto de aplicação para sensor SunSPOT com o nome CalculadoraCliente. Veja a imagem abaixo:
-http://spotshout.googlecode.com/svn/wiki/pt-BR/imagens/tutorial/client-wizard.png 
+Com o `NetBeans` aberto, crie um novo projeto de aplicação para sensor SunSPOT com o nome CalculadoraCliente.
 
 === Configurando ===
 Repita o mesmo procedimento de configuração do servidor de nomes, isto é, adicione o JAR/SRC ao `classpath` e modifique o arquivo `build.properties`.
@@ -181,7 +178,6 @@ http://spotshout.googlecode.com/svn/wiki/pt-BR/imagens/tutorial/client-copy.png
 
 === Gerando os Stubs/Skel ===
 Repita o procedimento utilizado para gerar os stubs/skeletons do servidor, porém, selecione agora a interface remota no projeto cliente.
-http://spotshout.googlecode.com/svn/wiki/pt-BR/imagens/tutorial/genplugin2.png
 
 === Usando o Objeto ===
 Localizamos o servidor de nomes através da operação `LocateRegistry.getRegistry()` que realiza um broadcast e retorna o servidor de nomes. Após obter o servidor de nomes podemos executar qualquer operação do Java RMI.
