@@ -3,6 +3,10 @@
   * [FAQ Perguntas Frequentes]
   * Usando o spotSHOUT
     * [15Min Tutorial de 15 Minutos]
+	  * [TutNameServer Servidor de Nomes]
+	  * [TutSensorServer Calculadora Servidora]
+	  * [TutSensorClient Calculatora Cliente]
+	  * [TutRun Executando no Emulador]
     * [Guide Guia Geral]
   * Desenvolvendo o spotSHOUT
     * [Building Construindo o spotSHOUT]

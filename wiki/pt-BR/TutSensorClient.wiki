@@ -1,0 +1,73 @@
+#summary Experimentando o spotSHOUT.
+
+<wiki:toc max_depth="2" />
+
+= Cliente =
+Agora iremos criar o sensor cliente. Este irá utilizar a interface remota e o servidor de nomes para localizar e comunicar-se de maneira transparente com a referência remota no sensor servidor.
+
+== Criando o Projeto ==
+Com o `NetBeans` aberto, crie um novo projeto de aplicação para sensor SunSPOT com o nome `CalculadoraCliente`.
+
+http://spotshout.googlecode.com/svn/wiki/pt-BR/imagens/tutorial/client-wizard.png
+
+== Configurando ==
+Repita o mesmo procedimento de configuração do servidor de nomes, isto é, adicione o JAR/SRC ao `classpath` e modifique o arquivo `build.properties`.
+
+http://spotshout.googlecode.com/svn/wiki/pt-BR/imagens/tutorial/client-addJAR.png
+http://spotshout.googlecode.com/svn/wiki/pt-BR/imagens/tutorial/client-buildProperties.png
+
+== Interface Remota ==
+Copie a definição da interface remota, isto é, o arquivo java para o pacote `org.sunspotworld` do projeto cliente.
+
+http://spotshout.googlecode.com/svn/wiki/pt-BR/imagens/tutorial/client-copy.png
+
+== Gerando os Stubs/Skel ==
+Repita o procedimento utilizado para gerar os stubs/skeletons do servidor, porém, selecione agora a interface remota no projeto cliente.
+
+http://spotshout.googlecode.com/svn/wiki/pt-BR/imagens/tutorial/genplugin.png
+
+== Usando o Objeto ==
+Localizamos o servidor de nomes através da operação `LocateRegistry.getRegistry()` que realiza um broadcast e retorna o servidor de nomes. Após obter o servidor de nomes podemos executar qualquer operação do Java RMI.
+
+Iremos agora utilizar a operação _lookup_ para obter a referência remota “Cal”. Após obter a referência remota, podemos utilizar qualquer método da interface remota. Podemos então executar uma soma e em seguida verificar se foi mesmo a última operação executada. O código da classe principal do cliente fica:
+
+{{{
+package org.sunspotworld;
+
+import java.io.IOException;
+import javax.microedition.midlet.MIDlet;
+import javax.microedition.midlet.MIDletStateChangeException;
+import spot.rmi.registry.LocateRegistry;
+import spot.rmi.registry.Registry;
+
+public class SunSpotApplication extends MIDlet {
+
+    protected void startApp() throws MIDletStateChangeException {
+        try {
+            // Obtendo Registro por broadcast
+            Registry registro = LocateRegistry.getRegistry();
+
+            // Obtendo referência remota de nome "Cal"
+            Calculadora calculadora = (Calculadora) registro.lookup("Cal");
+
+            // Utilizando a referência remota =)
+            int resposta = calculadora.soma(20, 22);
+            System.out.println("A soma de 20 + 22 e: " + resposta);
+			
+            resposta = calculadora.multiplica(30, 2);
+            System.out.println("A multplicacao de 30 * 2 e: " + resposta);
+
+            String ultimaOperacao = calculadora.ultimaOperacao();
+            System.out.println("A ultima operacao executada foi: " + ultimaOperacao);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    protected void pauseApp() {
+    }
+
+    protected void destroyApp(boolean unconditional) throws MIDletStateChangeException {
+    }
+}
+}}}

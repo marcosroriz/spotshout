@@ -1,0 +1,117 @@
+#summary Experimentando o spotSHOUT.
+
+<wiki:toc max_depth="2" />
+
+= Servidor =
+Agora iremos criar o sensor servidor, isto é, o sensor que contém a implementação da `Calculadora`. Ele irá definir a interface remota da Calculadora, uma implementação para essa (servidor) e anunciá-la na rede através do servidor de nomes.
+
+== Criando o Projeto ==
+Com o `NetBeans` aberto, crie um novo projeto de aplicação para sensor SunSPOT com o nome `CalculadoraServidor`. O pacote padrão do tutorial será o `org.sunspotworld`. Veja a imagem abaixo para mais detalhes:
+
+http://spotshout.googlecode.com/svn/wiki/pt-BR/imagens/tutorial/server-wizard.png
+ 
+== Configurando ==
+Repita o mesmo procedimento de configuração do servidor de nomes, isto é, adicione o JAR/SRC ao `classpath` e modifique o arquivo `build.properties`.
+
+http://spotshout.googlecode.com/svn/wiki/pt-BR/imagens/tutorial/server-addJAR.png
+http://spotshout.googlecode.com/svn/wiki/pt-BR/imagens/tutorial/server-buildProperties.png
+
+== Interface Remota ==
+Vamos definir a interface remota `Calculadora` conforme especificamos no diagrama de classes. Crie uma interface no pacote `org.sunspotworld` chamada `Calculadora`. Primeiramente devemos estender a interface `spot.rmi.Remote` e adicionar os métodos definidos. O código completo fica:
+{{{
+package org.sunspotworld;
+
+import spot.rmi.Remote;
+import spot.rmi.RemoteException;
+
+public interface Calculadora extends Remote {
+    public int soma(int x, int y) throws RemoteException;
+    public int subtrai(int x, int y) throws RemoteException;
+    public int multiplica(float x, int y) throws RemoteException;
+    public double divide(double x, double y) throws RemoteException;
+    public String ultimaOperacao() throws RemoteException;
+}
+}}}
+
+== Gerando os Stubs/Skel ==
+Utilize o plug-in do spotSHOUT para gerar os stubs/skeletons. Selecione a interface remota, clique com o botão direito e selecione a opção _Generate SunSPOT Stub/Skeleton_. Os arquivos gerados podem levar um tempo (cerca de 20s) para aparecer no `NetBeans` devido a lentidão da IDE para verificar novos arquivos no diretório do projeto.
+
+http://spotshout.googlecode.com/svn/wiki/pt-BR/imagens/tutorial/genplugin.png
+
+== Programando a Interface Remota ==
+Agora iremos implementar a interface remota, o código do servidor. Para isso, crie uma classe chamada `CalculadoraImpl` e implemente a interface Calculadora. O código completo fica:
+{{{
+package org.sunspotworld;
+
+import spot.rmi.RemoteException;
+
+public class CalculadoraImpl implements Calculadora {
+
+    String ultimaOp;
+
+    public int soma(int x, int y) throws RemoteException {
+        ultimaOp = "add";
+        return x + y;
+    }
+
+    public int subtrai(int x, int y) throws RemoteException {
+        ultimaOp = "subtrai";
+        return x - y;
+    }
+
+    public int multiplica(float x, int y) throws RemoteException {
+        ultimaOp = "multiplica";
+        return (int) x * y;
+    }
+
+    public double divide(double x, double y) throws RemoteException {
+        ultimaOp = "divide";
+        return x / y;
+    }
+
+    public String ultimaOperacao() throws RemoteException {
+        return ultimaOp;
+    }
+}
+}}}
+
+== Registrando o Servidor ==
+Primeiramente devemos crar uma instância da classe `CalculadoraImpl` para obter um objeto remoto. Para tornar esse objeto remoto em uma referência remota nós devemos exportá-lo, e se quisermos expor o objeto na rede devemos vincular ele a um servidor de nomes. 
+
+Localizamos o servidor de nomes através da operação `LocateRegistry.getRegistry()` que realiza um broadcast e retorna o servidor de nomes. Após obter o servidor de nomes podemos executar qualquer operação do Java RMI.
+
+A operação _bind_ já trata de exportar o objeto remoto automaticamente para nós, portanto não é necessário exportar o objeto manualmente. Nós iremos registrar o nosso objeto calculadora com o nome *Cal*.  Um parâmetro adicional nessa chamada é o nome completo (incluindo pacote) da interface remota. Esse parâmetro é necessário devido a falta de reflexão na API padrão do Sun SPOT. O código completo da classe principal do sensor servidor fica:
+
+{{{
+package org.sunspotworld;
+
+import java.io.IOException;
+
+import javax.microedition.midlet.MIDlet;
+import javax.microedition.midlet.MIDletStateChangeException;
+import spot.rmi.registry.LocateRegistry;
+import spot.rmi.registry.Registry;
+
+public class SunSpotApplication extends MIDlet {
+
+    protected void startApp() throws MIDletStateChangeException {
+        try {
+            Calculadora calculadora = new CalculadoraImpl();
+
+            // Obtém o registro através de broadcast
+            Registry registro = LocateRegistry.getRegistry();
+
+            // Registra a interface remota org.sunspotworld.Calculadora com o nome Cal
+            registro.bind("Cal", "org.sunspotworld.Calculadora", calculadora);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    protected void pauseApp() {
+    }
+
+    protected void destroyApp(boolean unconditional) throws MIDletStateChangeException {
+    }
+}
+}}}
