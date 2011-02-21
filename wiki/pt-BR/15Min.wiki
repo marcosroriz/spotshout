@@ -14,7 +14,7 @@ http://spotshout.googlecode.com/svn/wiki/pt-BR/imagens/tutorial/diagramaExemplo.
 
 A interface remota terá as operações de uma calculadora comum como: soma, subtração, multiplicação e divisão; além disso terá uma operação que retorna uma String contendo a última operação realizada. Com base nessas informações simples a imagem abaixo mostra o diagrama da interface remota `Calculadora`.
 
-<img src="http://spotshout.googlecode.com/svn/wiki/pt-BR/imagens/tutorial/diagramaCalculadora.png" align="middle" />
+http://spotshout.googlecode.com/svn/wiki/pt-BR/imagens/tutorial/diagramaCalculadora.png
 
 O tutorial está definido conforme os passos básicos para a utilização do _middleware_:
   # [TutNameServer Definir o Servidor de Nomes]
