@@ -1,4 +1,4 @@
-#summary Experimentando o spotSHOUT.
+#summary Criando a Calculadora Cliente.
 
 <wiki:toc max_depth="2" />
 
@@ -6,15 +6,10 @@
 Agora iremos criar o sensor cliente. Este irá utilizar a interface remota e o servidor de nomes para localizar e comunicar-se de maneira transparente com a referência remota no sensor servidor.
 
 == Criando o Projeto ==
-Com o `NetBeans` aberto, crie um novo projeto de aplicação para sensor SunSPOT com o nome `CalculadoraCliente`.
-
-http://spotshout.googlecode.com/svn/wiki/pt-BR/imagens/tutorial/client-wizard.png
+Com o `NetBeans` aberto, crie um novo projeto de aplicação para sensor SunSPOT com o nome `CalculadoraCliente`. O pacote padrão do tutorial é o `org.sunspotworld`.
 
 == Configurando ==
 Repita o mesmo procedimento de configuração do servidor de nomes, isto é, adicione o JAR/SRC ao `classpath` e modifique o arquivo `build.properties`.
-
-http://spotshout.googlecode.com/svn/wiki/pt-BR/imagens/tutorial/client-addJAR.png
-http://spotshout.googlecode.com/svn/wiki/pt-BR/imagens/tutorial/client-buildProperties.png
 
 == Interface Remota ==
 Copie a definição da interface remota, isto é, o arquivo java para o pacote `org.sunspotworld` do projeto cliente.
@@ -23,8 +18,6 @@ http://spotshout.googlecode.com/svn/wiki/pt-BR/imagens/tutorial/client-copy.png
 
 == Gerando os Stubs/Skel ==
 Repita o procedimento utilizado para gerar os stubs/skeletons do servidor, porém, selecione agora a interface remota no projeto cliente.
-
-http://spotshout.googlecode.com/svn/wiki/pt-BR/imagens/tutorial/genplugin.png
 
 == Usando o Objeto ==
 Localizamos o servidor de nomes através da operação `LocateRegistry.getRegistry()` que realiza um broadcast e retorna o servidor de nomes. Após obter o servidor de nomes podemos executar qualquer operação do Java RMI.

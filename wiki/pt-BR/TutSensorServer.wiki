@@ -1,4 +1,4 @@
-#summary Experimentando o spotSHOUT.
+#summary Criando a Calculadora Servidora.
 
 <wiki:toc max_depth="2" />
 
@@ -6,15 +6,10 @@
 Agora iremos criar o sensor servidor, isto é, o sensor que contém a implementação da `Calculadora`. Ele irá definir a interface remota da Calculadora, uma implementação para essa (servidor) e anunciá-la na rede através do servidor de nomes.
 
 == Criando o Projeto ==
-Com o `NetBeans` aberto, crie um novo projeto de aplicação para sensor SunSPOT com o nome `CalculadoraServidor`. O pacote padrão do tutorial será o `org.sunspotworld`. Veja a imagem abaixo para mais detalhes:
-
-http://spotshout.googlecode.com/svn/wiki/pt-BR/imagens/tutorial/server-wizard.png
+Com o `NetBeans` aberto, crie um novo projeto de aplicação para sensor SunSPOT com o nome `CalculadoraServidor`. O pacote padrão do tutorial é o `org.sunspotworld`.
  
 == Configurando ==
 Repita o mesmo procedimento de configuração do servidor de nomes, isto é, adicione o JAR/SRC ao `classpath` e modifique o arquivo `build.properties`.
-
-http://spotshout.googlecode.com/svn/wiki/pt-BR/imagens/tutorial/server-addJAR.png
-http://spotshout.googlecode.com/svn/wiki/pt-BR/imagens/tutorial/server-buildProperties.png
 
 == Interface Remota ==
 Vamos definir a interface remota `Calculadora` conforme especificamos no diagrama de classes. Crie uma interface no pacote `org.sunspotworld` chamada `Calculadora`. Primeiramente devemos estender a interface `spot.rmi.Remote` e adicionar os métodos definidos. O código completo fica:

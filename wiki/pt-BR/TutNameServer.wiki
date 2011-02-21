@@ -1,4 +1,4 @@
-#summary Experimentando o spotSHOUT.
+#summary Criando um Servidor de Nomes.
 
 <wiki:toc max_depth="2" />
 
