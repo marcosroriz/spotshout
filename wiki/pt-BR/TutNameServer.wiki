@@ -21,7 +21,7 @@ utility.jars=C:/caminho/para/spotSHOUT-1.0.jar
 http://spotshout.googlecode.com/svn/wiki/images/tutorial/buildProperties.png
 
 == Renomeando a Aplicação ==
-Vamos modificar o nome da nossa aplicação no sensor, isto é, vamos mudar o nome da nossa `midlet`. Renomeie a classe principal da aplicação `org.sunspotworld.*SunSpotApplication*` para `org.sunspotworld.*SensorNameServer*`.  Para realizar isso, selecione a classe SunSpotApplication e pressione `Ctrl + R` e escolha o nome `SensorNameServer`.
+Vamos modificar o nome da nossa aplicação no sensor, isto é, vamos mudar o nome da nossa `midlet`. Renomeie a classe principal da aplicação *`org.sunspotworld.SunSpotApplication`* para *`org.sunspotworld.SensorNameServer`*.  Para realizar isso, selecione a classe SunSpotApplication e pressione `Ctrl + R` e escolha o nome *`SensorNameServer`*.
 http://spotshout.googlecode.com/svn/wiki/images/tutorial/rename.png
 
 == Iniciando o Servidor de Nomes ==

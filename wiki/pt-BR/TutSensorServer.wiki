@@ -71,7 +71,7 @@ public class CalculatorImpl implements Calculator {
 }}}
 
 == Renomeando a Aplicação ==
-Vamos modificar o nome da nossa aplicação no sensor, isto é, vamos mudar o nome da nossa `midlet`. Renomeie a classe principal da aplicação `org.sunspotworld.*SunSpotApplication*` para `org.sunspotworld.*SensorCalculatorServer*`.  Para realizar isso, selecione a classe SunSpotApplication e pressione `Ctrl + R` e escolha o nome `SensorCalculatorServer`.
+Vamos modificar o nome da nossa aplicação no sensor, isto é, vamos mudar o nome da nossa `midlet`. Renomeie a classe principal da aplicação *`org.sunspotworld.SunSpotApplication`* para *`org.sunspotworld.SensorCalculatorServer`*.  Para realizar isso, selecione a classe SunSpotApplication e pressione `Ctrl + R` e escolha o nome *`SensorCalculatorServer`*.
 
 == Registrando o Servidor ==
 Primeiramente devemos crar uma instância da classe `CalculatorImpl` para obter um objeto remoto. Para tornar esse objeto remoto em uma referência remota nós devemos exportá-lo, e se quisermos expor o objeto na rede devemos vincular ele a um servidor de nomes. 
