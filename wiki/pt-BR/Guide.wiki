@@ -1,7 +1,5 @@
 #summary Guia de uso do spotSHOUT.
 
-<wiki:toc max_depth="2" />
-
 = Guia de uso do Middleware =
 
 O spotSHOUT é um `middleware` de objetos distribuídos simples que utiliza uma sintaxe praticamente idêntica ao Java RMI. Neste guia nós iremos especificar a estrutura dos componentes que define uma aplicação do `middleware`, são eles: o servidor de nomes, servidor e cliente.
