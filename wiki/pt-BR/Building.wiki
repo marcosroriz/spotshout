@@ -6,8 +6,6 @@
 O spotSHOUT é dividido em dois subprojetos: o middleware e o plug-in para o `NetBeans`. Iremos ensinar como obter o código e construir os subprojetos.
 
 == spotSHOUT Middleware ==
-Será descrito como  obter, compilar e modificar propriedades do `middleware` nesta seção.
-
 === Obtendo o código fonte ===
 Para obter a última versão (em desenvolvimento) do código fonte utilize seu cliente `svn` e execute o seguinte comando:
 {{{
@@ -26,9 +24,6 @@ O middleware será construído na pasta `build` com o nome `spotSHOUT-VERSAO.jar
 Para ativar o `debug ` e outras propriedades como tempo de `timeout` modifique a classe *` com.google.code.spotshout.RMIProperties` para o seu gosto. Após isso, recompile o `middleware`.
 
 == spotSHOUT Plug-in  ==
-
-Será descrito como obter, compilar e modificar propriedades do `plug-in` nesta seção.
-
 === Obtendo o código fonte ===
 Para obter a última versão (em desenvolvimento) do código fonte utilize seu cliente `svn` e execute o seguinte comando:
 {{{
