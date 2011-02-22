@@ -1,0 +1,44 @@
+#summary Construindo o projeto a partir do código fonte.
+
+<wiki:toc max_depth="3" />
+
+= Construindo o spotSHOUT =
+O spotSHOUT é dividido em dois subprojetos: o middleware e o plug-in para o `NetBeans`. Iremos ensinar como obter o código e construir os subprojetos.
+
+== spotSHOUT Middleware ==
+Será descrito como  obter, compilar e modificar propriedades do `middleware` nesta seção.
+
+=== Obtendo o código fonte ===
+Para obter a última versão (em desenvolvimento) do código fonte utilize seu cliente `svn` e execute o seguinte comando:
+{{{
+svn checkout http://spotshout.googlecode.com/svn/trunk/spotSHOUT spotSHOUT-Middleware
+}}}
+Após obter o código você pode abrir o projeto diretamente no `NetBeans`.
+
+=== Compilando o código fonte ===
+Entre na pasta do spotSHOUT-Middleware e execute a tarefa `jar-app` do `ant`, isto é, o comando abaixo:
+{{{
+ant jar-app
+}}}
+O middleware será construído na pasta `build` com o nome `spotSHOUT-VERSAO.jar`.
+
+=== Modificando propriedades ===
+Para ativar o `debug ` e outras propriedades como tempo de `timeout` modifique a classe *` com.google.code.spotshout.RMIProperties` para o seu gosto. Após isso, recompile o `middleware`.
+
+== spotSHOUT Plug-in  ==
+
+Será descrito como obter, compilar e modificar propriedades do `plug-in` nesta seção.
+
+=== Obtendo o código fonte ===
+Para obter a última versão (em desenvolvimento) do código fonte utilize seu cliente `svn` e execute o seguinte comando:
+{{{
+svn checkout http://spotshout.googlecode.com/svn/trunk/spotSHOUT-NB spotSHOUT-Plugin
+}}}
+Após obter o código você pode abrir o projeto diretamente no `NetBeans`.
+
+=== Compilando o código fonte ===
+No `NetBeans` abra o projeto e clique no botão construir, ou execute a tarefa `nbm` do ant::
+{{{
+ant nbm
+}}}
+O plug-in será construído na pasta `build` com o nome `com-google-code-spotshout-nb.nbm`.
