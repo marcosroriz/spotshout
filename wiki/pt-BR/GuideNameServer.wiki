@@ -1,0 +1,57 @@
+#summary Utilizando o Servidor de Nomes.
+
+= Servidor de Nomes =
+
+O servidor de nomes é responsável por operações relacionadas ao anúncio de nome na rede de sensores, como: vinculação, remoção e procura de nomes, ou seja, o servidor de nomes é o componente que contém a localização das referências remotas na rede.
+
+Na prática isto é feito através do mapeamento (_hashmap_) de um nome, uma _String_ a uma referência remota. O servidor de nome deve rodar *separadamente em um sensor ou hospedeiro*, não sendo possível que um sensor seja tanto o servidor de nomes como um cliente/servidor de referências remotas.
+
+Para criar um servidor de nomes basta utilizar a operação: 
+{{{
+LocateRegistry.createRegistry();
+}}}
+
+É interessante notar que existem duas formas de localizar o servidor de nomes: endereço fixo ou descoberta (_broadcast_). São representados pelo método estático _getRegistry()_ e _getRegistry(String host)_ respectivamente, da classe _LocateRegistry_.
+
+Após obter o servidor de nomes poderá utilizar todas as operações definidas pelo RMI Java no registro, como: _bind, list, lookup, rebind e unbind_.
+
+ * _bind(nome : String, nomeCompleto: String, pkg objRemoto : Remote) : void_
+Realiza o vínculo de uma referência remota _objRemote_ neste servidor de nomes denominada _nome_.  O _nomeCompleto_ é o nome da interface remota completo (incluindo pacote), é necessário devido o sensor NÃO conter classes de reflexão. O vínculo também é guardado localmente para identificar as chamadas e executar o algoritmo de coleta de lixo. As exceções possíveis para essa operação são:
+  * _AlreadyBoundException_: se o _nome_ já estiver vinculado no servidor de nome.
+  * _NullPointException_: se _nome_ , _nomeCompleto_ ou _objRemoto_ for null.
+  * _RemoteException_: se houver falha de comunicação com o servidor de nomes.
+
+Exemplo:
+registry.bind("Cal", "org.pkg.Calculator", objetoRemoto);
+  
+  * _list() : String[]_
+Esta operação retorna um vetor de nomes de objetos anunciados neste servidor de nome. A exceção possível para esta operação é:
+    * _RemoteException_: se houver falha de comunicação com o servidor de nomes.
+
+Exemplo:
+String[] names = registry.list();
+E o vetor names conteria os nomes registrados no servidor, como "Cal".
+
+  * _lookup(nome : String) : Remote_
+Retorna uma referência remota associada a _nome_ no registro. Esta referência então será transformada pelo cliente na interface remota acordada. As exceções possíveis para essa operação são:
+    * _NotBoundException_: se _nome_ não estiver anunciado no servidor de nome.
+    * _NullPointException_: se _nome_ for null.
+    * _RemoteException_: se houver falha de comunicação com o servidor de nomes.
+
+Exemplo:
+Calculator cal = (Calculator) registry.lookup("Cal");
+	
+  * _rebind(nome : String, nomeCompleto: String, objRemoto : Remote) : void_
+Substitui/Realiza o vínculo de uma referência remota _objRemote_ neste servidor de nomes denominada _nome_. O vínculo também é guardado localmente para identificar as chamadas e executar o algoritmo de coleta de lixo. A diferença desta operação com a bind é que esta irá substituir/realizar o vínculo independente da existência ou não do nome em um registro, de maneira que a outra operação irá executar uma exceção se o nome já estiver anunciado no registro. As exceções possíveis para essa operação são:
+– NullPointException: se nome ou objRemoto for null.
+– RemoteException: se houver falha de comunicação com o servidor de nomes.
+  
+Exemplo:
+registry.rebind("Cal", "org.pkg.Calculator", objetoRemoto);
+    
+  * _unbind(nome : String) : void_
+Remove o vínculo de uma referência remota associada a _nome_ no registro. As exceções possíveis para essa operação são:
+    * _AccessException_: se o registro local negar acesso a desvinculação.
+    * _NotBoundException_: se o nome não estiver anunciado no servidor de nome.
+    * _NullPointException_: se nome for null.
+    * _RemoteException_: se houver falha de comunicação com o servidor de nomes.
