@@ -7,7 +7,11 @@
       * [TutSensorServer Calculadora Servidora]
       * [TutSensorClient Calculatora Cliente]
       * [TutRun Executando no Emulador]
-    * [Guide Guia Geral]
+    * [Guide Guia]
+      * [GuideNameServer Guia do Servidor de Nomes]
+      * [GuideServer Guia do Servidor]
+      * [GuideClient Guia do Cliente]
+      * [GuideSerialization Guia de Serialização de Objetos]
   * Desenvolvendo o spotSHOUT
     * [Building Construindo o spotSHOUT]
     * [ContributingBUG Contribuindo uma correção/bug]
