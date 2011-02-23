@@ -1,6 +1,6 @@
 #summary Utilizando o Servidor de Nomes.
 
-<wiki:toc max_depth="2" />
+<wiki:toc max_depth="3" />
 
 = Servidor de Nomes =
 
@@ -8,16 +8,22 @@ O servidor de nomes é responsável por operações relacionadas ao anúncio de 
 
 Na prática isto é feito através do mapeamento (_hashmap_) de um nome, uma _String_ a uma referência remota. O servidor de nome deve rodar *separadamente em um sensor ou hospedeiro*, não sendo possível que um sensor seja tanto o servidor de nomes como um cliente/servidor de referências remotas.
 
+== Criando um Registro ==
 Para criar um servidor de nomes basta utilizar a operação: 
 {{{
 LocateRegistry.createRegistry();
 }}}
 
-É interessante notar que existem duas formas de localizar o servidor de nomes: endereço fixo ou descoberta (_broadcast_). São representados pelo método estático _getRegistry()_ e _getRegistry(String host)_ respectivamente, da classe _LocateRegistry_.
+== Obtendo um Registro ==
+É interessante notar que existem duas formas de localizar o servidor de nomes: endereço fixo ou descoberta (_broadcast_). São representados pelo método estático `getRegistry()` e `getRegistry(String host)`` respectivamente, da classe `LocateRegistry`.
 
+  * `getRegistry(String host)`: Requer um conhecimento prévio da localização do servidor de nomes. A vantagem de utilizar esta forma é que está poupa recursos de convergência/descoberta dos sensores porém deixa o nível de abstração de utilização do \textit{middleware} ainda rudimentar.
+  * `getRegistry()`: Não requer um conhecimento prévio da localização do servidor de nomes. A desvantagem desta forma é o custo de convergência/descoberta dos sensores porém isto aumenta significadamente a abstração de localização e de utilização do \textit{middleware}. Essa é a opção *recomendada* devido a flexibilidade em não tornar seu código acoplado a um endereço fixo e porque após obter o registro só será necessário reexecutar essa operação em caso de perca de conexão com o registro.
+  
+== Operações RMI ==
 Após obter o servidor de nomes poderá utilizar todas as operações definidas pelo RMI Java no registro, como: _bind, list, lookup, rebind e unbind_.
 
-== bind ==
+=== bind ===
 Assinatura: 
 {{{
 bind(nome : String, nomeCompleto: String, pkg objRemoto : Remote) : void
@@ -33,7 +39,7 @@ registry.bind("Cal", "org.pkg.Calculator", objetoRemoto);
 }}}
   
 
-== list ==
+=== list ===
 Assinatura:
 {{{
 list() : String[]
@@ -49,7 +55,7 @@ String[] names = registry.list();
 }}}
 
 
-== lookup ==
+=== lookup ===
 Assinatura:
 {{{
 lookup(nome : String) : Remote
@@ -65,7 +71,7 @@ Calculator cal = (Calculator) registry.lookup("Cal");
 cal.add(30, 2);
 }}}
 	
-== rebind ==
+=== rebind ===
 Assinatura:
 {{{
 rebind(nome : String, nomeCompleto: String, objRemoto : Remote) : void
@@ -79,7 +85,7 @@ Exemplo:
 registry.rebind("Cal", "org.pkg.Calculator", objetoRemoto);
 }}} 
   
-== unbind ==
+=== unbind ===
 Assinatura:
 {{{
 unbind(nome : String) : void
