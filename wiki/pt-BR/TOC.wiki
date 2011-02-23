@@ -15,7 +15,7 @@
   * Desenvolvendo o spotSHOUT
     * [Building Construindo o spotSHOUT]
     * [ContributingBUG Contribuindo uma correção/bug]
-    * [L10N Localizando o Wiki]
+    * [HelpWiki Contribuindo com o Wiki]
   * Arquitetura do spotSHOUT
     * [GeneralView Visão Geral]
     * [StubsSkel Stubs/Skeletons]
