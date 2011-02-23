@@ -16,11 +16,11 @@ Após a instalação *configure o ambiente de simulação* e em seguida leia o t
 Para instalar o middleware como biblioteca de aplicação para sensores/hospedeiros faça os seguintes passos:
   # Baixe o JAR, SRC e Plugin do spotSHOUT na [http://code.google.com/p/spotshout/downloads/list seção de downloads].
   # O modo de como referenciar o middleware depende da natureza do projeto (Sensor ou Hospedeiro):
-    # Sensor: Abra o `NetBeans` e no projeto Sensor que utiliza o spotSHOUT edite o arquivo `build.properties` adicionando a seguinte linha com o caminho (`path`) do JAR: 
+    * Sensor: Abra o `NetBeans` e no projeto Sensor que utiliza o spotSHOUT edite o arquivo `build.properties` adicionando a seguinte linha com o caminho (`path`) do JAR: 
 {{{
 utility.jars=C:/caminho/para/spotSHOUT-1.0.jar
 }}}
-    # Hospediero: Abra o `NetBeans` e no projeto Hospedeiro que utiliza o spotSHOUT edite o arquivo `build.properties` incluindo o caminho (`path`) do JAR na linha:
+    * Hospediero: Abra o `NetBeans` e no projeto Hospedeiro que utiliza o spotSHOUT edite o arquivo `build.properties` incluindo o caminho (`path`) do JAR na linha:
 {{{
 user.classpath=C:/caminho/para/spotSHOUT-1.0.jar;....
 }}}

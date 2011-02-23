@@ -17,8 +17,8 @@ LocateRegistry.createRegistry();
 == Obtendo um Registro ==
 É interessante notar que existem duas formas de localizar o servidor de nomes: endereço fixo ou descoberta (_broadcast_). São representados pelo método estático `getRegistry()` e `getRegistry(String host)`` respectivamente, da classe `LocateRegistry`.
 
-  * `getRegistry(String host)`: Requer um conhecimento prévio da localização do servidor de nomes. A vantagem de utilizar esta forma é que está poupa recursos de convergência/descoberta dos sensores porém deixa o nível de abstração de utilização do \textit{middleware} ainda rudimentar.
-  * `getRegistry()`: Não requer um conhecimento prévio da localização do servidor de nomes. A desvantagem desta forma é o custo de convergência/descoberta dos sensores porém isto aumenta significadamente a abstração de localização e de utilização do \textit{middleware}. Essa é a opção *recomendada* devido a flexibilidade em não tornar seu código acoplado a um endereço fixo e porque após obter o registro só será necessário reexecutar essa operação em caso de perca de conexão com o registro.
+    * `getRegistry()`: Não requer um conhecimento prévio da localização do servidor de nomes. A desvantagem desta forma é o custo de convergência/descoberta dos sensores porém isto aumenta significadamente a abstração de localização e de utilização do \textit{middleware}. Essa é a opção *recomendada* devido a flexibilidade em não tornar seu código acoplado a um endereço fixo e porque após obter o registro só será necessário reexecutar essa operação em caso de perca de conexão com o registro.
+	* `getRegistry(String host)`: Requer um conhecimento prévio da localização do servidor de nomes. A vantagem de utilizar esta forma é que está poupa recursos de convergência/descoberta dos sensores porém deixa o nível de abstração de utilização do \textit{middleware} ainda rudimentar.
   
 == Operações RMI ==
 Após obter o servidor de nomes poderá utilizar todas as operações definidas pelo RMI Java no registro, como: _bind, list, lookup, rebind e unbind_.
