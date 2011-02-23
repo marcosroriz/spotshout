@@ -1,0 +1,104 @@
+#summary Serializando objetos.
+
+= Serialização de Objetos =
+
+O spotSHOUT utiliza a biblioteca [http://www.ipd.uni-karlsruhe.de/KSN/Serialization/ KSN Serialization] do instituto [http://www.ipd.uni-karlsruhe.de/ Karlsruhe Sensor Networking] para suportar a serialização de objetos.
+
+No spotSHOUT não há nenhuma restrição ao uso de objetos nas operações remotas, desde que eles estejam seguindo as regras do KSN Serialization. Isto é, você, pode trocar objetos complexos durante toda a comunicação de dados.
+
+Para exemplificar o uso de uma classe serializavél através do KSN vamos usar um [http://en.wikipedia.org/wiki/JavaBean javabeans] `Dog` que contém os atributos `name` (`String`) e `age` (`int),
+
+O código inicial da classe é o seguinte:
+{{{
+package org.sunspotworld;
+
+import java.io.IOException;
+import ksn.io.KSNSerializableInterface;
+import ksn.io.ObjectInputStream;
+import ksn.io.ObjectOutputStream;
+
+public class Dog implements KSNSerializableInterface {
+
+    private String name;
+    private int age;
+
+    public Dog() {
+    }
+
+    public void writeObjectOnSensor(ObjectOutputStream stream) throws IOException {
+     }
+
+    public void readObjectOnSensor(ObjectInputStream stream) throws IOException, ClassNotFoundException, IllegalAccessException, InstantiationException {
+    }
+	
+   // sets and getters
+}
+}}}
+
+A serialização no KSN é feita estaticamente com auxílio do programador devido as limitações de reflexão do Sensor. O programador irá implementar a interface ` KSNSerializableInterface` que contém métodos para escrever e ler os dados do objeto que se deseja serializar, respectivamente ` writeObjectOnSensor` e ` readObjectOnSensor`. O funcionamento da serialização é o seguinte: no momento da serialização do objeto é chamado o método `writeObjectOnSensor` com um fluxo de dados `ObjectOutputStream` aonde o programador irá escrever os atributos que deseja ser serializados.  Neste momento o programador irá definir quais atributos ele deseja salvar. 
+{{{
+    public void writeObjectOnSensor(ObjectOutputStream stream) throws IOException {
+        stream.writeUTF(name);
+        stream.writeInt(age);
+    }
+}}}
+
+Então o KSN irá pegar o fluxo em que você escreveu (`stream`) e irá fazer o processo inverso do outro lado da comunicação, i.e., irá chamar o método `readObjectOnSensor` aonde o programador irá escrever o código para ler os dados do fluxo na *mesma ordem* em que foi escrito.
+{{{
+    public void readObjectOnSensor(ObjectInputStream stream) throws IOException,
+            ClassNotFoundException, IllegalAccessException, InstantiationException {
+        this.name = stream.readUTF();
+        this.age = stream.readInt();
+    }
+}}}
+
+O objeto que leu o fluxo após a execução do método terá os mesmos dados que foi escrito anteriormente, completando a serialização. Porém temos uma dúvida, como ele faz isso? Basicamente o KSN adiciona metadados indicando qual a classe que você quer serializar nos dados da comunicação. Em seguida ele instancia a classe a partir de um construtor vazio. *Por isso é muito importante que a sua classe serializavél tenha um construtor vazio*. A partir disso ele simplesmente executa o método de leitura passando o fluxo de dados da comunicação. 
+
+Código completo da classe (pronto para ser utilizado no spotSHOUT):
+{{{
+package org.sunspotworld;
+
+import java.io.IOException;
+import ksn.io.KSNSerializableInterface;
+import ksn.io.ObjectInputStream;
+import ksn.io.ObjectOutputStream;
+
+public class Dog implements KSNSerializableInterface {
+
+    private String name;
+    private int age;
+
+    public Dog() {
+    }
+
+    public void writeObjectOnSensor(ObjectOutputStream stream) throws IOException {
+        stream.writeUTF(name);
+        stream.writeInt(age);
+    }
+
+    public void readObjectOnSensor(ObjectInputStream stream) throws IOException,
+            ClassNotFoundException, IllegalAccessException, InstantiationException {
+        this.name = stream.readUTF();
+        this.age = stream.readInt();
+    }
+	
+	public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+}
+}}}
+
+Uma excelente documentação sobre como usar serialização pode ser encontrada [http://www.ipd.uni-karlsruhe.de/KSN/Serialization/downloads/KSN%20Serialization%20Manual.pdf aqui].
