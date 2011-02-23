@@ -3,7 +3,7 @@
 <wiki:toc max_depth="2" />
 
 = Servidor =
-O Servidor é o objeto remoto que implementa uma interface remota. 
+O Servidor é o objeto remoto que implementa uma interface remota.  
 == Criando o Projeto ==
 Com o `NetBeans` aberto, crie um novo projeto de aplicação para sensor SunSPOT com o nome `SensorCalculatorServer`. O pacote padrão do tutorial é o `org.sunspotworld`.
  

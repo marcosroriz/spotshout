@@ -6,7 +6,7 @@ O spotSHOUT utiliza a biblioteca [http://www.ipd.uni-karlsruhe.de/KSN/Serializat
 
 No spotSHOUT não há nenhuma restrição ao uso de objetos nas operações remotas, desde que eles estejam seguindo as regras do KSN Serialization. Isto é, você, pode trocar objetos complexos durante toda a comunicação de dados.
 
-Para exemplificar o uso de uma classe serializavél através do KSN vamos usar um [http://en.wikipedia.org/wiki/JavaBean javabeans] `Dog` que contém os atributos `name` (`String`) e `age` (`int),
+Para exemplificar o uso de uma classe serializavél através do KSN vamos usar um [http://en.wikipedia.org/wiki/JavaBean javabeans] `Dog` que contém os atributos `name` (`String`) e `age` (`int`),
 
 O código inicial da classe é o seguinte:
 {{{
