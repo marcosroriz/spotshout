@@ -2,11 +2,12 @@
 
 = Guia de uso do Middleware =
 
-O spotSHOUT é um `middleware` de objetos distribuídos simples que utiliza uma sintaxe praticamente idêntica ao Java RMI. Neste guia nós iremos especificar a estrutura dos componentes que define uma aplicação do `middleware`, são eles: o servidor de nomes, servidor e cliente.
+O spotSHOUT é um `middleware` de objetos distribuídos simples que utiliza uma sintaxe praticamente idêntica ao Java RMI. A base do `middleware`  é a comunicação entre objetos de maneira transparente nos sensores através de uma interface remota. A interface remota é o contrato no qual os objetos se comunicam e ela irá ser implementada pelo objeto servidor e usada pelo objeto cliente. Neste guia nós iremos especificar como definir e utilizar estes componentes  que define uma interação do `middleware`. Vamos abordar os tópicos de interface remota, servidor de nomes, servidor,  cliente e serialização de objetos.
 
 O conteúdo foi dividido em subseções com o objetivo de tornar o conteúdo conciso e simples, são elas:
 
- * [GuideNameServer Guia do Servidor de Nomes]
- * [GuideServer Guia do Servidor]
- * [GuideClient Guia do Cliente]
- * [GuideSerialization Guia de Serialização de Objetos]
+ * [GuiaRemote Interface Remota]
+ * [GuideNameServer Servidor de Nomes]
+ * [GuideServer Servidor]
+ * [GuideClient Cliente]
+ * [GuideSerialization Serialização de Objetos]
