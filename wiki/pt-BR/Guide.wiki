@@ -6,7 +6,7 @@ O spotSHOUT é um `middleware` de objetos distribuídos simples que utiliza uma 
 
 O conteúdo foi dividido em subseções com o objetivo de tornar o conteúdo conciso e simples, são elas:
 
- * [GuiaRemote Interface Remota]
+ * [GuideRemote Interface Remota]
  * [GuideNameServer Servidor de Nomes]
  * [GuideServer Servidor]
  * [GuideClient Cliente]

@@ -8,9 +8,10 @@
       * [TutSensorClient Calculatora Cliente]
       * [TutRun Executando no Emulador]
     * [Guide Guia]
-      * [GuideNameServer Guia do Servidor de Nomes]
-      * [GuideServer Guia do Servidor]
-      * [GuideClient Guia do Cliente]
+      * [GuideRemote Interface Remota]
+      * [GuideNameServer Servidor de Nomes]
+      * [GuideServer Servidor]
+      * [GuideClient Cliente]
       * [GuideSerialization Guia de Serialização de Objetos]
   * Desenvolvendo o spotSHOUT
     * [Building Construindo o spotSHOUT]
