@@ -1,102 +1,26 @@
 #summary Interface remota.
 
-<wiki:toc max_depth="3" />
-
 = Interface remota =
 
-O servidor de nomes é responsável por operações relacionadas ao anúncio de nome na rede de sensores, como: vinculação, remoção e procura de nomes, ou seja, o servidor de nomes é o componente que contém a localização das referências remotas na rede.
+Um objeto de uma aplicação remota que deseja interagir com outras precisa
+de uma interface comum, i.e., um contrato com os outros objetos da RSSF, a isso
+denominamos interface remota. A interface remota especifica quais métodos um objeto
+servidor está disponibilizando para ser chamado.
+ 
 
-Na prática isto é feito através do mapeamento (_hashmap_) de um nome, uma _String_ a uma referência remota. O servidor de nome deve rodar *separadamente em um sensor ou hospedeiro*, não sendo possível que um sensor seja tanto o servidor de nomes como um cliente/servidor de referências remotas.
+Na prática uma interface remota é qualquer interface que estende a interface `Remote` (`spot.rmi.Remote`). Alem disso todos os métodos devem “tacar” a exceção `RemoteException` no caso de falha na comunicação. É *válido* lembrar que no `import` não utilize `*`, como em: `import spot.rmi.*`, pois terá erro na hora do `parsing` do plug-in de geração de código do spotSHOUT. 
 
-== Criando um Registro ==
-Para criar um servidor de nomes basta utilizar a operação: 
+Interface remota exemplo:
+
 {{{
-LocateRegistry.createRegistry();
+package org.sunspotworld;
+
+import spot.rmi.Remote;
+import spot.rmi.RemoteException;
+
+public interface Dog extends Remote {
+    public int barkLevel() throws RemoteException;
+    public String getName() throws RemoteException;
+}
 }}}
 
-== Obtendo um Registro ==
-É interessante notar que existem duas formas de localizar o servidor de nomes: endereço fixo ou descoberta (_broadcast_). São representados pelo método estático `getRegistry()` e `getRegistry(String host)`` respectivamente, da classe `LocateRegistry`.
-
-    * `getRegistry()`: Não requer um conhecimento prévio da localização do servidor de nomes. A desvantagem desta forma é o custo de convergência/descoberta dos sensores porém isto aumenta significadamente a abstração de localização e de utilização do \textit{middleware}. Essa é a opção *recomendada* devido a flexibilidade em não tornar seu código acoplado a um endereço fixo e porque após obter o registro só será necessário reexecutar essa operação em caso de perca de conexão com o registro.
-	* `getRegistry(String host)`: Requer um conhecimento prévio da localização do servidor de nomes. A vantagem de utilizar esta forma é que está poupa recursos de convergência/descoberta dos sensores porém deixa o nível de abstração de utilização do \textit{middleware} ainda rudimentar.
-  
-== Operações RMI ==
-Após obter o servidor de nomes poderá utilizar todas as operações definidas pelo RMI Java no registro, como: _bind, list, lookup, rebind e unbind_.
-
-=== bind ===
-Assinatura: 
-{{{
-bind(nome : String, nomeCompleto: String, pkg objRemoto : Remote) : void
-}}}
-Realiza o vínculo de uma referência remota `objRemote` neste servidor de nomes denominada `nome`.  O `nomeCompleto` é o nome da interface remota completo (incluindo pacote), é necessário devido o sensor NÃO conter classes de reflexão. O vínculo também é guardado localmente para identificar as chamadas e executar o algoritmo de coleta de lixo. As exceções possíveis para essa operação são:
-    * `AlreadyBoundException`: se o `nome` já estiver vinculado no servidor de nome.
-    * `NullPointException`: se `nome`, `nomeCompleto` ou `objRemoto` for null.
-    * `RemoteException`: se houver falha de comunicação com o servidor de nomes.
-
-Exemplo:
-{{{
-registry.bind("Cal", "org.pkg.Calculator", objetoRemoto);
-}}}
-  
-
-=== list ===
-Assinatura:
-{{{
-list() : String[]
-}}}
-Esta operação retorna um vetor de nomes de objetos anunciados neste servidor de nome. A exceção possível para esta operação é:
-    * `RemoteException`: se houver falha de comunicação com o servidor de nomes.
-
-Exemplo:
-{{{
-// Já registramos um objeto remoto Cal
-String[] names = registry.list();
-// Names conterá os nomes registrados no servidor, como "Cal".
-}}}
-
-
-=== lookup ===
-Assinatura:
-{{{
-lookup(nome : String) : Remote
-}}}
-Retorna uma referência remota associada a `nome` no registro. Esta referência então será transformada pelo cliente na interface remota acordada. As exceções possíveis para essa operação são:
-    * `NotBoundException`: se _nome_ não estiver anunciado no servidor de nome.
-    * `NullPointException`: se _nome_ for null.
-    * `RemoteException`: se houver falha de comunicação com o servidor de nomes.
-
-Exemplo:
-{{{
-Calculator cal = (Calculator) registry.lookup("Cal");
-cal.add(30, 2);
-}}}
-	
-=== rebind ===
-Assinatura:
-{{{
-rebind(nome : String, nomeCompleto: String, objRemoto : Remote) : void
-}}}
-Substitui/Realiza o vínculo de uma referência remota `objRemote` neste servidor de nomes denominada `nome`. O vínculo também é guardado localmente para identificar as chamadas e executar o algoritmo de coleta de lixo. A diferença desta operação com a bind é que esta irá substituir/realizar o vínculo independente da existência ou não do `nome` em um registro, de maneira que a outra operação irá executar uma exceção se o nome já estiver anunciado no registro. As exceções possíveis para essa operação são:
-    * `NullPointException`: se `nome`, `nomeCompleto` ou `objRemoto` for null.
-    * `RemoteException`: se houver falha de comunicação com o servidor de nomes.
-  
-Exemplo:
-{{{
-registry.rebind("Cal", "org.pkg.Calculator", objetoRemoto);
-}}} 
-  
-=== unbind ===
-Assinatura:
-{{{
-unbind(nome : String) : void
-}}}
-Remove o vínculo de uma referência remota associada a `nome` no registro. As exceções possíveis para essa operação são:
-    * `AccessException`: se o registro local negar acesso a desvinculação, caso não tenha sido você que registrou o `nome`.
-    * `NotBoundException`: se o `nome` não estiver anunciado no servidor de nome.
-    * `NullPointException`: se `nome` for null.
-    * `RemoteException`: se houver falha de comunicação com o servidor de nomes.
-
-Exemplo:
-{{{
-registry.unbind("Cal");
-}}}
