@@ -2,13 +2,9 @@
 
 = Interface remota =
 
-Um objeto de uma aplicação remota que deseja interagir com outras precisa
-de uma interface comum, i.e., um contrato com os outros objetos da RSSF, a isso
-denominamos interface remota. A interface remota especifica quais métodos um objeto
-servidor está disponibilizando para ser chamado.
- 
+Um objeto de uma aplicação remota que deseja interagir com outras precisa de uma interface comum, i.e., um contrato com os outros objetos da RSSF, a isso denominamos interface remota. A interface remota especifica quais métodos um objeto servidor está disponibilizando para ser chamado.
 
-Na prática uma interface remota é qualquer interface que estende a interface `Remote` (`spot.rmi.Remote`). Alem disso todos os métodos devem “tacar” a exceção `RemoteException` no caso de falha na comunicação. É *válido* lembrar que no `import` não utilize `*`, como em: `import spot.rmi.*`, pois terá erro na hora do `parsing` do plug-in de geração de código do spotSHOUT. 
+Na prática uma interface remota é qualquer interface que estende a interface `Remote` (`spot.rmi.Remote`). Alem disso todos os métodos devem “tacar” a exceção `RemoteException` no caso de falha na comunicação. É *válido* lembrar que no `import` não utilize `*`, como em: `import spot.rmi.*`, pois terá erro na hora do _parsing_ do plug-in de geração de código do spotSHOUT. 
 
 Interface remota exemplo:
 
