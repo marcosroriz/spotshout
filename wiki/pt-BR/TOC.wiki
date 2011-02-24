@@ -14,7 +14,7 @@
       * [GuideSerialization Guia de Serialização de Objetos]
   * Desenvolvendo o spotSHOUT
     * [Building Construindo o spotSHOUT]
-    * [ContributingBUG Contribuindo uma correção/bug]
+    * [ContributingBUG Contribuindo uma correção]
     * [HelpWiki Contribuindo com o Wiki]
   * Arquitetura do spotSHOUT
     * [GeneralView Visão Geral]

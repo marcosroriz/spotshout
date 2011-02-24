@@ -1,0 +1,11 @@
+#summary Contribuindo com uma correção.
+
+<wiki:toc max_depth="2" />
+
+= Contribuindo com uma correção  =
+
+== Descobri um _bug_ ==
+Se você descobriu um _bug_, por favor nos relate. Vá na [http://code.google.com/p/spotshout/issues/list página de problemas] e verifique se o _bug_ já foi relatado, caso contrário abra um novo _bug_. Se possível ative a opção de _debug_ do _middleware_ e anexe o _log_ do _middleware_. Para ativar o [http://code.google.com/p/spotshout/wiki/Building#Modificando_propriedades debug veja esta página].
+
+== Corrigi um _bug_ ==
+Ao corrigir um _bug_ já relatado anexe o _patch_ no tópico. Se o _bug_ não estiver relatado por favor crie um novo e anexe o patch.
