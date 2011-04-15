@@ -1,3 +1,22 @@
-#summary One-sentence summary of this page.
+#summary Remote Interface.
 
-= GUIDE = 
+= Remote Interface  =
+
+An object of a remote application that wishes to interact with other needs a common interface, ie, a contract with other objects in the WSN, we call this the remote interface. The remote interface specifies which methods an object server is available to be called.
+
+In practice a remote interface is any interface that extends the `Remote` interface (`spot.rmi.Remote`). Besides that all methods should throw the RemoteException exception in case of `failure` on communication. It is *valid* * to remember that in `import` try to avoid the usage of implicit imports (`*`), as in: `import all.my.classes.*`, it will have error at the time of _parsing_ plug-in code generation of spotSHOUT. (We are fixing it).
+
+
+Remote Interface Example:
+
+{{{
+package org.sunspotworld;
+
+import spot.rmi.Remote;
+import spot.rmi.RemoteException;
+
+public interface Dog extends Remote {
+    public int barkLevel() throws RemoteException;
+    public String getName() throws RemoteException;
+}
+}}}

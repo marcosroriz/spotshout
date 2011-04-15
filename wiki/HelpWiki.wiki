@@ -1,3 +1,22 @@
-#summary One-sentence summary of this page.
+#summary Contributing to the wiki.
 
-= L10N =
+<wiki:toc max_depth="2" />
+
+= Contributing to the wiki =
+
+The wiki `googlecode` has the function to have pages in multiple languages. We invite you to contribute and translate the documentation in your native language.
+
+You can contribute to the wiki as follows:
+  * Adding comment pages.
+  * Modifying the content of the pages (via svn) and sending the patch through the section of `issues`.
+
+== Translating the wiki == 
+To translate the documentation into your native language you must first obtain a copy of the wiki pages. Let's get the latest version of pages via the following command `svn`.
+{{{
+svn checkout http://spotshout.googlecode.com/svn/wiki/ spotSHOUT-Wiki
+}}}
+
+Now create a folder with your language code. See [# http://code.google.com/p/support/wiki/WikiSyntax Localizing_Wiki_Content here for the full list of availables languages].
+
+Copy the files and now just translate each file.
+To send, create an `issue` with the patch attached.

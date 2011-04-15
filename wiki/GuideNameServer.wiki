@@ -1,3 +1,103 @@
-#summary One-sentence summary of this page.
+#summary Using the Name Server.
 
-= ddd =
+<wiki:toc max_depth="3" />
+
+= Name Server =
+
+The name server is responsible for operations related to advertising name in sensors networks, such as binding, removal and search for names, that is, the name server is the component that contains the location of remote references in the network.
+
+In practice this is done by mapping (_hashmap_) a name to a remote reference. The name server must run in a *separated* host or a sensor, it is not possible yet for a sensor to act as a name server and be in the same time a remote reference server.
+
+== Creating the registry ==
+To create a name server just use the operation:
+{{{
+LocateRegistry.createRegistry();
+}}}
+
+== Obtaining a Registry ==
+Interestingly, there are two ways to locate the name server: fixed address or discovery (_broadcast_). They are represented by the static method `getRegistry()` and `getRegistry (String host)` respectively , class `LocateRegistry`.
+
+    * `getRegistry()`: Requires no prior knowledge of the location of the server names. The disadvantage is the cost of this form of convergence / discovery of the sensors but this significantly increases the abstraction of location and use of the _middleware_. This option is *recommended* due to the flexibility to make your code not coupled to a fixed address and after obtaining the registry, you only need to rerun this operation in case of loss of connection with the registry.
+	
+	* `getRegistry(String host)`: Requires prior knowledge of the location of the server names. The advantage of using this form is that it saves resources for convergence / discovery of the sensors but couple the middleware with a specific location (hardcoded).
+  
+== Operações RMI ==
+After getting the name server, we can use all the operations defined by the Java RMI registry, such as _bind, list, lookup, rebind and unbind_.
+
+=== bind ===
+Signature: 
+{{{
+bind(name : String, fullName: String, remoteObject: Remote) : void
+}}}
+Performs the bond of a remote reference `remoteObject` in this name server with the name `name`. The `fullName` is the full name of the remote interface (including package). It is necessary because the sensor does NOT contain reflection classes. The link is also saved locally to identify incoming calls and run the garbage collection algorithm. The possible exceptions to this operation are:
+    * `AlreadyBoundException`: if `name` is already bounded in the name server.
+    * `NullPointException`: if one of these `name`, `fullName` or `remoteObject` are null.
+    * `RemoteException`: if there is a failure to communicate with the name server.
+
+Example:
+{{{
+registry.bind ("Cal", "org.pkg.Calculator" objetoRemoto);
+}}}
+
+=== list ===
+Signature:
+{{{
+list() : String[]
+}}}
+This operation returns an array of object names announced on this server name. The possible exception to this operation is:
+    * `RemoteException`: if there is a failure in the communication with the name server.
+
+Example:
+{{{
+/ / We already reported a remote object Cal
+String [] names = registry.list ();
+/ / Names contain the names registered on the server, as "Cal".
+}}}
+
+
+=== lookup ===
+Signature:
+{{{
+lookup(name : String) : Remote
+}}}
+Returns a remote reference to `name 'associated in the registry. This reference will then be processed by the client in the remote interface agreed. The possible exceptions to this operation are:
+    * `NotBoundException`: if _name_ is not announced on the name server.
+    * `NullPointException`: if `name` is null.
+    * `RemoteException`: if there is a failure to communicate with the name server.
+
+Example:
+{{{
+Calculator cal = (Calculator) registry.lookup("Cal");
+cal.add(30, 2);
+}}}
+	
+=== rebind ===
+Signature:
+{{{
+rebind(name : String, fullName: String, remoteObject : Remote) : void
+}}}
+Replaces / Performs the bond of a remote reference `remoteObject` in the name server with the name `name`. The link is also saved locally to identify incoming calls and run the garbage collection algorithm. The difference from the bind operation is that this will replace / make the connection regardless of whether or not the `name` is already announced in the server, that is, the other operation will perform an exception if the name is already announced in the record. The possible exceptions to this operation are:
+
+    * `NullPointException`: if one of these `name`, `fullName` or `remoteObject` are null.
+    * `RemoteException`: if there is a failure to communicate with the name server.
+  
+Example:
+{{{
+registry.rebind("Cal", "org.pkg.Calculator", objetoRemoto);
+}}} 
+  
+=== unbind ===
+Assinatura:
+{{{
+unbind(name : String) : void
+}}}
+Remove the link associated with a remote reference named `name` in the registry. The possible exceptions to this operation are:
+    * `AccessException`: if the local registry denies acess to untie the name, if the caller is not the one that originated the registration.
+    * `NotBoundException`: if _name_ is not announced on the name server.
+    * `NullPointException`: if `name` is null.
+    * `RemoteException`: if there is a failure to communicate with the name server.
+
+Example:
+{{{
+registry.unbind("Cal");
+}}}

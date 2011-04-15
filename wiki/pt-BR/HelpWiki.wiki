@@ -6,7 +6,6 @@
 
 O wiki do `googlecode` conta com a função de ter páginas em várias línguas. Nós convidamos você contribuir e traduzir a documentação na sua língua nativa. 
 
-== Contribuindo com o wiki ==
 Você pode contribuir com a wiki da seguinte maneira:
  * Adicionando comentário nas páginas.
  * Modificando o conteúdo das páginas (através do svn) e enviando o patch através da seção de `issues`.
@@ -20,5 +19,5 @@ svn checkout http://spotshout.googlecode.com/svn/wiki/ spotSHOUT-Wiki
 Agora crie uma pasta conforme o seu idioma. Veja [http://code.google.com/p/support/wiki/WikiSyntax#Localizing_Wiki_Content aqui a lista de idiomas].
 
 Copie os arquivos e agora basta traduzir cada arquivo.
-Para enviar crie um `issue` com o patch anexado.
+Para enviar, crie um `issue` com o patch anexado.
 
