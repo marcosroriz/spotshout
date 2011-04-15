@@ -1,3 +1,23 @@
-#summary One-sentence summary of this page.
+#summary Experiencing spotSHOUT.
 
-= 15 MIN TUTORIAL = 
+= 15 Minutres Tutorial =
+
+Now that you've installed the middleware, we'll use it through a fast and simple example. The steps for building applications that use the _middleware_ spotSHOUT are basically: 
+ * Sensor / Host starts the name server; 
+ * Sensor / Host server registers a remote reference in the name server; 
+ * Sensor / Host Client obtains the remote reference; 
+ * Starts the communication. 
+
+To introduce and train these concepts we'll make a simple application, a remote calculator. First we start the name server, which is where the sensors may obtain remote references. The sensors of the application will agree on a common interface, also know as, remote interface. The sensor server will implement the functionality defined in the remote interface and register such reference in the name server with the name `Cal`. Then the client will get the remote reference through the search operation by the name `Cal` in the name server. After obtaining the reference sensor remote client can make remote calls on a fully transparent manner. The overview of our application can be viewed in the image below:
+
+http://spotshout.googlecode.com/svn/wiki/images/tutorial/generalView.png
+
+The remote interface has operations of an ordinary calculator: addition, subtraction, multiplication and division, in addition will have an operation that returns a String containing the last operation performed. Based on this simple information in the image below shows the diagram of the remote interface `Calculator`.
+
+http://spotshout.googlecode.com/svn/wiki/images/tutorial/umlDiagram.png
+
+The tutorial is set as the basic steps for using _middleware_:
+  # [TutNameServer Set the Server Name]
+  # [TutSensorServer Calculator Servant]
+  # [TutSensorClient Create a Client Calculator]
+  # [TutRun Run the application on emulator]

@@ -1,3 +1,15 @@
-#summary One-sentence summary of this page.
+#summary Frequently Asked Questions.
+
+<wiki:toc max_depth="3" />
 
 = FAQ =
+In this section we will list the answers of the major questions faced by developers. The questions will be added as they are reported.
+
+== `NetBeans` Plugin ==
+=== I can not generate the stubs/skeletons ===
+Make sure the interface code is compiling, ie, contains no grammatical error.
+
+=== I can not generate the stubs / skeletons and my code is correct ===
+Verifique se o código da interface remota não contém `import` de todas as classes de um pacote, i.e., não contem uma declaração do tipo `import pkg.*`. O asterisco implica em importar todas as classes deste pacote, porém gera um erro na análise do código da interface (`parsing`). Para corrigir isso importe cada classe de uma vez, o atalho do `NetBeans` para tal comando é `Ctrl` + `Shift` + `I`.
+
+Verify iif the remote interface code does not contain `import` of all classes of a package, ie, it contains a declaration of type `import pkg .*`. The asterisk implies import all classes in this package, but generates an error in the analysis of the interface code (`parsing`). To correct it matters import each class explicit it, `NetBeans` shortcut for this command is `Ctrl` `Shift` + `I`.

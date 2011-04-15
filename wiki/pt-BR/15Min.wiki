@@ -2,7 +2,7 @@
 
 = Tutorial de 15 Minutos =
 
-Agora que você instalou o middleware vamos experimentar o middleware através de um exemplo simples e rápido. Os passos para a construção de aplicações que utiliza o _middleware_ spotSHOUT são basicamente:
+Agora que você instalou o middleware, vamos experimentar o uso dele através de um exemplo simples e rápido. Os passos para a construção de aplicações que utiliza o _middleware_ spotSHOUT são basicamente:
  * Sensor/Hospedeiro inicia o servidor de nomes;
  * Sensor/Hospedeiro Servidor registra uma referência remota no servidor de nomes;
  * Sensor/Hospedeiro Cliente obtém a referência remota;

@@ -4,6 +4,7 @@
 
 = Perguntas Frequentes =
 Nesta seção serão listadas as respostas das principais perguntas encontradas por desenvolvedores.
+As questões serão adicionadas conforme relatadas.
 
 == Plugin do `NetBeans` ==
 === Não consigo gerar os stubs/skeletons ===

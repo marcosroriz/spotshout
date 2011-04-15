@@ -1,3 +1,13 @@
-#summary One-sentence summary of this page.
+#summary spotSHOUT User Guide.
 
-= GUIDE = 
+= Middleware User Guide =
+
+The spotSHOUT `middleware` is a distributed object paradigm that uses a simple syntax almost identical to Java RMI. The basis of it, is the communication between objects in a transparent manner in the sensors through a remote interface. The remote interface is a contract in which objects communicate and it will be implemented by the object server and used by the client object. In this guide we will specify how to define and use these components that defines the interaction of 'middleware'. We cover the topics of remote interface, naming server, server, client and object serialization.
+
+The content is divided into subsections in order to make content concise and simple, they are:
+
+ * [GuideRemote Remote Interface]
+ * [GuideNameServer Naming Server]
+ * [GuideServer Server]
+ * [GuideClient Client]
+ * [GuideSerialization Serializing Objects]
