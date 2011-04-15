@@ -13,7 +13,7 @@ svn checkout-http://spotshout.googlecode.com/svn/trunk/spotSHOUT spotSHOUT Middl
 }}}
 After getting the code you can open the project directly in `NetBeans`.
 
-Compiling the source code === ===
+=== Compiling the source code ===
 Enter the folder spotSHOUT-Middleware and run the `jar-app` task of `ant`, ie, the command below:
 {{{
 ant jar-app
