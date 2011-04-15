@@ -21,7 +21,7 @@ ant jar-app
 O middleware será construído na pasta `build` com o nome `spotSHOUT-VERSAO.jar`.
 
 === Modificando propriedades ===
-Para ativar o `debug ` e outras propriedades como tempo de `timeout` modifique a classe *` com.google.code.spotshout.RMIProperties` para o seu gosto. Após isso, recompile o `middleware`.
+Para ativar o `debug ` e outras propriedades como tempo de `timeout` modifique a classe *`com.google.code.spotshout.RMIProperties`* para o seu gosto. Após isso, recompile o `middleware`.
 
 == spotSHOUT Plug-in  ==
 === Obtendo o código fonte ===

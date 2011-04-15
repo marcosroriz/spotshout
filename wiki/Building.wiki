@@ -1,3 +1,39 @@
-#summary One-sentence summary of this page.
+#summary Building the project from source code.
 
-= Building = 
+<wiki:toc max_depth="3" />
+
+= Building spotSHOUT =
+spotSHOUT is divided into two subprojects: the middleware and plug-in for `NetBeans`. We will teach you how to get the code and build the subprojects.
+
+== spotSHOUT Middleware ==
+=== Getting the source code ===
+For the latest version (in development) use your `svn` client and run the following command:
+{{{
+svn checkout-http://spotshout.googlecode.com/svn/trunk/spotSHOUT spotSHOUT Middleware
+}}}
+After getting the code you can open the project directly in `NetBeans`.
+
+Compiling the source code === ===
+Enter the folder spotSHOUT-Middleware and run the `jar-app` task of `ant`, ie, the command below:
+{{{
+ant jar-app
+}}}
+The middleware will be built in the `build` folder with the name `spotSHOUT-VERSAO.jar`.
+
+=== Modifying Properties ===
+To enable `debug` and other properties such as `timeout` time modify the class *`com.google.code.spotshout.RMIProperties`* to your taste. After that, recompile the `middleware`.
+
+== SpotSHOUT Plug-in == 
+=== Getting the source code ===
+For the latest version (in development) use your `svn` client and run the following command:
+{{{
+svn checkout http://spotshout.googlecode.com/svn/trunk/spotSHOUT-NB spotSHOUT-Plugin
+}}}
+After getting the code you can open the project directly in `NetBeans`.
+
+Compiling the source code === ===
+In `NetBeans` open the project and click build, or run the `nbm` `ant` task:
+{{{
+ant nbm
+}}}
+The plug-in will be built in the `build` folder with the name `com-google-code-spotshout-nb.nbm`.
