@@ -1,1 +1,69 @@
-dfa
+#summary Building the Client Calculator.
+
+<wiki:toc max_depth="2" />
+
+= Client =
+Now we'll create the client sensor. This will use the remote interface and the name server to locate and communicate seamlessly with the reference sensor in the remote server.
+
+== Creating the Project ==
+With `NetBeans` open, create a new SunSPOT sensor application with the name `SensorCalculatorClient`. The standard package of the tutorial is `org.sunspotworld`.
+
+== Seettings ==
+Repeat the same settings procedure of the name server, that is, adding JAR/SRC to the `classpath` and modifying the `build.properties` file.
+
+== Remote Interface ==
+Copy the definition of the remote interface, ie, the source file Calculator interface for the package org.sunspotworld in the client project.
+
+http://spotshout.googlecode.com/svn/wiki/images/tutorial/client-copy.png
+
+== Generating the Stubs/Skel ==
+Repeat the procedure used to generate the stubs / skeletons from the server, but now select the remote interface on the client project.
+
+== Renaming the Application ==
+Let's change the name of our application on the sensor, that is, let's change the name of our `midlet`. Rename the main application class *`org.sunspotworld.SunSpotApplication`* to *`org.sunspotworld.SensorCalculatorClient*`. To accomplish this, select the class *`SunSpotApplication`* and press `Ctrl + R` and choose the name *`SensorCalculatorClient*`.
+
+== Usando the Remote Reference ==
+We found the name server through the operation `LocateRegistry.getRegistry()` that do a broadcast and returns the name server. After obtaining the name server we can perform any operation of the Java RMI.
+
+We will now use the operation _lookup_ to get the remote reference "Cal". After obtaining a remote reference, we can use any method of remote interface. We can then perform a sum and then see if it was really the last operation performed. The code of the client's main class is:
+
+{{{
+package org.sunspotworld;
+
+import java.io.IOException;
+import javax.microedition.midlet.MIDlet;
+import javax.microedition.midlet.MIDletStateChangeException;
+import spot.rmi.registry.LocateRegistry;
+import spot.rmi.registry.Registry;
+
+public class SensorCalculatorClient extends MIDlet {
+
+    protected void startApp() throws MIDletStateChangeException {
+        try {
+            // Get the Name Server by broadcast
+            Registry registry = LocateRegistry.getRegistry();
+
+            // Obtendo referência remota de nome "Cal"
+            Calculator cal = (Calculator) registry.lookup("Cal");
+
+            // Using the remote reference
+            int addOp = cal.add(20, 22);
+            System.out.println("The sum of 20 and 22 is: " + addOp);
+
+            double multiplyOp = cal.multiply(30, 2);
+            System.out.println("The multiplication of 30 and 2 is: " + multiplyOp);
+
+            String lastOp = cal.lastOperation();
+            System.out.println("The last operation was: " + lastOp);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    protected void pauseApp() {
+    }
+
+    protected void destroyApp(boolean unconditional) throws MIDletStateChangeException {
+    }
+}
+}}}

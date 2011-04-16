@@ -1,22 +1,59 @@
-#summary Installing and setting up spotSHOUT.
+#summary Installing and configuring spotSHOUT.
 
-= Installation =
+<wiki:toc max_depth="2" />
 
-The installation is straightforward. You basically download the spotSHOUT JAR and point into your Sun SPOT Project and install the spotSHOUT NetBeans Plugins. Here are the steps:
+= Installing =
 
-  # Download the spotSHOUT JAR, SRC and NetBeans Plugin in the [http://code.google.com/p/spotshout/downloads/list download section].
-  # To make the spotSHOUT middleware avaliable to your project edit the build.properties file of it (It's on the root of the Project).  
-{{{ 
-utility.jars=C:/path/to/spotSHOUT-0.0.1.jar
+There are two ways to install spotSHOUT, as a local or system library implementation. They differ basically on how the spotSHOUT JAR is referenced.
+
+The Local Library Mode requires that each project Sun SPOT references spotSHOUT manually in list of JARs that they are using. This method is easier to install, but is more annoying to use and maintain, since a change on the JAR version requires to recompile all applications. The method works with the simulator Solarium and will be used as the basis for the tutorials explained in the Wiki.
+
+The System Library Mode attached the spotSHOUT Jar to the bootstrap classes of the Sun SPOTs. Allowing the project to be referenced indirectly, ie, the projects do not need to import / point to the JAR file, since it is already in the standard library. This method is easier to use and maintain, but unfortunately requires that the standard library of classes to be rebuilt and updated for each Sun SPOT sensor and this method does not work with the Simulator Solarium.
+
+After installation *configure the simulation environment* and then read the tutorial for five minutes or go to the guide.
+
+== Installing as Local Library ==
+To install the library as a middleware application for sensors / hosts take the following steps:
+  # Download the JAR, SRC and Plugin spotSHOUT in [http://code.google.com/p/spotshout/downloads/list download section].
+  # The way of how to reference the middleware depends on the nature of the project (Sensor or Host)
+    * Sensor: Open `NetBeans` and in the Sensor project that uses spotSHOUT edit the `build.properties` file adding the following line: 
+{{{
+utility.jars=C:/caminho/para/spotSHOUT-1.0.jar
 }}}
-  # Now start NetBeans and 
+    * Host: Open `NetBeans` and in the Host project that uses spotSHOUT edite the `build.properties` file adding the following line:
+{{{
+user.classpath=C:/caminho/para/spotSHOUT-1.0.jar;....
+}}}
+  # In `NetBeans` add the spotSHOUT classpath to your project (for code completion). Do: Right Click on the Project Name * > * Properties * > * Java Classpath * > * Add JAR/folder * > * Select the JAR *AND* Source of spotSHOUT. http://spotshout.googlecode.com/svn/wiki/images/addJAR.png
+  # Install the plug-in to generate the stubs/skeletons in `NetBeans`. Do:  Tools Menu * > * Plug-ins * > * Downloaded * > * Select "Add Plug-ins" * > * Choose the NBM-file (Plug-in) downloaded. Next click on install and it's going to show the software license (Apache v2), read it! After reading, accept it and it will be installed. http://spotshout.googlecode.com/svn/wiki/images/plugin.png
 
-= Details =
+== Installing as System Library ==
+  # Download the JAR, SRC and Plugin spotSHOUT in [http://code.google.com/p/spotshout/downloads/list download section].
+  # Move the spotSHOUT Jar to the `/lib` directory of the SunSPOT SDK installation folder. http://spotshout.googlecode.com/svn/wiki/images/libDir.png
+  # In your home folder modify the `.sunspot.properties` file and adapt the file to have the following lines (verify the name and version of the JAR - here we are using `spotSHOUT-1.0.jar`). http://spotshout.googlecode.com/svn/wiki/images/systeminstall.png
+{{{
+spot.library.name=spotSHOUT
+spot.library.addin.jars=${sunspot.lib}/spotSHOUT-1.0.jar${path.separator}${sunspot.lib}/multihop_common.jar${path.separator}${sunspot.lib}/transducer_device.jar
+}}}
+  # Rebuild the standard system class library of SunSPOT using the following ant command (in any directory that contains the `build.xml` file of SunSPOT - example: the install folder of the SunSPOT SDK): http://spotshout.googlecode.com/svn/wiki/images/antlibrary.png
+{{{
+$ ant library
+}}}
+  # Deploy the new standard library on your Sun SPOT's using:
+{{{
+$ ant flashlibrary
+}}}
 
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
+= Configuring the Environment =
+In order to utilize the base stations in a simulated environment (a host computer) make sure they are marked as shared and not necessary. Just change the `.sunspot.properties` file adding the following lines:
+{{{
+basestation.shared=true
+basestation.not.required=true
+}}}
+If you do not want to modify your file, just in time to run a host application passes the properties as arguments. Example:
+{{{
+ant host-run -Dbasestation.shared=true -Dbasestation.not.required=true
+}}}
 
-Testing image
-http://spotshout.googlecode.com/svn/trunk/spotSHOUT-NB/src/com/google/code/spotshout/nb/mudkip.png
+= Referências =
+The operation guide of the [http://sunspotworld.com/docs/Yellow/SunSPOT-Programmers-Manual.pdf SunSpot] documentation and other middleware, such as [http://code.google.com/p/looci/wiki/Welcome?tm=6 LooCI] and [http://www.ipd.uka.de/KSN/Serialization/ KSN], were used to construct the installation guide.

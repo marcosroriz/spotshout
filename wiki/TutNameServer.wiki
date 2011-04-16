@@ -1,3 +1,50 @@
+#summary Building the Name Server..
 
-    * [NameServer Naming Server]
-    * [Communication Communication]
+<wiki:toc max_depth="2" />
+
+= Name Server =
+The sensors use names to find remote references in the network. We can see that the name server occupies a very important role, because it on him that sensors query those names. *The name server should run in a separate sensor or host*, is not possible (yet) that a sensor is both the name server as a client / server, remote references.
+
+== Creating the Project ==
+In this tutorial we will use a sensor as a nameserver. Start `NetBeans` and create a new Sensor Application Project to SunSpot named `SensorNameServer`. The standard package of the tutorial will be `org.sunspotworld`. See image below for more details:
+
+http://spotshout.googlecode.com/svn/wiki/images/tutorial/wizard.png
+ 
+== Settings ==
+As specified in the installation guide we'll add the spotSHOUT JAR and configure the project to work with the middleware.
+Add the spotSHOUT JAR and SRC to the 'project' classpath in the properties menu. Also modify the `build.properties` file adding the following property: `utility.jars`, as in the example below:
+
+{{{
+utility.jars=C:/caminho/para/spotSHOUT-1.0.jar
+}}}
+
+http://spotshout.googlecode.com/svn/wiki/images/tutorial/buildProperties.png
+
+== Renanimg the Application ==
+Let's change the name of our application on the sensor, that is, let's change the name of our `midlet`. Rename the main application class *`org.sunspotworld.SunSpotApplication`* to *`org.sunspotworld.SensorNameServer*`. To accomplish this, select the class *`SunSpotApplication`* and press `Ctrl + R` and choose the name *`SensorNameServer*`.
+
+http://spotshout.googlecode.com/svn/wiki/images/tutorial/rename.png
+
+== Starting the Name Server ==
+To create the server just execute the method _createRegistry() _ from the `LocateRegistry` static class. Modify the code of the main class to contain this method. The main body of the class shall stand as the following code:
+
+{{{
+package org.sunspotworld;
+
+import javax.microedition.midlet.MIDlet;
+import javax.microedition.midlet.MIDletStateChangeException;
+import spot.rmi.registry.LocateRegistry;
+
+public class SensorNameServer extends MIDlet {
+
+    protected void startApp() throws MIDletStateChangeException {
+        LocateRegistry.createRegistry();
+    }
+
+    protected void pauseApp() {
+    }
+
+    protected void destroyApp(boolean unconditional) throws MIDletStateChangeException {
+    }
+}
+}}}

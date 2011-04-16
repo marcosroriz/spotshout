@@ -2,7 +2,7 @@
 
 = Serialização de Objetos =
 
-O spotSHOUT utiliza a biblioteca [http://www.ipd.uni-karlsruhe.de/KSN/Serialization/ KSN Serialization] do instituto [http://www.ipd.uni-karlsruhe.de/ Karlsruhe Sensor Networking] para suportar a serialização de objetos.
+O spotSHOUT utiliza a biblioteca [http://www.ipd.uni-karlsruhe.de/KSN/Serialization/ KSN Serialization] do instituto [http://www.ipd.uni-karlsruhe.de/ Karlsruhe Sensor Networking] para suportar a serialização de objetos complexos. Variáveis primitivas são serializadas pelos próprios mecanismos do _middleware_.
 
 No spotSHOUT não há nenhuma restrição ao uso de objetos nas operações remotas, desde que eles estejam seguindo as regras do KSN Serialization. Isto é, você, pode trocar objetos complexos durante toda a comunicação de dados.
 

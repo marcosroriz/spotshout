@@ -20,9 +20,9 @@ http://spotshout.googlecode.com/svn/wiki/images/tutorial/client-copy.png
 Repita o procedimento utilizado para gerar os stubs/skeletons do servidor, porém, selecione agora a interface remota no projeto cliente.
 
 == Renomeando a Aplicação ==
-Vamos modificar o nome da nossa aplicação no sensor, isto é, vamos mudar o nome da nossa `midlet`. Renomeie a classe principal da aplicação *`org.sunspotworld.SunSpotApplication`* para *`org.sunspotworld.*SensorCalculatorClient`*.  Para realizar isso, selecione a classe *`SunSpotApplication`* e pressione `Ctrl + R` e escolha o nome *`SensorCalculatorClient`*.
+Vamos modificar o nome da nossa aplicação no sensor, isto é, vamos mudar o nome da nossa `midlet`. Renomeie a classe principal da aplicação *`org.sunspotworld.SunSpotApplication`* para *`org.sunspotworld.SensorCalculatorClient`*.  Para realizar isso, selecione a classe *`SunSpotApplication`* e pressione `Ctrl + R` e escolha o nome *`SensorCalculatorClient`*.
 
-== Usando o Objeto ==
+== Usando a Referência Remota ==
 Localizamos o servidor de nomes através da operação `LocateRegistry.getRegistry()` que realiza um broadcast e retorna o servidor de nomes. Após obter o servidor de nomes podemos executar qualquer operação do Java RMI.
 
 Iremos agora utilizar a operação _lookup_ para obter a referência remota “Cal”. Após obter a referência remota, podemos utilizar qualquer método da interface remota. Podemos então executar uma soma e em seguida verificar se foi mesmo a última operação executada. O código da classe principal do cliente fica:

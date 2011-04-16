@@ -1,1 +1,27 @@
-adfdsa
+#summary Running the application on the simulator.
+
+== Running the App on the Simulator ==
+Now that we have developed our application, lets test it on the Sun SPOT simulator, `Solarium`.
+Create three new sensors in the simulator (`Emulator` * > * `New Virtual Spot`).
+
+http://spotshout.googlecode.com/svn/wiki/images/tutorial/solarium.png
+
+In the middle sensor deploy the application name server. Right click and select `Deploy MIDlet bundle ...` and browse the `SensorNameServer` project folder and select the `build.xml` file.
+
+Start the application on the name server Sensor, right click on the sensor and select `Run MIDlet` * > * `SensorNameServer`.
+
+http://spotshout.googlecode.com/svn/wiki/images/tutorial/solarium-mid.png
+
+In the right sensor deploy the server calculator. Right Click on the sensor and select `Deploy MIDlet bundle ...` and browse the `SensorCalculatorServer` project folder and select the `build.xml` file.
+
+Start the application on the Server Calculator Sensor, right click on the sensor and select `Run MIDlet` * > * `SensorCalculatorServer`.
+
+http://spotshout.googlecode.com/svn/wiki/images/tutorial/solarium-right.png
+
+In the left sensor deploy the client calculator. Right Click on the sensor and select `Deploy MIDlet bundle ...` and browse the `SensorCalculatorClient` project folder and select the `build.xml` file.
+
+Open the output windows of the left sensor. Right Click on the sensor and selec the `Display application output` * > * `in Internal Frame`. 
+
+Start the application on the Client Calculator Sensor, right click on the sensor and select `Run MIDlet` * > * `SensorCalculatorClient`.
+
+http://spotshout.googlecode.com/svn/wiki/images/tutorial/solarium-execution.png

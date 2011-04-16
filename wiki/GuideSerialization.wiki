@@ -1,3 +1,109 @@
-#summary One-sentence summary of this page.
+#summary Serializing objects.
 
-= afdadf =
+= Serialização de Objetos =
+
+spotSHOUT uses the library [http://www.ipd.uni-karlsruhe.de/KSN/Serialization/ KSN Serialization] from the institute [http://www.ipd.uni-karlsruhe.de/ Karlsruhe Sensor Networking] to support serialization of complex objects. Primitive variables are serialized by the middleware itself.
+
+In spotSHOUT there is no restriction on the use of objects in remote operations, provided they are following the rules of KSN Serialization. That is, you can exchange complex objects throughout all the data communication.
+
+To illustrate the use of a serializable class by KSN we'll use a [http://en.wikipedia.org/wiki/JavaBean javabeans] `Dog` class which contains the attributes `name` (`String`) and `age` (`int`),
+
+The initial code for the class is the following:
+{{{
+package org.sunspotworld;
+
+import java.io.IOException;
+import ksn.io.KSNSerializableInterface;
+import ksn.io.ObjectInputStream;
+import ksn.io.ObjectOutputStream;
+
+public class Dog implements KSNSerializableInterface {
+
+    private String name;
+    private int age;
+
+    public Dog() {
+    }
+
+    public void writeObjectOnSensor(ObjectOutputStream stream) throws IOException {
+     }
+
+    public void readObjectOnSensor(ObjectInputStream stream) throws IOException, ClassNotFoundException, IllegalAccessException, InstantiationException {
+    }
+	
+   // sets and getters
+}
+}}}
+
+Serialization is done statically in the KSN with the help of the programmer due to limitations of reflection in the SunSPOT sensor. The developer will implement the interface `KSNSerializableInterface` that contains methods to write and read data from the object you want to serialize, respectively `writeObjectOnSensor` and `readObjectOnSensor`. The workflow of serialization is the following: when the user initiate the serialization the library calls the method `writeObjectOnSensor` with the data stream `ObjectOutputStream` where the developer will write the attributes he wants to be serialized. At this point the programmer will define which attributes they want to save it.
+
+{{{
+    public void writeObjectOnSensor(ObjectOutputStream stream) throws IOException {
+        stream.writeUTF(name);
+        stream.writeInt(age);
+    }
+}}}
+
+KSN will then pick up the flow of what you wrote (`stream`) and will do the reverse process on the other side of the communication, ie, will call the `readObjectOnSensor` where the developer will write code to read the data flow in the *same order* they were written.
+
+{{{
+    public void readObjectOnSensor(ObjectInputStream stream) throws IOException,
+            ClassNotFoundException, IllegalAccessException, InstantiationException {
+        this.name = stream.readUTF();
+        this.age = stream.readInt();
+    }
+}}}
+
+O objeto que leu o fluxo após a execução do método terá os mesmos dados que foi escrito anteriormente, completando a serialização. Porém temos uma dúvida, como ele faz isso? Basicamente o KSN adiciona metadados indicando qual a classe que você quer serializar nos dados da comunicação. Em seguida ele instancia a classe a partir de um construtor vazio. *Por isso é muito importante que a sua classe serializavél tenha um construtor vazio*. A partir disso ele simplesmente executa o método de leitura passando o fluxo de dados da comunicação. 
+
+
+The object that read the flow stream after the execution of the method will have the same data (state) that was written earlier, the source object, completing the serialization. But we have a question, how does he do that? Basically KSN adds metadata indicating which class you want to serialize in the data communication. Then it instantiates the class from an *empty constructor*. It is therefore very important that your serializable class has a * empty constructor*. From this he simply performs the method of reading through the data flow of communication.
+
+Full class code (ready for use in spotSHOUT):
+{{{
+package org.sunspotworld;
+
+import java.io.IOException;
+import ksn.io.KSNSerializableInterface;
+import ksn.io.ObjectInputStream;
+import ksn.io.ObjectOutputStream;
+
+public class Dog implements KSNSerializableInterface {
+
+    private String name;
+    private int age;
+
+    public Dog() {
+    }
+
+    public void writeObjectOnSensor(ObjectOutputStream stream) throws IOException {
+        stream.writeUTF(name);
+        stream.writeInt(age);
+    }
+
+    public void readObjectOnSensor(ObjectInputStream stream) throws IOException,
+            ClassNotFoundException, IllegalAccessException, InstantiationException {
+        this.name = stream.readUTF();
+        this.age = stream.readInt();
+    }
+	
+	public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+}
+}}}
+
+An excellent documentation on using serialization can be found [http://www.ipd.uni-karlsruhe.de/KSN/Serialization/downloads/KSN%% 20Serialization 20Manual.pdf here].

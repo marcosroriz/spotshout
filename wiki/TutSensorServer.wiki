@@ -1,1 +1,118 @@
-dfasdfas
+#summary Building the Calculator Servant.
+
+<wiki:toc max_depth="2" />
+
+= Server =
+Now we'll create the server sensor, ie, the sensor that contains the implementation of the `Calculator` remote interface. It will implement the remote interface and announce it on the network through the name server.
+
+== Creating the Project ==
+With `NetBeans` open, create a new SunSPOT sensor application with the name `SensorCalculatorServer`. The standard package of the tutorial is `org.sunspotworld`.
+ 
+== Settings ==
+Repeat the same settings procedure of the name server, that is, adding JAR/SRC to the `classpath` and modifying the `build.properties` file.
+
+== Remote Interface ==
+We'll define the `Calculator` remote interface as specify in the class diagram. Create an interface in the package `org.sunspotworld` called `Calculator`. First we extend the spot.rmi.Remote `interface` and add the methods defined. The complete code is:
+
+{{{
+package org.sunspotworld;
+
+import spot.rmi.Remote;
+import spot.rmi.RemoteException;
+
+public interface Calculator extends Remote {
+    public int add(int x, int y) throws RemoteException;
+    public int subtract(int x, int y) throws RemoteException;
+    public double multiply(float x, int y) throws RemoteException;
+    public double divide(double x, double y) throws RemoteException;
+    public String lastOperation() throws RemoteException;
+}
+}}}
+
+== Generating the Stubs/Skel ==
+Use the spotSHOUT plug-in to generate the stubs / skeletons. Select the remote interface, right click and select _Generate SunSpot Stub / Skeleton_. The generated files may take some time (about 20s) to appear on `NetBeans` due to the slow process of the IDE to check for new files in the project.
+
+http://spotshout.googlecode.com/svn/wiki/images/tutorial/genplugin.png
+
+== Implementing the Remote Interface ==
+We will now implement the remote interface, the server code. For this, create a class called `CalculatorImpl` and implement the interface operations `Calculator`. Our implementation is as follows:
+
+{{{
+package org.sunspotworld;
+
+import spot.rmi.RemoteException;
+
+public class CalculatorImpl implements Calculator {
+
+    String lastOp;
+
+    public int add(int x, int y) throws RemoteException {
+        lastOp = "add";
+        return x + y;
+    }
+
+    public int subtract(int x, int y) throws RemoteException {
+        lastOp = "subtract";
+        return x - y;
+    }
+
+    public double multiply(float x, int y) throws RemoteException {
+        lastOp = "multiply";
+        return (double) x * y;
+    }
+
+    public double divide(double x, double y) throws RemoteException {
+        lastOp = "divide";
+        return x / y;
+    }
+
+    public String lastOperation() throws RemoteException {
+        return lastOp;
+    }
+}
+}}}
+
+== Renomeando a Aplicação ==
+Let's change the name of our application on the sensor, that is, let's change the name of our `midlet`. Rename the main application class *`org.sunspotworld.SunSpotApplication`* to *`org.sunspotworld.SensorCalculatorServer*`. To accomplish this, select the class *`SunSpotApplication`* and press `Ctrl + R` and choose the name *`SensorCalculatorServer*`.
+
+== Registering in the Name Server ==
+First we create an instance of class `CalculatorImpl` to get a remote object. To make this remote object in a remote reference we are exporting it, and if want to expose this object in the network we should link it to a name in a name server.
+
+We found the name server through the operation `LocateRegistry.getRegistry()` that do a broadcast and returns the name server. After obtaining the name server we can perform any operation of the Java RMI.
+
+The operation _bind_ automatically export the remote object for us, so we don't need to export the remote object manually. We will register our calculator implementation with the name `Cal`. An additional parameter that is called the full name (including package) of the remote interface. This parameter is necessary because of lack of reflection on the standard API of Sun SPOT. The complete code of the main class of the sensor server is:
+
+{{{
+package org.sunspotworld;
+
+import java.io.IOException;
+
+import javax.microedition.midlet.MIDlet;
+import javax.microedition.midlet.MIDletStateChangeException;
+import spot.rmi.registry.LocateRegistry;
+import spot.rmi.registry.Registry;
+
+public class SensorCalculatorServer extends MIDlet {
+
+    protected void startApp() throws MIDletStateChangeException {
+        try {
+            Calculator cal = new CalculatorImpl();
+
+            // Get the Name Server by broadcast
+            Registry registry = LocateRegistry.getRegistry();
+
+            // Registering the remote interface org.sunspotworld.Calculator as Ca
+            registry.bind("Cal", "org.sunspotworld.Calculator", cal);
+            System.out.println("Registered this");
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    protected void pauseApp() {
+    }
+
+    protected void destroyApp(boolean unconditional) throws MIDletStateChangeException {
+    }
+}
+}}}

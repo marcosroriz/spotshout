@@ -1,3 +1,4 @@
-#summary One-sentence summary of this page.
+#summary Server.
 
-= dfdaf =
+= Server =
+The server is the remote object that implements a remote interface and is able to receive remote calls. The remote object becomes a remote reference through the export of the object. This can be done manually or *automatically* during link calls (binding/rebind) in some name server.
