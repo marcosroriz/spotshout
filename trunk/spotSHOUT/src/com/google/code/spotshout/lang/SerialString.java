@@ -23,7 +23,7 @@ import ksn.io.ObjectInputStream;
 import ksn.io.ObjectOutputStream;
 
 /**
- * This class represent a Short value allowing to be serializable.
+ * This class represent a String value allowing to be serializable.
  */
 public class SerialString implements KSNSerializableInterface {
 
