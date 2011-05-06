@@ -4,6 +4,7 @@
  */
 package com.google.code.spotshout.nb;
 
+import javax.swing.JOptionPane;
 import org.apache.ws.jaxme.js.JavaMethod;
 import org.apache.ws.jaxme.js.JavaQName;
 import org.apache.ws.jaxme.js.JavaQNameImpl;
@@ -45,15 +46,13 @@ public class StubGen {
         }
 
         // Library Needed Imports
-        javaSource.addImport(JavaQNameImpl.getInstance("java.io", "*"));
-        javaSource.addImport(JavaQNameImpl.getInstance("ksn.io", "*"));
-        javaSource.addImport(JavaQNameImpl.getInstance("spot.rmi", "*"));
-        javaSource.addImport(JavaQNameImpl.getInstance("spot.rmi.registry", "*"));
-        javaSource.addImport(JavaQNameImpl.getInstance("com.google.code.spotshout", "*"));
+        javaSource.addImport(JavaQNameImpl.getInstance("com.google.code.spotshout.RMIProperties"));
         javaSource.addImport(JavaQNameImpl.getInstance("com.google.code.spotshout.comm", "*"));
         javaSource.addImport(JavaQNameImpl.getInstance("com.google.code.spotshout.lang", "*"));
         javaSource.addImport(JavaQNameImpl.getInstance("com.google.code.spotshout.remote", "*"));
+        javaSource.addImport(JavaQNameImpl.getInstance("java.io.Serializable"));
 
+        
         // Implements Remote Interface and Extends Stub
         javaSource.addImplements(JavaQNameImpl.getInstance(pkgName, iName));
         javaSource.addExtends(JavaQNameImpl.getInstance("com.google.code.spotshout.remote", "Stub"));
@@ -77,6 +76,7 @@ public class StubGen {
 
     private void generateMethod(JavaMethod remoteMethod, int methodNumber) {
         // Create the declaration of the method from the remoteMethod signature
+        remoteMethod.setProtection(JavaSource.Protection.valueOf("public"));
         JavaMethod stubMethod = javaSource.newJavaMethod(remoteMethod);
         String[] parameterNames = remoteMethod.getParamNames();
 
@@ -97,8 +97,8 @@ public class StubGen {
 
         // Creating TargetMethod and InvokeRequest
         stubMethod.addLine();
-        stubMethod.addLine("TargetMethod m = new TargetMethod(" + methodNumber + ", args);");
-        stubMethod.addLine("InvokeRequest invReq = new InvokeRequest(getLookupName(), m);");
+        stubMethod.addLine("TargetMethod $___m = new TargetMethod(" + methodNumber + ", args);");
+        stubMethod.addLine("InvokeRequest invReq = new InvokeRequest(getLookupName(), $___m);");
 
         // Creating Connection and Writting request
         stubMethod.addLine("conn = RMIUnicastConnection.makeClientConnection("
@@ -119,9 +119,10 @@ public class StubGen {
             if (remoteMethod.getType().isPrimitive()) {
                 sb.append("return ((" + wrapper(remoteMethod.getType()));
                 sb.append(")invReply.getReturnValue()).getValue();");
-            } else if (remoteMethod.getType().getClassName().equals("java.lang.String")
-                    || remoteMethod.getType().getClassName().equals("String")) {
-                sb.append("return ((SerialString");
+            } else if ((remoteMethod.getType().getPackageName().startsWith("java.util")) ||
+                   (remoteMethod.getType().getPackageName().startsWith("java.lang"))) {
+                String dataName = remoteMethod.getType().getClassName();
+                sb.append("return ((" + dataName);
                 sb.append(")invReply.getReturnValue()).getValue();");
             } else {
                 sb.append("return (" + remoteMethod.getType() + ")");
@@ -167,10 +168,12 @@ public class StubGen {
             objType = "Long";
         } else if (keyword.equals("short")) {
             objType = "Short";
-        } else if ((keyword.equals("java.lang.String")) || (keyword.equals("String"))) {
-            objType = "String";
+        } else if (!keyword.contains(".") && parameter.getPackageName().contains("java.")) {
+            objType = keyword;
+        } else if (keyword.contains("java.")) {
+            String[] pkgs = parameter.getClassName().split("\\.");
+            objType = pkgs[pkgs.length - 1];
         }
-
         return "Serial" + objType;
     }
 
