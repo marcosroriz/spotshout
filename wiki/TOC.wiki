@@ -17,9 +17,3 @@
     * [Building Building spotSHOUT]
     * [ContributingBUG Contributing a fix]
     * [HelpWiki Contribute to the Wiki]
-  * Architecture of spotSHOUT
-    * [GeneralView General View]
-    * [StubsSkel Stubs/Skeletons]
-    * [RemoteReference Remote Reference]
-    * [NameServer Naming Server]
-    * [Communication Communication]
