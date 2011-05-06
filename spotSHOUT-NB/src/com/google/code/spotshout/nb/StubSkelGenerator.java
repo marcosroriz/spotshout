@@ -38,7 +38,7 @@ public final class StubSkelGenerator implements ActionListener {
 
                 // Check if file implements spot.rmi.Registry
                 if (!gen.isParseable()) {
-                    String msg = "The file: " + file.getName() + " does not implement spot.rmi.Remote.";
+                    String msg = "The file: " + file.getName() + " does not implement spot.rmi.Remote or spot.rmi.RemoteException.";
                     showMessage(msg, NotifyDescriptor.ERROR_MESSAGE);
                     continue;
                 }

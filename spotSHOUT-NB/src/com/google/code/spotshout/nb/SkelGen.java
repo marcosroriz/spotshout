@@ -45,14 +45,11 @@ public class SkelGen {
         }
 
         // Library Needed Imports
-        javaSource.addImport(JavaQNameImpl.getInstance("java.io", "*"));
-        javaSource.addImport(JavaQNameImpl.getInstance("ksn.io", "*"));
-        javaSource.addImport(JavaQNameImpl.getInstance("spot.rmi", "*"));
-        javaSource.addImport(JavaQNameImpl.getInstance("spot.rmi.registry", "*"));
-        javaSource.addImport(JavaQNameImpl.getInstance("com.google.code.spotshout", "*"));
+        javaSource.addImport(JavaQNameImpl.getInstance("com.google.code.spotshout.RMIProperties"));
         javaSource.addImport(JavaQNameImpl.getInstance("com.google.code.spotshout.comm", "*"));
         javaSource.addImport(JavaQNameImpl.getInstance("com.google.code.spotshout.lang", "*"));
         javaSource.addImport(JavaQNameImpl.getInstance("com.google.code.spotshout.remote", "*"));
+        javaSource.addImport(JavaQNameImpl.getInstance("ksn.io.KSNSerializableInterface"));
 
         // Implements Skeleton Interface
         javaSource.addImplements(JavaQNameImpl.getInstance("com.google.code.spotshout.remote", "Skel"));
@@ -102,12 +99,12 @@ public class SkelGen {
             JavaQName[] methodParam = methods[i].getParamTypes();
             for (int j = 0; j < methodParam.length; j++) {
                 sb.delete(0, sb.length());
-                
-                sb.append(methodParam[j].getClassName());
+
+                sb.append(getTypeFullName(methodParam[j]));
                 sb.append(" p" + j + " = ");
                 
-                if (!methodParam[j].isPrimitive()) 
-                    sb.append("(" + methodParam[j].getClassName() + ")");
+                if (!methodParam[j].isPrimitive())
+                    sb.append("( " + getTypeFullName(methodParam[j]) + " )");
                 
                 sb.append("((" + unwrap(methodParam[j]) + ")method.getArgs()[" + j + "]).getValue();");
                 serviceMethod.indent();
@@ -156,6 +153,16 @@ public class SkelGen {
         serviceMethod.addEndTry();
     }
 
+    private String getTypeFullName(JavaQName parameter) {
+        String pkgName = parameter.getPackageName();
+        String className = parameter.getClassName();
+
+        if (!pkgName.equals("") && !className.contains("."))
+            return pkgName + "." + className;
+        else
+            return className;
+    }
+
     /**
      * Gets the name of the Unwrapper of a given type.
      *
@@ -182,10 +189,12 @@ public class SkelGen {
             objType = "Long";
         } else if (keyword.equals("short")) {
             objType = "Short";
-        } else if ((keyword.equals("java.lang.String")) || (keyword.equals("String"))) {
-            objType = "String";
+        } else if (!keyword.contains(".") && parameter.getPackageName().contains("java.")) {
+            objType = keyword;
+        } else if (keyword.contains("java.")) {
+            String[] pkgs = parameter.getClassName().split("\\.");
+            objType = pkgs[pkgs.length - 1];            
         }
-
         return "Serial" + objType;
     }
 
