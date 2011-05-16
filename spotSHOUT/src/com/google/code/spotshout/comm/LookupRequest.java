@@ -30,14 +30,14 @@ import java.io.IOException;
  * Lookup Request Protocol
  * ----------------------------------------------------------------------------
  * Byte:        Opcode
- * UTF:         Remote Interface Name
+ * UTF:         Remote Name
  */
 public class LookupRequest extends RMIRequest {
 
     /**
-     * Remote Interface Name on NameServer.
+     * Remote Interface Name on the NameServer.
      */
-    private String remoteInterfaceName;
+    private String remoteName;
 
     /**
      * Empty constructor for dependency injection and "manual" reflection.
@@ -48,11 +48,11 @@ public class LookupRequest extends RMIRequest {
 
     /**
      * The lookup request of the RMI protocol.
-     * @param remoteInterfaceName - the remote name (in the NameServer)
+     * @param remoteName - the remote name (in the NameServer)
      */
-    public LookupRequest(String remoteInterfaceName) {
+    public LookupRequest(String remoteName) {
         super(ProtocolOpcode.LOOKUP_REQUEST);
-        this.remoteInterfaceName = remoteInterfaceName;
+        this.remoteName = remoteName;
         long ourAddr = RadioFactory.getRadioPolicyManager().getIEEEAddress();
         remoteAddress = IEEEAddress.toDottedHex(ourAddr);
     }
@@ -66,7 +66,7 @@ public class LookupRequest extends RMIRequest {
      */
     protected void readData(DataInput input) throws IOException {
         // We have already readed operation for the manual reflection
-        remoteInterfaceName = input.readUTF();
+        remoteName = input.readUTF();
         remoteAddress = input.readUTF();
     }
 
@@ -79,12 +79,12 @@ public class LookupRequest extends RMIRequest {
      */
     protected void writeData(DataOutput output) throws IOException {
         output.write(getOperation());
-        output.writeUTF(remoteInterfaceName);
+        output.writeUTF(remoteName);
         output.writeUTF(remoteAddress);
     }
 
     // Getter
-    public String getRemoteInterfaceName() {
-        return remoteInterfaceName;
+    public String getRemoteName() {
+        return remoteName;
     }
 }

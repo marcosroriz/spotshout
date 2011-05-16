@@ -31,7 +31,7 @@ import java.io.IOException;
  * Bind Request Protocol
  * ----------------------------------------------------------------------------
  * Byte:        Opcode
- * UTF:         Remote Interface Desired Name
+ * UTF:         Remote Desired Name
  * UTF:         Remote Interface Full Qualified Name
  */
 public class BindRequest extends RMIRequest {
@@ -39,7 +39,7 @@ public class BindRequest extends RMIRequest {
     /**
      * Remote Interface Name on NameServer.
      */
-    private String remoteInterfaceName;
+    private String remoteName;
 
     /**
      * Remote Interface Full Qualified Name (including package).
@@ -58,13 +58,13 @@ public class BindRequest extends RMIRequest {
      * The bind request of the RMI protocol. This constructor should be used by
      * the SPOT.
      * 
-     * @param remoteInterfaceName - the remote name (in the NameServer)
+     * @param remoteName - the remote name (in the NameServer)
      * @param remoteFullName - the remote interface full qualified name
      *                         (including package).
      */
-    public BindRequest(String remoteInterfaceName, String remoteFullName) {
+    public BindRequest(String remoteName, String remoteFullName) {
         super(ProtocolOpcode.BIND_REQUEST);
-        this.remoteInterfaceName = remoteInterfaceName;
+        this.remoteName = remoteName;
         this.remoteFullName = remoteFullName;
         remoteAddress = IEEEAddress.toDottedHex(RadioFactory.getRadioPolicyManager().getIEEEAddress());
     }
@@ -78,7 +78,7 @@ public class BindRequest extends RMIRequest {
      */
     protected void readData(DataInput input) throws IOException {
         // We have already readed operation for the manual reflection
-        remoteInterfaceName = input.readUTF();
+        remoteName = input.readUTF();
         remoteFullName = input.readUTF();
         remoteAddress = input.readUTF();
     }
@@ -92,7 +92,7 @@ public class BindRequest extends RMIRequest {
      */
     protected void writeData(DataOutput output) throws IOException {
         output.write(getOperation());
-        output.writeUTF(remoteInterfaceName);
+        output.writeUTF(remoteName);
         output.writeUTF(remoteFullName);
         output.writeUTF(remoteAddress);
     }
@@ -106,10 +106,10 @@ public class BindRequest extends RMIRequest {
     }
 
     /**
-     * Get the remote interface name (as desired).
-     * @return desired name.
+     * Get the remote name (as desired).
+     * @return choosed name.
      */
-    public String getRemoteInterfaceName() {
-        return remoteInterfaceName;
+    public String getRemoteName() {
+        return remoteName;
     }
 }

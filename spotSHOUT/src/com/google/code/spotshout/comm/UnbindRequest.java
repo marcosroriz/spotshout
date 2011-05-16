@@ -29,14 +29,14 @@ import java.io.IOException;
  * Unbind Request Protocol
  * ----------------------------------------------------------------------------
  * Byte:        Opcode
- * UTF:         Remote Interface Name
+ * UTF:         Remote Name
  */
 public class UnbindRequest extends RMIRequest {
 
     /**
-     * Remote Interface Name on NameServer.
+     * Remote Interface Name on the NameServer.
      */
-    private String remoteInterfaceName;
+    private String remoteName;
 
     /**
      * Empty constructor for dependency injection and "manual" reflection.
@@ -46,11 +46,11 @@ public class UnbindRequest extends RMIRequest {
 
     /**
      * The unbind request of the RMI protocol.
-     * @param remoteInterfaceName - the remote name (in the NameServer)
+     * @param remoteName - the remote name (in the NameServer)
      */
-    public UnbindRequest(String remoteInterfaceName) {
+    public UnbindRequest(String remoteName) {
         super(ProtocolOpcode.UNBIND_REQUEST);
-        this.remoteInterfaceName = remoteInterfaceName;
+        this.remoteName = remoteName;
     }
 
     /**
@@ -62,7 +62,7 @@ public class UnbindRequest extends RMIRequest {
      */
     protected void readData(DataInput input) throws IOException {
         // We have already readed operation for the manual reflection
-        remoteInterfaceName = input.readUTF();
+        remoteName = input.readUTF();
     }
 
     /**
@@ -74,14 +74,14 @@ public class UnbindRequest extends RMIRequest {
      */
     protected void writeData(DataOutput output) throws IOException {
         output.write(getOperation());
-        output.writeUTF(remoteInterfaceName);
+        output.writeUTF(remoteName);
     }
 
     /**
      * Get the remote interface name (as desired).
      * @return desired name.
      */
-    public String getRemoteInterfaceName() {
-        return remoteInterfaceName;
+    public String getRemoteName() {
+        return remoteName;
     }
 }

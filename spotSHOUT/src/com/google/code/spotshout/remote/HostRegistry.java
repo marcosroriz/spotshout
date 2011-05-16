@@ -82,7 +82,7 @@ public class HostRegistry extends Server implements Registry {
         listenersList.addElement(listener);
     }
 
-    private void dispatchEvents(RMIOperation operation) {
+    private void dispatchEvents(RMIRequest operation) {
         Enumeration e = listenersList.elements();
         RegistryListener reg = null;
         while (e.hasMoreElements()) {
@@ -117,10 +117,10 @@ public class HostRegistry extends Server implements Registry {
     }
    
     protected RMIReply bind(BindRequest request) {
-        RMIProperties.log("Bind Request Started -- Remote Name: " + request.getRemoteInterfaceName());
+        RMIProperties.log("Bind Request Started -- Remote Name: " + request.getRemoteName());
 
         BindReply reply = new BindReply();
-        String interfaceName = request.getRemoteInterfaceName();
+        String interfaceName = request.getRemoteName();
 
         if (registryTable.containsKey(interfaceName)) {
             reply.setOperationStatus(ProtocolOpcode.OPERATION_NOK);
@@ -133,7 +133,7 @@ public class HostRegistry extends Server implements Registry {
             registryTable.put(interfaceName, v);
         }
 
-        RMIProperties.log("Bind Request Finished -- Remote Name: " + request.getRemoteInterfaceName());
+        RMIProperties.log("Bind Request Finished -- Remote Name: " + request.getRemoteName());
         return reply;
     }
 
@@ -158,7 +158,7 @@ public class HostRegistry extends Server implements Registry {
             Skel skel = (Skel) skelClass.newInstance();
             skel.setRemote(obj);
 
-            invokeTable.put(request.getRemoteInterfaceName(), skel);
+            invokeTable.put(request.getRemoteName(), skel);
             RMIProperties.log("Bind Request Finished -- Remote Name: " + name);
         } catch (Exception ex) {
             throw new RemoteException(HostRegistry.class, "Skeleton not found");
@@ -203,10 +203,10 @@ public class HostRegistry extends Server implements Registry {
     }
 
     protected RMIReply lookup(LookupRequest request) {
-        RMIProperties.log("Lookup Request Started -- Remote Name: " + request.getRemoteInterfaceName());
+        RMIProperties.log("Lookup Request Started -- Remote Name: " + request.getRemoteName());
 
         RMIReply reply;
-        String interfaceName = request.getRemoteInterfaceName();
+        String interfaceName = request.getRemoteName();
 
         if (!registryTable.containsKey(interfaceName)) {
             reply = new LookupReply(ProtocolOpcode.OPERATION_NOK, ProtocolOpcode.EXCEPTION_NOT_BOUND);
@@ -217,7 +217,7 @@ public class HostRegistry extends Server implements Registry {
             reply = new LookupReply(remoteAddr, remoteFullName, remoteAddr);
         }
 
-        RMIProperties.log("Lookup Request Finished -- Remote Name: " + request.getRemoteInterfaceName());
+        RMIProperties.log("Lookup Request Finished -- Remote Name: " + request.getRemoteName());
         return reply;
     }
  
@@ -244,10 +244,10 @@ public class HostRegistry extends Server implements Registry {
     }
 
     protected RMIReply rebind(RebindRequest request) {
-        RMIProperties.log("Rebind Request Started -- Remote Name: " + request.getRemoteInterfaceName());
+        RMIProperties.log("Rebind Request Started -- Remote Name: " + request.getRemoteName());
 
         RebindReply reply = new RebindReply();
-        String interfaceName = request.getRemoteInterfaceName();
+        String interfaceName = request.getRemoteName();
 
         // Adding to table
         Vector v = new Vector(2);
@@ -255,7 +255,7 @@ public class HostRegistry extends Server implements Registry {
         v.addElement(request.getRemoteAddress());
         registryTable.put(interfaceName, v);
 
-        RMIProperties.log("Rebind Request Finished -- Remote Name: " + request.getRemoteInterfaceName());
+        RMIProperties.log("Rebind Request Finished -- Remote Name: " + request.getRemoteName());
         return reply;
     }
 
@@ -275,7 +275,7 @@ public class HostRegistry extends Server implements Registry {
             Skel skel = (Skel) skelClass.newInstance();
             skel.setRemote(obj);
 
-            invokeTable.put(request.getRemoteInterfaceName(), skel);
+            invokeTable.put(request.getRemoteName(), skel);
             RMIProperties.log("Rebind Request Finished -- Remote Name: " + name);
         } catch (Exception ex) {
             throw new RemoteException(HostRegistry.class, "Skeleton not found");
@@ -283,10 +283,10 @@ public class HostRegistry extends Server implements Registry {
     }
 
     protected RMIReply unbind(UnbindRequest request) {
-        RMIProperties.log("Unbind Request Started -- Remote Name: " + request.getRemoteInterfaceName());
+        RMIProperties.log("Unbind Request Started -- Remote Name: " + request.getRemoteName());
 
         UnbindReply reply = new UnbindReply();
-        String interfaceName = request.getRemoteInterfaceName();
+        String interfaceName = request.getRemoteName();
 
         if (!registryTable.containsKey(interfaceName)) {
             reply.setOperationStatus(ProtocolOpcode.OPERATION_NOK);
@@ -296,7 +296,7 @@ public class HostRegistry extends Server implements Registry {
             registryTable.remove(interfaceName);
         }
 
-        RMIProperties.log("Unbind Request Finished -- Remote Name: " + request.getRemoteInterfaceName());
+        RMIProperties.log("Unbind Request Finished -- Remote Name: " + request.getRemoteName());
         return reply;
     }
 
