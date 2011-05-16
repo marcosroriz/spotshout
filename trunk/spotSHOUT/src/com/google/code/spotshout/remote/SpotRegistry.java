@@ -111,7 +111,7 @@ public class SpotRegistry extends Server implements Registry {
             Skel skel = (Skel) skelClass.newInstance();
             skel.setRemote(obj);
 
-            invokeTable.put(request.getRemoteInterfaceName(), skel);
+            invokeTable.put(request.getRemoteName(), skel);
             RMIProperties.log("Bind Request Finished -- Remote Name: " + name);
         } catch (Exception ex) {
             throw new RemoteException(SpotRegistry.class, "Error on bind(" +  name + ")");
@@ -202,7 +202,7 @@ public class SpotRegistry extends Server implements Registry {
             Skel skel = (Skel) skelClass.newInstance();
             skel.setRemote(obj);
 
-            invokeTable.put(request.getRemoteInterfaceName(), skel);
+            invokeTable.put(request.getRemoteName(), skel);
             RMIProperties.log("Rebind Request Finished -- Remote Name: " + name);
         } catch (Exception ex) {
             throw new RemoteException(SpotRegistry.class, "Error on rebind(" + name + ")");
@@ -230,7 +230,7 @@ public class SpotRegistry extends Server implements Registry {
 
             if (reply.exceptionHappened()) throw new NotBoundException(SpotRegistry.class, "Ubind name is not bounded.");
 
-            invokeTable.remove(request.getRemoteInterfaceName());
+            invokeTable.remove(request.getRemoteName());
             RMIProperties.log("Unbind Request Finished -- Remote Name: " + name);
         } catch (Exception ex) {
             throw new RemoteException(SpotRegistry.class, "Error on unbind(" + name + ")");

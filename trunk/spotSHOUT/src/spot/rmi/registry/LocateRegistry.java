@@ -24,7 +24,6 @@ import com.google.code.spotshout.remote.SpotRegistry;
 import com.sun.spot.io.j2me.radiogram.Radiogram;
 import com.sun.spot.io.j2me.radiogram.RadiogramConnection;
 import java.io.IOException;
-import spot.rmi.RemoteException;
 import javax.microedition.io.Connector;
 import javax.microedition.io.Datagram;
 
@@ -35,33 +34,74 @@ import javax.microedition.io.Datagram;
 public class LocateRegistry {
 
     private static Registry reg;
+    private static Thread regThread;
     
     protected  LocateRegistry() {}
 
+    /**
+     * Creates a Registry (Default to Port 245)
+     * @return
+     */
     public static Registry createRegistry() {
-        reg = new HostRegistry();
-        (new Thread((HostRegistry) reg)).start();
+        if (reg == null) {
+            reg = new HostRegistry();
+            regThread = new Thread((HostRegistry) reg);
+            regThread.start();
+        }
         return reg;
     }
 
+    /**
+     * Discover and get a Registry (by broadcast)
+     * @return a registry
+     * @throws IOException
+     */
     public static Registry getRegistry() throws IOException {
-        String addr = discoverSrv();
-        
-        reg = new SpotRegistry(addr, RMIProperties.RMI_SERVER_PORT);
-        (new Thread((SpotRegistry) reg)).start();
+        if (reg == null) {
+            String addr = discoverSrv();
+            createSpotRegistry(addr, RMIProperties.RMI_SERVER_PORT);
+        }
         return reg;
     }
 
+    /**
+     * Get a Registry in a specific location
+     * @param host - registry addr (MAC)
+     * @return registry
+     */
     public static Registry getRegistry(String host) {
-        reg = new SpotRegistry(host, RMIProperties.RMI_SERVER_PORT);
+        if (reg == null) {
+            createSpotRegistry(host, RMIProperties.RMI_SERVER_PORT);
+        }
         return reg;
     }
 
+    /**
+     * Get a Registry in a specific location and port
+     * @param host - registry addr (MAC)
+     * @param port - port number
+     * @return registry
+     */
     public static Registry getRegistry(String host, int port) {
-        reg = new SpotRegistry(host, RMIProperties.RMI_SERVER_PORT);
+        if (reg == null) {
+            createSpotRegistry(host, port);
+        }
         return reg;
     }
 
+    private static Registry createSpotRegistry(String host, int port) {
+        reg = new SpotRegistry(host, port);
+        regThread = new Thread((SpotRegistry) reg);
+        regThread.start();
+
+        return reg;
+    }
+
+    /**
+     * Discover the Name Server ADDR
+     * @return the name server addr
+     * @throws IOException
+     */
     private static String discoverSrv() throws IOException {
         RadiogramConnection rCon = null;
         Datagram dg = null;
