@@ -122,7 +122,7 @@ public class StubGen {
             } else if ((remoteMethod.getType().getPackageName().startsWith("java.util")) ||
                    (remoteMethod.getType().getPackageName().startsWith("java.lang"))) {
                 String dataName = remoteMethod.getType().getClassName();
-                sb.append("return ((" + dataName);
+                sb.append("return ((Serial" + dataName);
                 sb.append(")invReply.getReturnValue()).getValue();");
             } else {
                 sb.append("return (" + remoteMethod.getType() + ")");
