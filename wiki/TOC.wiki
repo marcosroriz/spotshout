@@ -7,11 +7,9 @@
       * [TutSensorServer Calculator Server]
       * [TutSensorClient Calculator Client]
       * [TutRun Running in the Emulator]
-    * [Guide Guia]
+    * [Guide Guide]
       * [GuideRemote Remote Interface]
       * [GuideNameServer Name Server]
-      * [GuideServer Server]
-      * [GuideClient Client]
       * [GuideSerialization Object Serialization]
   * Developing spotSHOUT
     * [Building Building spotSHOUT]

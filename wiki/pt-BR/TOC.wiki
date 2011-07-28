@@ -10,8 +10,6 @@
     * [Guide Guia]
       * [GuideRemote Interface Remota]
       * [GuideNameServer Servidor de Nomes]
-      * [GuideServer Servidor]
-      * [GuideClient Cliente]
       * [GuideSerialization Guia de Serialização de Objetos]
   * Desenvolvendo o spotSHOUT
     * [Building Construindo o spotSHOUT]
