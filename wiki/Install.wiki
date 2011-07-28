@@ -55,5 +55,5 @@ If you do not want to modify your file, just in time to run a host application p
 ant host-run -Dbasestation.shared=true -Dbasestation.not.required=true
 }}}
 
-= Referências =
+= References =
 The operation guide of the [http://sunspotworld.com/docs/Yellow/SunSPOT-Programmers-Manual.pdf SunSpot] documentation and other middleware, such as [http://code.google.com/p/looci/wiki/Welcome?tm=6 LooCI] and [http://www.ipd.uka.de/KSN/Serialization/ KSN], were used to construct the installation guide.
