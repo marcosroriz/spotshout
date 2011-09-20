@@ -9,5 +9,4 @@ The content is divided into subsections in order to make content concise and sim
  * [GuideRemote Remote Interface]
  * [GuideNameServer Naming Server]
  * [GuideServer Server]
- * [GuideClient Client]
  * [GuideSerialization Serializing Objects]

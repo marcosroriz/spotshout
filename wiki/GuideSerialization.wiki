@@ -1,6 +1,6 @@
 #summary Serializing objects.
 
-= Serialização de Objetos =
+= Object Serialization =
 
 spotSHOUT uses the library [http://www.ipd.uni-karlsruhe.de/KSN/Serialization/ KSN Serialization] from the institute [http://www.ipd.uni-karlsruhe.de/ Karlsruhe Sensor Networking] to support serialization of complex objects. Primitive variables are serialized by the middleware itself.
 
@@ -53,9 +53,6 @@ KSN will then pick up the flow of what you wrote (`stream`) and will do the reve
         this.age = stream.readInt();
     }
 }}}
-
-O objeto que leu o fluxo após a execução do método terá os mesmos dados que foi escrito anteriormente, completando a serialização. Porém temos uma dúvida, como ele faz isso? Basicamente o KSN adiciona metadados indicando qual a classe que você quer serializar nos dados da comunicação. Em seguida ele instancia a classe a partir de um construtor vazio. *Por isso é muito importante que a sua classe serializavél tenha um construtor vazio*. A partir disso ele simplesmente executa o método de leitura passando o fluxo de dados da comunicação. 
-
 
 The object that read the flow stream after the execution of the method will have the same data (state) that was written earlier, the source object, completing the serialization. But we have a question, how does he do that? Basically KSN adds metadata indicating which class you want to serialize in the data communication. Then it instantiates the class from an *empty constructor*. It is therefore very important that your serializable class has a * empty constructor*. From this he simply performs the method of reading through the data flow of communication.
 

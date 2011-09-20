@@ -7,5 +7,5 @@
 == I found a _bug_ ==
 If you discovered a _bug_, please report to us. Go to the [http://code.google.com/p/spotshout/issues/list issues page] and check if the _bug_ has been reported, otherwise open a new _bug_. If possible turn on the option of _debug_ _middleware_ and attach the _log_ _middleware_. To enable the [http://code.google.com/p/spotshout/wiki/Building # debug Modificando_propriedades see this page].
 
-== I fiex a _bug_ ==
+== I fixed a _bug_ ==
 To correct a previously reported _bug_ attach _patch_ on the bug topic. If the _bug_ has not been created, please file a bug and attach the patch.

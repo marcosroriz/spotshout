@@ -21,7 +21,7 @@ Interestingly, there are two ways to locate the name server: fixed address or di
 	
 	* `getRegistry(String host)`: Requires prior knowledge of the location of the server names. The advantage of using this form is that it saves resources for convergence / discovery of the sensors but couple the middleware with a specific location (hardcoded).
   
-== Operações RMI ==
+== RMI Operations ==
 After getting the name server, we can use all the operations defined by the Java RMI registry, such as _bind, list, lookup, rebind and unbind_.
 
 === bind ===
