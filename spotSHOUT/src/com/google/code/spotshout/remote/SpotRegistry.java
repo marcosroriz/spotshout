@@ -1,6 +1,6 @@
 /*
  * spotSHOUT - A RMI Middleware for the SunSPOT Platform.
- * Copyright (C) 2010 Marcos Paulino Roriz Junior
+ * Copyright (C) 2010-2011 Marcos Paulino Roriz Junior
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,6 @@ import com.google.code.spotshout.comm.ListRequest;
 import com.google.code.spotshout.comm.LookupReply;
 import com.google.code.spotshout.comm.LookupRequest;
 import com.google.code.spotshout.comm.ProtocolOpcode;
-import com.google.code.spotshout.comm.RMIOperation;
 import com.google.code.spotshout.comm.RMIReply;
 import com.google.code.spotshout.comm.RMIRequest;
 import com.google.code.spotshout.comm.RMIUnicastConnection;
