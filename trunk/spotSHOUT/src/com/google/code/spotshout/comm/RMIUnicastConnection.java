@@ -1,6 +1,6 @@
 /*
  * spotSHOUT - A RMI Middleware for the SunSPOT Platform.
- * Copyright (C) 2010 Marcos Paulino Roriz Junior
+ * Copyright (C) 2010-2011 Marcos Paulino Roriz Junior
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -66,7 +66,9 @@ public class RMIUnicastConnection {
             dos = connection.openDataOutputStream();
             connection.setTimeout(RMIProperties.RELIABLE_TIMEOUT);
             Thread.sleep(RMIProperties.LITTLE_SLEEP_TIME);
-        } catch (InterruptedException ex) {}
+        } catch (Exception ex) {
+            throw new IOException("Could not make reliable connection between spots");
+        }
     }
 
     /**
