@@ -1,6 +1,6 @@
 #summary Experiencing spotSHOUT.
 
-= 15 Minutres Tutorial =
+= 15 Minutes Tutorial =
 
 Now that you've installed the middleware, we'll use it through a fast and simple example. The steps for building applications that use the _middleware_ spotSHOUT are basically: 
  * Sensor / Host starts the name server; 
